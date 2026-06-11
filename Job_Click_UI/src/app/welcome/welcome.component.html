@@ -1,0 +1,35 @@
+<div class="welcome">
+  <div class="welcome__card">
+    <span class="welcome__badge">Signed in</span>
+    <h1 class="jc-page-title">Welcome, {{ currentUser.displayName() }}</h1>
+    <p class="jc-body">
+      Your authentication is working. Role-specific workspaces are coming next.
+    </p>
+
+    <dl class="welcome__meta">
+      <div>
+        <dt>Email</dt>
+        <dd>{{ currentUser.user()?.email }}</dd>
+      </div>
+      <div>
+        <dt>Roles</dt>
+        <dd class="welcome__roles">
+          @for (label of roleLabels(); track label) {
+            <span class="welcome__role">{{ label }}</span>
+          }
+        </dd>
+      </div>
+      @if (currentUser.user()?.companyName) {
+        <div>
+          <dt>Company</dt>
+          <dd>{{ currentUser.user()?.companyName }}</dd>
+        </div>
+      }
+    </dl>
+
+    <button mat-stroked-button color="primary" type="button" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Sign out</span>
+    </button>
+  </div>
+</div>

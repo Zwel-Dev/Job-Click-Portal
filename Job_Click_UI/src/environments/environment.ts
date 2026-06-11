@@ -1,36 +1,26 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
+// Development environment (default). Replaced by environment.prod.ts in production
+// builds via the `fileReplacements` entry in angular.json.
+//
+// NOTE: `baseApiUrl` is intentionally NOT defined here. It is loaded at runtime
+// from `src/appsettings.json` by AppConfigService so the API host can be changed
+// without rebuilding. This file holds build-time flags only.
 
-export const environment = {
+export interface AppEnvironment {
+  production: boolean;
+  /** When true, services return mock data via `of(...)` instead of calling HttpClient. */
+  useMock: boolean;
+  enableAi: boolean;
+  enableRealtime: boolean;
+  defaultPageSize: number;
+  /** Max upload size (MB) for resumes, logos, attachments. */
+  allowFileSizeMb: number;
+}
+
+export const environment: AppEnvironment = {
   production: false,
-  defaultauth: "fackbackend",
-
-  //baseApiUrl: 'http://localhost:5100',
-  //baseApiUrl: 'http://smarthrpro_app.systematic-solution.com',
-  baseApiUrl: "",
-  baseAdminUrl: "http://localhost:4200",
-
-  firebaseConfig: {
-    apiKey: "",
-    authDomain: "",
-
-    databaseURL: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: "",
-  },
-  timeout: 180, // minutes
-  allowFilesize: 3, //allow file size(MB) to upload image or file
+  useMock: true,
+  enableAi: false,
+  enableRealtime: false,
+  defaultPageSize: 20,
+  allowFileSizeMb: 3,
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

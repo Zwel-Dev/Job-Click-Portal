@@ -1,0 +1,64 @@
+@use 'typography' as type;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: type.$jc-font-sans;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--jc-text);
+  background-color: var(--jc-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--jc-text);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--jc-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Visible keyboard focus for accessibility.
+:focus-visible {
+  outline: 2px solid var(--jc-primary-500);
+  outline-offset: 2px;
+}
+
+// Thin, unobtrusive scrollbars.
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--jc-gray-300) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--jc-gray-300);
+  border-radius: var(--jc-radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}

@@ -1,0 +1,99 @@
+<section class="login">
+  <header class="login__head">
+    <h1 class="jc-page-title">Sign in</h1>
+    <p class="jc-body">Welcome back. Enter your credentials to access your workspace.</p>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="login__alert" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <form class="login__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <mat-form-field appearance="outline" class="login__field">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        placeholder="you@company.com"
+      />
+      <mat-icon matPrefix aria-hidden="true">mail_outline</mat-icon>
+      @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+        <mat-error>Email is required.</mat-error>
+      } @else if (form.controls.email.hasError('email')) {
+        <mat-error>Enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="login__field">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="hidePassword() ? 'password' : 'text'"
+        formControlName="password"
+        autocomplete="current-password"
+      />
+      <mat-icon matPrefix aria-hidden="true">lock_outline</mat-icon>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="togglePassword()"
+        [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+        [attr.aria-pressed]="!hidePassword()"
+      >
+        <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+        <mat-error>Password is required.</mat-error>
+      } @else if (form.controls.password.hasError('minlength')) {
+        <mat-error>Password must be at least 6 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="login__options">
+      <mat-checkbox formControlName="rememberMe" color="primary">Remember me</mat-checkbox>
+      <a class="login__link" routerLink="/auth/forgot-password">Forgot password?</a>
+    </div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      class="login__submit"
+      [disabled]="submitting()"
+    >
+      @if (submitting()) {
+        <mat-progress-spinner diameter="20" mode="indeterminate" />
+        <span>Signing in...</span>
+      } @else {
+        <span>Sign in</span>
+      }
+    </button>
+  </form>
+
+  <p class="login__signup jc-body">
+    Don't have an account?
+    <a routerLink="/auth/register">Join as a candidate</a>
+    <span class="login__dot" aria-hidden="true">&middot;</span>
+    <a routerLink="/auth/register-company">Register your company</a>
+  </p>
+
+  @if (showDemo) {
+    <div class="login__demo">
+      <p class="jc-overline">Demo accounts &mdash; password: {{ demoPassword }}</p>
+      <div class="login__demo-grid">
+        @for (account of demoAccounts; track account.email) {
+          <button type="button" class="login__demo-card" (click)="fillDemo(account.email)">
+            <span class="login__demo-role">{{ account.role }}</span>
+            <span class="login__demo-email">{{ account.email }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>

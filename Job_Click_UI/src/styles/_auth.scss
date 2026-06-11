@@ -1,0 +1,183 @@
+// Shared styling for authentication screens (login, register, forgot/reset).
+// Global (un-encapsulated) so all auth pages stay visually consistent.
+
+.auth-head {
+  margin-bottom: var(--jc-space-5);
+
+  .jc-body {
+    margin-top: var(--jc-space-2);
+  }
+}
+
+.auth-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+  margin-bottom: var(--jc-space-5);
+  padding: var(--jc-space-3) var(--jc-space-4);
+  border: 1px solid var(--jc-danger);
+  border-radius: var(--jc-radius-sm);
+  background: var(--jc-danger-surface);
+  color: #991b1b;
+  font-size: 0.875rem;
+
+  mat-icon {
+    flex: 0 0 auto;
+  }
+}
+
+// Segmented control: switch between candidate / company sign-up.
+.auth-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: var(--jc-space-6);
+  padding: 4px;
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-md);
+  background: var(--jc-surface-muted);
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--jc-space-2);
+    height: 40px;
+    border-radius: var(--jc-radius-sm);
+    color: var(--jc-text-secondary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      color: var(--jc-text);
+      text-decoration: none;
+    }
+
+    &--active {
+      background: var(--jc-surface);
+      color: var(--jc-primary-700);
+      box-shadow: var(--jc-shadow-xs);
+    }
+  }
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.auth-field {
+  width: 100%;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--jc-space-4);
+}
+
+.auth-terms {
+  margin: var(--jc-space-1) 0 var(--jc-space-2);
+  font-size: 0.875rem;
+}
+
+.auth-terms-error {
+  margin: 0 0 var(--jc-space-3);
+  color: var(--jc-danger);
+  font-size: 0.8125rem;
+}
+
+.auth-link {
+  color: var(--jc-primary);
+  font-weight: 500;
+}
+
+.auth-actions {
+  display: flex;
+  margin-top: var(--jc-space-5);
+
+  .auth-submit {
+    flex: 1 1 auto;
+  }
+
+  &--split {
+    gap: var(--jc-space-3);
+
+    > button:first-child {
+      flex: 0 0 auto;
+    }
+  }
+}
+
+.auth-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jc-space-2);
+  height: 48px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.auth-alt {
+  margin-top: var(--jc-space-6);
+  text-align: center;
+}
+
+// Stepper tweaks so it fits the narrow auth card flush with the form.
+.auth-stepper {
+  .mat-horizontal-content-container {
+    padding: var(--jc-space-5) 0 0;
+  }
+
+  .mat-horizontal-stepper-header-container {
+    margin-bottom: var(--jc-space-1);
+  }
+}
+
+// Post-registration confirmation.
+.auth-success {
+  text-align: center;
+  padding: var(--jc-space-4) 0;
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--jc-space-5);
+    border-radius: var(--jc-radius-pill);
+    background: var(--jc-success-surface);
+    color: var(--jc-success);
+
+    mat-icon {
+      font-size: 34px;
+      width: 34px;
+      height: 34px;
+    }
+  }
+
+  &__email {
+    font-weight: 600;
+    color: var(--jc-text);
+  }
+
+  &__actions {
+    margin-top: var(--jc-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--jc-space-3);
+  }
+}

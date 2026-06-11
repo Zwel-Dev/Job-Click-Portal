@@ -1,0 +1,23 @@
+@use '@angular/material' as mat;
+
+// Angular Material M3 theme — professional blue, light, comfortable density.
+// Component tokens are emitted as `--mat-sys-*`; our custom components use the
+// `--jc-*` tokens from `_tokens.scss`, tuned to match this palette.
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$blue-palette,
+        tertiary: mat.$azure-palette,
+      ),
+      typography: 'Inter, "Segoe UI", Roboto, sans-serif',
+      density: 0,
+    )
+  );
+}
+
+@include mat.elevation-classes();
+@include mat.app-background();

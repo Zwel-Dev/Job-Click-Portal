@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+// Global stylesheet entry. Order matters: Material theme first (emits system
+// tokens + base), then our design tokens, typography, base resets, utilities.
+@use 'styles/theme';
+@use 'styles/tokens';
+@use 'styles/typography';
+@use 'styles/base';
+@use 'styles/utilities';
+@use 'styles/auth';

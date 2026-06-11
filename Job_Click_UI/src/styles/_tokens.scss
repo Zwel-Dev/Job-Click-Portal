@@ -1,0 +1,81 @@
+// Design tokens — the single source of truth for color, spacing, radius, and
+// elevation used by custom (non-Material) components. Material components read
+// their own `--mat-sys-*` tokens emitted by the theme.
+
+:root {
+  // Brand — professional blue
+  --jc-primary-50: #eff5ff;
+  --jc-primary-100: #dbe7fe;
+  --jc-primary-200: #bfd3fe;
+  --jc-primary-300: #93b4fd;
+  --jc-primary-400: #6090fa;
+  --jc-primary-500: #3b6ef6;
+  --jc-primary-600: #2563eb;
+  --jc-primary-700: #1d4ed8;
+  --jc-primary-800: #1e40af;
+  --jc-primary-900: #1e3a8a;
+  --jc-primary: var(--jc-primary-600);
+  --jc-primary-contrast: #ffffff;
+
+  // Neutral — slate gray
+  --jc-gray-50: #f8fafc;
+  --jc-gray-100: #f1f5f9;
+  --jc-gray-200: #e2e8f0;
+  --jc-gray-300: #cbd5e1;
+  --jc-gray-400: #94a3b8;
+  --jc-gray-500: #64748b;
+  --jc-gray-600: #475569;
+  --jc-gray-700: #334155;
+  --jc-gray-800: #1e293b;
+  --jc-gray-900: #0f172a;
+
+  // Semantic
+  --jc-success: #16a34a;
+  --jc-success-surface: #dcfce7;
+  --jc-warning: #d97706;
+  --jc-warning-surface: #fef3c7;
+  --jc-danger: #dc2626;
+  --jc-danger-surface: #fee2e2;
+  --jc-info: #2563eb;
+  --jc-info-surface: #dbeafe;
+
+  // Surfaces & text
+  --jc-bg: var(--jc-gray-50);
+  --jc-surface: #ffffff;
+  --jc-surface-muted: var(--jc-gray-100);
+  --jc-border: var(--jc-gray-200);
+  --jc-border-strong: var(--jc-gray-300);
+  --jc-text: var(--jc-gray-900);
+  --jc-text-secondary: var(--jc-gray-600);
+  --jc-text-muted: var(--jc-gray-500);
+  --jc-text-on-primary: #ffffff;
+
+  // Radius
+  --jc-radius-xs: 4px;
+  --jc-radius-sm: 6px;
+  --jc-radius-md: 10px;
+  --jc-radius-lg: 14px;
+  --jc-radius-pill: 999px;
+
+  // Spacing scale (4px base)
+  --jc-space-1: 4px;
+  --jc-space-2: 8px;
+  --jc-space-3: 12px;
+  --jc-space-4: 16px;
+  --jc-space-5: 20px;
+  --jc-space-6: 24px;
+  --jc-space-8: 32px;
+  --jc-space-10: 40px;
+  --jc-space-12: 48px;
+
+  // Elevation
+  --jc-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --jc-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --jc-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --jc-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  // Layout
+  --jc-header-height: 64px;
+  --jc-sidebar-width: 264px;
+  --jc-content-max: 1280px;
+}

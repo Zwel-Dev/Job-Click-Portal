@@ -1,0 +1,21 @@
+:host {
+  display: inline-flex;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+
+  &__img {
+    display: block;
+    width: auto;
+  }
+
+  &--on-dark {
+    padding: var(--jc-space-2) var(--jc-space-3);
+    background: #fff;
+    border-radius: var(--jc-radius-md);
+    box-shadow: var(--jc-shadow-sm);
+  }
+}

@@ -1,0 +1,20 @@
+<nav class="auth-switch" aria-label="Account type">
+  <a
+    class="auth-switch__btn"
+    routerLink="/auth/register"
+    routerLinkActive="auth-switch__btn--active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <mat-icon aria-hidden="true">person_outline</mat-icon>
+    <span>Candidate</span>
+  </a>
+  <a
+    class="auth-switch__btn"
+    routerLink="/auth/register-company"
+    routerLinkActive="auth-switch__btn--active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <mat-icon aria-hidden="true">business</mat-icon>
+    <span>Company</span>
+  </a>
+</nav>

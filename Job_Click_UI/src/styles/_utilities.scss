@@ -1,0 +1,40 @@
+// Small set of layout utilities. Kept intentionally minimal — prefer component styles.
+
+.jc-container {
+  width: 100%;
+  max-width: var(--jc-content-max);
+  margin-inline: auto;
+  padding-inline: var(--jc-space-6);
+}
+
+.jc-row {
+  display: flex;
+  align-items: center;
+}
+
+.jc-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.jc-gap-1 { gap: var(--jc-space-1); }
+.jc-gap-2 { gap: var(--jc-space-2); }
+.jc-gap-3 { gap: var(--jc-space-3); }
+.jc-gap-4 { gap: var(--jc-space-4); }
+.jc-gap-6 { gap: var(--jc-space-6); }
+
+.jc-grow { flex: 1 1 auto; }
+.jc-spacer { flex: 1 1 auto; }
+
+.jc-text-center { text-align: center; }
+.jc-text-muted { color: var(--jc-text-muted); }
+.jc-text-secondary { color: var(--jc-text-secondary); }
+.jc-text-danger { color: var(--jc-danger); }
+
+.jc-hidden { display: none !important; }
+
+@media (max-width: 600px) {
+  .jc-container {
+    padding-inline: var(--jc-space-4);
+  }
+}

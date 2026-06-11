@@ -1,0 +1,190 @@
+@if (registeredEmail(); as email) {
+  <div class="auth-success">
+    <span class="auth-success__icon">
+      <mat-icon aria-hidden="true">domain_verification</mat-icon>
+    </span>
+    <h1 class="jc-section-title">Company registered</h1>
+    <p class="jc-body">
+      We've sent a verification link to
+      <span class="auth-success__email">{{ email }}</span>.
+      Verify your email, then our team will review your company before you start posting jobs.
+    </p>
+    <div class="auth-success__actions">
+      <a mat-flat-button color="primary" routerLink="/auth/login">Continue to sign in</a>
+    </div>
+  </div>
+} @else {
+  <header class="auth-head">
+    <h1 class="jc-page-title">Register your company</h1>
+    <p class="jc-body">Start hiring on Job Click in two quick steps.</p>
+  </header>
+
+  <app-account-type-switch />
+
+  @if (errorMessage()) {
+    <div class="auth-alert" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <mat-stepper class="auth-stepper" [linear]="true" #stepper>
+    <mat-step [stepControl]="companyForm" label="Company">
+      <form class="auth-form" [formGroup]="companyForm" novalidate>
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Company name</mat-label>
+          <input matInput formControlName="companyName" autocomplete="organization" />
+          <mat-icon matPrefix aria-hidden="true">business</mat-icon>
+          @if (companyForm.controls.companyName.hasError('required') && companyForm.controls.companyName.touched) {
+            <mat-error>Company name is required.</mat-error>
+          } @else if (companyForm.controls.companyName.hasError('minlength')) {
+            <mat-error>Enter the company name.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Industry</mat-label>
+          <mat-select formControlName="industry">
+            @for (industry of industries; track industry) {
+              <mat-option [value]="industry">{{ industry }}</mat-option>
+            }
+          </mat-select>
+          @if (companyForm.controls.industry.hasError('required') && companyForm.controls.industry.touched) {
+            <mat-error>Select an industry.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Company size</mat-label>
+          <mat-select formControlName="companySize">
+            @for (size of companySizes; track size.value) {
+              <mat-option [value]="size.value">{{ size.label }}</mat-option>
+            }
+          </mat-select>
+          @if (companyForm.controls.companySize.hasError('required') && companyForm.controls.companySize.touched) {
+            <mat-error>Select your company size.</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="auth-actions">
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="auth-submit"
+            matStepperNext
+            [disabled]="companyForm.invalid"
+          >
+            Continue
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step [stepControl]="accountForm" label="Admin account">
+      <form class="auth-form" [formGroup]="accountForm" (ngSubmit)="submit()" novalidate>
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Your full name</mat-label>
+          <input matInput formControlName="adminFullName" autocomplete="name" />
+          <mat-icon matPrefix aria-hidden="true">person_outline</mat-icon>
+          @if (accountForm.controls.adminFullName.hasError('required') && accountForm.controls.adminFullName.touched) {
+            <mat-error>Your name is required.</mat-error>
+          } @else if (accountForm.controls.adminFullName.hasError('minlength')) {
+            <mat-error>Enter your full name.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Work email</mat-label>
+          <input matInput type="email" formControlName="workEmail" autocomplete="email" placeholder="you@company.com" />
+          <mat-icon matPrefix aria-hidden="true">mail_outline</mat-icon>
+          @if (accountForm.controls.workEmail.hasError('required') && accountForm.controls.workEmail.touched) {
+            <mat-error>Work email is required.</mat-error>
+          } @else if (accountForm.controls.workEmail.hasError('email')) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Phone number</mat-label>
+          <input matInput type="tel" formControlName="phone" autocomplete="tel" placeholder="+95 9 ..." />
+          <mat-icon matPrefix aria-hidden="true">phone_iphone</mat-icon>
+          @if (accountForm.controls.phone.hasError('required') && accountForm.controls.phone.touched) {
+            <mat-error>Phone number is required.</mat-error>
+          } @else if (accountForm.controls.phone.hasError('pattern')) {
+            <mat-error>Enter a valid phone number.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="new-password"
+          />
+          <mat-icon matPrefix aria-hidden="true">lock_outline</mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePassword()"
+            [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+          >
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (accountForm.controls.password.hasError('required') && accountForm.controls.password.touched) {
+            <mat-error>Password is required.</mat-error>
+          } @else if (accountForm.controls.password.hasError('weakPassword')) {
+            <mat-error>Use 8+ characters with upper, lower, and a number.</mat-error>
+          }
+        </mat-form-field>
+        <app-password-strength [password]="accountForm.controls.password.value" />
+
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-label>Confirm password</mat-label>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+          />
+          <mat-icon matPrefix aria-hidden="true">lock_outline</mat-icon>
+          @if (accountForm.controls.confirmPassword.hasError('required') && accountForm.controls.confirmPassword.touched) {
+            <mat-error>Please confirm your password.</mat-error>
+          } @else if (accountForm.controls.confirmPassword.hasError('passwordMismatch')) {
+            <mat-error>Passwords do not match.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-checkbox formControlName="acceptTerms" color="primary" class="auth-terms">
+          I agree to the
+          <a href="#" class="auth-link" (click)="$event.preventDefault(); $event.stopPropagation()">Terms of Service</a>
+          and
+          <a href="#" class="auth-link" (click)="$event.preventDefault(); $event.stopPropagation()">Privacy Policy</a>.
+        </mat-checkbox>
+        @if (accountForm.controls.acceptTerms.hasError('required') && accountForm.controls.acceptTerms.touched) {
+          <p class="auth-terms-error">You must accept the terms to continue.</p>
+        }
+
+        <div class="auth-actions auth-actions--split">
+          <button mat-stroked-button type="button" matStepperPrevious>Back</button>
+          <button mat-flat-button color="primary" type="submit" class="auth-submit" [disabled]="submitting()">
+            @if (submitting()) {
+              <mat-progress-spinner diameter="20" mode="indeterminate" />
+              <span>Creating...</span>
+            } @else {
+              <span>Create company account</span>
+            }
+          </button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+
+  <p class="auth-alt jc-body">
+    Already have an account?
+    <a routerLink="/auth/login">Sign in</a>
+  </p>
+}

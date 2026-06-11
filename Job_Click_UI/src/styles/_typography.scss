@@ -1,0 +1,49 @@
+// Typography scale. Base font is Inter (loaded in index.html) with a system fallback.
+
+$jc-font-sans: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+.jc-page-title {
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--jc-text);
+}
+
+.jc-section-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--jc-text);
+}
+
+.jc-card-title {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  color: var(--jc-text);
+}
+
+.jc-body {
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  color: var(--jc-text-secondary);
+}
+
+.jc-caption {
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  font-weight: 500;
+  color: var(--jc-text-muted);
+}
+
+.jc-overline {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--jc-text-muted);
+}

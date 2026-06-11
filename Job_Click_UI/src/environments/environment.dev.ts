@@ -1,21 +1,12 @@
-export const environment = {
-  production: true,
-  //baseApiUrl: 'http://localhost:5100',
-  baseApiUrl: "http://localhost:5100",
+import type { AppEnvironment } from './environment';
 
-  //baseApiUrl: 'http://localhost:5100',
-  baseAdminUrl: "http://localhost:4200",
-  defaultauth: "fackbackend",
-  firebaseConfig: {
-    apiKey: "",
-    authDomain: "",
-    databaseURL: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: "",
-  },
-  timeout: 180, // minutes
+// Optional "dev API" target (not wired by default). Use by adding a `development`
+// fileReplacement in angular.json if you want to run against a live dev backend.
+export const environment: AppEnvironment = {
+  production: false,
+  useMock: false,
+  enableAi: false,
+  enableRealtime: false,
+  defaultPageSize: 20,
+  allowFileSizeMb: 3,
 };
-

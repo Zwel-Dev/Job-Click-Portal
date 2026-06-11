@@ -1,0 +1,41 @@
+<div class="auth-shell">
+  <aside class="auth-shell__brand">
+    <div class="auth-shell__brand-inner">
+      <app-logo [size]="60" [onDark]="true" />
+
+      <div class="auth-shell__pitch">
+        <h2>Hire smarter.<br />Get hired faster.</h2>
+        <p>
+          The recruitment platform that connects talent and teams through
+          intelligent matching and a modern applicant tracking system.
+        </p>
+
+        <ul class="auth-shell__features">
+          <li>
+            <mat-icon aria-hidden="true">check_circle</mat-icon>
+            <span>AI-assisted candidate and job matching</span>
+          </li>
+          <li>
+            <mat-icon aria-hidden="true">check_circle</mat-icon>
+            <span>End-to-end hiring pipeline and analytics</span>
+          </li>
+          <li>
+            <mat-icon aria-hidden="true">check_circle</mat-icon>
+            <span>Built for candidates, recruiters, and admins</span>
+          </li>
+        </ul>
+      </div>
+
+      <p class="auth-shell__foot">&copy; {{ year }} Job Click Portal</p>
+    </div>
+  </aside>
+
+  <main class="auth-shell__content">
+    <div class="auth-shell__card">
+      <div class="auth-shell__card-logo">
+        <app-logo [size]="52" />
+      </div>
+      <router-outlet />
+    </div>
+  </main>
+</div>

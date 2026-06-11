@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+.login {
+  &__head {
+    margin-bottom: var(--jc-space-6);
+
+    .jc-body {
+      margin-top: var(--jc-space-2);
+    }
+  }
+
+  &__alert {
+    display: flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+    margin-bottom: var(--jc-space-5);
+    padding: var(--jc-space-3) var(--jc-space-4);
+    border: 1px solid var(--jc-danger);
+    border-radius: var(--jc-radius-sm);
+    background: var(--jc-danger-surface);
+    color: #991b1b;
+    font-size: 0.875rem;
+
+    mat-icon {
+      flex: 0 0 auto;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__field {
+    width: 100%;
+  }
+
+  &__options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: var(--jc-space-1) 0 var(--jc-space-5);
+  }
+
+  &__link {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--jc-space-2);
+    height: 48px;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  &__signup {
+    margin-top: var(--jc-space-6);
+    text-align: center;
+  }
+
+  &__dot {
+    margin: 0 var(--jc-space-2);
+    color: var(--jc-text-muted);
+  }
+
+  &__demo {
+    margin-top: var(--jc-space-6);
+    padding-top: var(--jc-space-5);
+    border-top: 1px solid var(--jc-border);
+  }
+
+  &__demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--jc-space-2);
+    margin-top: var(--jc-space-3);
+  }
+
+  &__demo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--jc-space-2) var(--jc-space-3);
+    text-align: left;
+    border: 1px solid var(--jc-border);
+    border-radius: var(--jc-radius-sm);
+    background: var(--jc-surface);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+      border-color: var(--jc-primary-400);
+      background: var(--jc-primary-50);
+    }
+  }
+
+  &__demo-role {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--jc-text);
+  }
+
+  &__demo-email {
+    font-size: 0.75rem;
+    color: var(--jc-text-muted);
+  }
+}
+
+@media (max-width: 420px) {
+  .login__demo-grid {
+    grid-template-columns: 1fr;
+  }
+}
