@@ -362,32 +362,135 @@ All IDs must cross-resolve (every `jobId`/`companyId` exists).
 
 ---
 
-## 13. Phase backlog (detailed)
+## 13. Phased build plan (sequenced slices)
 
-### Phase 1 (MVP)
-- [ ] `candidateGuard` + repoint post-login redirect to `/candidate/dashboard`
-- [ ] `CandidateLayoutComponent` (header + sidebar + nav config) + lazy `CandidateModule`/routing
-- [ ] Models + enums (`candidate`, `job`, `application`) + mock fixtures/handlers
-- [ ] `CandidateProfileService` + `CandidateProfileStore`
-- [ ] Dashboard with widgets (skeleton/empty/error)
-- [ ] Profile shell + 8 section editors (CRUD, validation, completion)
-- [ ] Resume manager (upload/list/default/preview/remove)
-- [ ] Job search (filters, sort, pagination) + `app-job-card`
-- [ ] Job detail + apply dialog (pre-apply gate, resume select)
-- [ ] Saved jobs (optimistic sync)
-- [ ] Applications list + status tracker + detail + withdraw
-- [ ] Settings (account/privacy/notifications)
+Built as **vertical slices**, each independently shippable and **build-verified** before the next — the same cadence used for Auth (Phase 0 → 1 → 2). Slice IDs map to the high-level phases in §2 (P1 = `C1.x`, P2 = `C2.x`, P3 = `C3.x`).
 
-### Phase 2 (Engagement)
-- [ ] Recommendations page (5 match bands) + match breakdown popover
-- [ ] Interviews list + reschedule request
-- [ ] Messages + notifications host pages (consume `CommsModule`)
-- [ ] `BehaviorTrackerService` hooks (job views, search history, saves, applies)
-- [ ] Match score badge on job cards
+### 13.1 Sequence & dependencies
 
-### Phase 3 (AI)
-- [ ] AI resume review suggestions (consume `AiModule`)
-- [ ] AI resume parsing → review → pre-fill profile sections
+```text
+C1.0 Foundation ─► C1.1 Profile ─► C1.2 Dashboard
+        │                              ▲
+        ├─► C1.3 Job Search ─► C1.4 Job Detail + Apply ─► C1.5 Saved + Applications
+        │                                                         │
+        └─► C1.6 Settings                                         ▼
+                                                          (P1 complete)
+P2:  C2.0 Recommendations ─► C2.1 Interviews ─► C2.2 Comms (msgs+notifs) ─► C2.3 Behavior tracking
+P3:  C3.0 AI resume review ─► C3.1 AI parse → profile pre-fill
+```
+
+| Slice | Goal | Depends on | Size |
+| --- | --- | --- | :---: |
+| **C1.0** | Foundation & shell (walking skeleton) | Auth | M |
+| **C1.1** | Profile (8 sections, CRUD) | C1.0 | L |
+| **C1.2** | Dashboard widgets | C1.0, C1.1 | M |
+| **C1.3** | Job search + filters | C1.0 | L |
+| **C1.4** | Job detail + apply flow | C1.3 | M |
+| **C1.5** | Saved jobs + applications tracker | C1.4 | M |
+| **C1.6** | Account settings | C1.0 | S |
+| **C2.0** | Recommendations (match bands) | C1.3, Reco engine | M |
+| **C2.1** | Interviews | C1.5 | S |
+| **C2.2** | Messages + notifications | CommsModule | M |
+| **C2.3** | Behavioral tracking hooks | C1.3–C1.5 | S |
+| **C3.0** | AI resume review | C1.4, AiModule | M |
+| **C3.1** | AI parse → profile pre-fill | C1.1, C1.4 | M |
+
+---
+
+### Phase 1 — MVP
+
+#### C1.0 — Foundation & shell  *(walking skeleton — do first)*
+**Goal:** an authenticated candidate can sign in and navigate an empty-but-real workspace.
+- [ ] `candidateGuard` in `@core/auth/guards`; repoint `guestGuard`/post-login redirect to `/candidate/dashboard` for candidates
+- [ ] Lazy `CandidateModule` + `candidate-routing.module.ts` wired into root routes
+- [ ] `CandidateLayoutComponent` (header with `<app-logo>`, user menu, sidebar nav config, mobile drawer) — **relative import** of the layout class
+- [ ] Enums (`ApplicationStatus`, `EmploymentType`, `WorkMode`, `SeniorityLevel`, `AvailabilityStatus`, `ProficiencyLevel`, `ProfileVisibility`, `PortfolioPlatform`) + `statusLabel` maps
+- [ ] Cross-cutting models (`candidate`, `job`, `application`, `recommendation`)
+- [ ] Mock fixtures (`candidate-profile`, `jobs`, `applications`, `saved-jobs`, `resumes`) + handlers
+- [ ] `CandidateProfileService` + `CandidateProfileStore` (load on shell init)
+- [ ] Shared P1 primitives needed downstream: `app-kpi-card`, `app-empty-state`, `app-error-state`, `app-skeleton`, `app-page-header`
+- [ ] Placeholder dashboard route
+- **Exit:** build green; login as candidate → land on shell; sidebar nav routes resolve; profile loads into store.
+
+#### C1.1 — Profile
+**Goal:** candidate can view and edit a complete profile; completion updates.
+- [ ] `ProfileShellComponent` (header card: photo, name, headline, completion ring, visibility/availability badges; in-page section nav)
+- [ ] Sections: `PersonalInfo`, `ProfessionalSummary`, `EmploymentPreferences`, `WorkExperience`, `Education`, `Skills`, `Certifications`, `Portfolio` (read view + edit, validation per §8.3)
+- [ ] `CandidateProfileService` sub-collection CRUD (skills/experience/education/certs/portfolio)
+- [ ] Shared deps: `app-skill-selector`, `app-file-upload` (photo), `app-confirm-dialog`, `app-tag/chip`, rich-text (summary)
+- [ ] Client-side completion recompute after save + toast
+- **Exit:** every section CRUD works against mock; completion reflects changes; build green.
+
+#### C1.2 — Dashboard
+**Goal:** at-a-glance landing with real widgets.
+- [ ] `CandidateDashboardComponent` widget grid: profile completion, recent applications, saved-jobs preview, newest jobs (recommendations fallback until C2.0), (interview/notification widgets stubbed for P2)
+- [ ] Compose via `forkJoin`; skeleton + empty + error per widget
+- **Exit:** widgets render from mock; CTAs deep-link correctly; build green.
+
+#### C1.3 — Job search
+**Goal:** candidate can search, filter, sort, and page through jobs.
+- [ ] `JobSearchComponent` + `JobSearchQuery` model; `JobSearchService.search()` (mock paginated)
+- [ ] `app-filter-panel` (keyword, location, salary, industry, company, type[], seniority[], remote) — debounced, query-param synced
+- [ ] `app-job-card` (shared) + result list + sort + `app-pagination`
+- [ ] `SavedJobService.save/remove` + inline save toggle (state stub; full sync in C1.5)
+- **Exit:** filters/sort/pagination drive results from mock; URL reflects query; build green.
+
+#### C1.4 — Job detail + apply
+**Goal:** candidate can open a job and apply.
+- [ ] `JobDetailComponent` (description, requirements, skills, benefits, locations, company card)
+- [ ] `ApplyDialogComponent`: pre-apply gate (`isApplyReady` checklist), resume select, cover note, submit (idempotent)
+- [ ] `JobSearchService.getById/apply`
+- **Exit:** apply creates an application (mock), disables re-apply, toasts; gate blocks when not ready; build green.
+
+#### C1.5 — Saved jobs + applications
+**Goal:** candidate can manage saved jobs and track outcomes end-to-end.
+- [ ] `SavedJobsComponent` (list, remove, apply inline) with optimistic save/unsave **synced** across search/detail/dashboard
+- [ ] `ApplicationListComponent` (filter by status, sort, pagination)
+- [ ] `ApplicationDetailComponent` + `ApplicationStatusTracker` timeline (read-only) + history + withdraw (confirm)
+- [ ] `ApplicationService.list/getById/withdraw`
+- **Exit:** save state consistent everywhere; tracker renders all statuses incl. Rejected/Withdrawn; build green. **→ P1 candidate complete.**
+
+#### C1.6 — Settings
+**Goal:** candidate can manage account, privacy, notification prefs.
+- [ ] `AccountSettingsComponent` tabs: Account (email/phone/password — reuse `app-password-strength`), Privacy (`profileVisibility`, `availabilityStatus`), Notifications (channel toggles)
+- **Exit:** each tab saves to mock + toast; build green. *(Can run in parallel with C1.3–C1.5.)*
+
+---
+
+### Phase 2 — Engagement
+
+#### C2.0 — Recommendations
+- [ ] `recommendation` models + `RecommendationService.getRecommendedJobs(category)`/`getMatchBreakdown`
+- [ ] `RecommendationsComponent` with 5 bands (Best/Good/Growth/Trending/New)
+- [ ] `app-match-score-badge` + `match-breakdown` popover (weighted skill/exp/loc/salary/edu bars)
+- [ ] Wire match badge into `app-job-card` + dashboard "recommended" widget
+- **Exit:** bands populate from mock match scores; breakdown explains the score; build green.
+
+#### C2.1 — Interviews
+- [ ] `CandidateInterviewService` + `InterviewListComponent` (upcoming/past, join link via `safeUrl`, reschedule request dialog)
+- [ ] Activate dashboard interview-invitations widget
+- **Exit:** interviews list + reschedule against mock; build green.
+
+#### C2.2 — Messages & notifications
+- [ ] Consume `CommsModule` (`MessagingService`, `NotificationService`, thread/list/composer, bell + panel in header)
+- [ ] `MessagesComponent` + `NotificationsPageComponent` host pages; unread badges in shell
+- **Exit:** threads + notifications render/mark-read from mock; build green.
+
+#### C2.3 — Behavioral tracking
+- [ ] `BehaviorTrackerService` hooks on job view, search, save, apply (feeds `SEARCH_HISTORY`/`RECOMMENDATION_LOGS` mocks)
+- **Exit:** events recorded (verifiable in mock store); no UX regressions; build green.
+
+---
+
+### Phase 3 — AI
+
+#### C3.0 — AI resume review
+- [ ] Consume `AiModule`/`AiService`; `ResumeReviewSuggestionsComponent` in resume manager (suggestion cards, apply actions, streaming/loading states, disclaimer)
+- **Exit:** review suggestions render from mock AI; build green.
+
+#### C3.1 — AI parse → profile pre-fill
+- [ ] On resume upload: `AiService.parse` → `ResumeParseReviewComponent` (review extracted skills/experience/education/certs) → accept → pre-fill profile sections (human-in-the-loop)
+- **Exit:** parsed fields reviewable and committed to profile via existing CRUD; build green. **→ candidate module complete.**
 
 ---
 

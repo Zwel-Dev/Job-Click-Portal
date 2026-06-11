@@ -1,0 +1,25 @@
+<app-page-header title="Saved jobs" subtitle="Jobs you've bookmarked to revisit." />
+
+@if (loading()) {
+  <div class="saved__grid">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="240px" radius="var(--jc-radius-lg)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (savedJobs().length) {
+  <div class="saved__grid">
+    @for (saved of savedJobs(); track saved.id) {
+      <app-job-card [job]="saved.job" [showApply]="true" (save)="remove(saved.job)" (apply)="apply($event)" />
+    }
+  </div>
+} @else {
+  <app-empty-state
+    icon="bookmark_border"
+    title="No saved jobs yet"
+    message="Save jobs from search to revisit them here."
+  >
+    <a mat-flat-button color="primary" routerLink="/candidate/jobs">Find jobs</a>
+  </app-empty-state>
+}

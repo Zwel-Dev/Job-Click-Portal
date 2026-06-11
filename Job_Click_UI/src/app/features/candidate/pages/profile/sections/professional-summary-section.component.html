@@ -1,0 +1,53 @@
+<section class="profile-section">
+  <div class="profile-section__head">
+    <h2 class="profile-section__title">Professional summary</h2>
+    @if (!editing()) {
+      <button mat-button color="primary" type="button" (click)="startEdit()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+    }
+  </div>
+
+  @if (store.profile(); as p) {
+    @if (!editing()) {
+      <div class="profile-grid">
+        <div class="profile-field profile-field--full">
+          <span class="profile-field__label">Headline</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.headline">{{ p.headline || 'Not provided' }}</span>
+        </div>
+        <div class="profile-field profile-field--full">
+          <span class="profile-field__label">Summary</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.summary">{{ p.summary || 'Not provided' }}</span>
+        </div>
+        <div class="profile-field profile-field--full">
+          <span class="profile-field__label">Career objective</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.careerObjective">{{ p.careerObjective || 'Not provided' }}</span>
+        </div>
+      </div>
+    } @else {
+      <form class="profile-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Headline</mat-label>
+          <input matInput formControlName="headline" maxlength="120" placeholder="e.g. Senior Frontend Developer" />
+          <mat-hint align="end">{{ form.controls.headline.value.length }}/120</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Professional summary</mat-label>
+          <textarea matInput formControlName="summary" rows="4" maxlength="2000"></textarea>
+          <mat-hint align="end">{{ form.controls.summary.value.length }}/2000</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Career objective</mat-label>
+          <textarea matInput formControlName="careerObjective" rows="2" maxlength="500"></textarea>
+        </mat-form-field>
+
+        <div class="profile-form__actions">
+          <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving()">Save</button>
+        </div>
+      </form>
+    }
+  }
+</section>

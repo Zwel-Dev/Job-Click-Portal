@@ -1,0 +1,147 @@
+:host {
+  display: block;
+}
+
+.ad__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-1);
+  margin-bottom: var(--jc-space-4);
+  color: var(--jc-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+    text-decoration: none;
+  }
+}
+
+.ad {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--jc-space-6);
+  align-items: start;
+}
+
+.ad__main {
+  min-width: 0;
+  padding: var(--jc-space-6);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.ad__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--jc-space-3);
+  padding-bottom: var(--jc-space-5);
+  border-bottom: 1px solid var(--jc-border);
+}
+
+.ad__title {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.ad__company {
+  margin-top: 2px;
+  color: var(--jc-text-secondary);
+}
+
+.ad__section {
+  margin-top: var(--jc-space-6);
+}
+
+.ad__heading {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin-bottom: var(--jc-space-4);
+}
+
+.ad__timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-4);
+}
+
+.ad__event {
+  display: flex;
+  gap: var(--jc-space-3);
+
+  &-dot {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    margin-top: 4px;
+    border-radius: 50%;
+    background: var(--jc-gray-300);
+
+    &[data-tone='info'] { background: var(--jc-info); }
+    &[data-tone='progress'] { background: var(--jc-warning); }
+    &[data-tone='success'] { background: var(--jc-success); }
+    &[data-tone='danger'] { background: var(--jc-danger); }
+  }
+
+  &-status {
+    font-weight: 600;
+    color: var(--jc-text);
+  }
+
+  &-date {
+    font-size: 0.8125rem;
+    color: var(--jc-text-muted);
+  }
+
+  &-remark {
+    margin-top: var(--jc-space-1);
+    color: var(--jc-text-secondary);
+    font-size: 0.875rem;
+  }
+}
+
+.ad__side {
+  position: sticky;
+  top: calc(var(--jc-header-height) + var(--jc-space-4));
+}
+
+.ad__card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--jc-space-5);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.ad__salary {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--jc-primary-700);
+}
+
+.ad__meta {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.ad__action {
+  margin-top: var(--jc-space-3);
+}
+
+@media (max-width: 900px) {
+  .ad {
+    grid-template-columns: 1fr;
+  }
+  .ad__side {
+    position: static;
+  }
+}

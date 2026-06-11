@@ -1,0 +1,119 @@
+<app-page-header title="Find jobs" subtitle="Search and filter roles across companies.">
+  <button actions mat-stroked-button type="button" class="search__filter-toggle" (click)="toggleFilters()">
+    <mat-icon>tune</mat-icon> Filters
+  </button>
+</app-page-header>
+
+<form class="search__bar" [formGroup]="filterForm">
+  <mat-form-field appearance="outline" class="search__keyword">
+    <mat-label>Search jobs</mat-label>
+    <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+    <input matInput formControlName="keyword" placeholder="Job title or company" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="search__sort">
+    <mat-label>Sort by</mat-label>
+    <mat-select [value]="sort()" (selectionChange)="onSortChange($event.value)">
+      @for (option of sortOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</form>
+
+<div class="search__layout">
+  <aside class="search__filters" [class.search__filters--open]="filtersOpen()" [formGroup]="filterForm">
+    <div class="search__filters-head">
+      <h2 class="search__filters-title">Filters</h2>
+      <button mat-button color="primary" type="button" (click)="clearFilters()">Clear all</button>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" placeholder="City or Remote" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Minimum salary</mat-label>
+      <input matInput type="number" formControlName="salaryMin" min="0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Industry</mat-label>
+      <mat-select formControlName="industry">
+        <mat-option [value]="''">Any industry</mat-option>
+        @for (industry of industries(); track industry) {
+          <mat-option [value]="industry">{{ industry }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Company</mat-label>
+      <mat-select formControlName="company">
+        <mat-option [value]="''">Any company</mat-option>
+        @for (company of companies(); track company) {
+          <mat-option [value]="company">{{ company }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Employment type</mat-label>
+      <mat-select formControlName="employmentTypes" multiple>
+        @for (type of employmentTypeOptions; track type) {
+          <mat-option [value]="type">{{ employmentTypeLabels[type] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Seniority</mat-label>
+      <mat-select formControlName="seniorityLevels" multiple>
+        @for (level of seniorityOptions; track level) {
+          <mat-option [value]="level">{{ seniorityLabels[level] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="remote" color="primary">Remote only</mat-checkbox>
+  </aside>
+
+  <section class="search__results">
+    @if (error()) {
+      <app-error-state [message]="error()!" (retry)="runSearch()" />
+    } @else if (loading()) {
+      <div class="search__grid">
+        @for (item of skeletons; track item) {
+          <app-skeleton height="226px" radius="var(--jc-radius-lg)" />
+        }
+      </div>
+    } @else if (result()) {
+      @let res = result()!;
+      @if (res.data.length) {
+        <p class="search__count">{{ res.totalItems }} job{{ res.totalItems === 1 ? '' : 's' }} found</p>
+        <div class="search__grid">
+          @for (job of res.data; track job.id) {
+            <app-job-card [job]="job" (save)="onSave(job)" />
+          }
+        </div>
+        <div class="search__pagination">
+          <app-pagination
+            [page]="res.page"
+            [pageSize]="res.pageSize"
+            [totalItems]="res.totalItems"
+            (pageChange)="onPageChange($event)"
+          />
+        </div>
+      } @else {
+        <app-empty-state
+          icon="search_off"
+          title="No jobs match your filters"
+          message="Try adjusting or clearing your filters."
+        >
+          <button mat-stroked-button color="primary" type="button" (click)="clearFilters()">Clear filters</button>
+        </app-empty-state>
+      }
+    }
+  </section>
+</div>

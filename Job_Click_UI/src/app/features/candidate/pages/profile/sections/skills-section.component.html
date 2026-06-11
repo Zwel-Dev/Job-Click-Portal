@@ -1,0 +1,76 @@
+<section class="profile-section">
+  <div class="profile-section__head">
+    <h2 class="profile-section__title">Skills</h2>
+    @if (!formOpen()) {
+      <button mat-button color="primary" type="button" (click)="startAdd()">
+        <mat-icon>add</mat-icon> Add
+      </button>
+    }
+  </div>
+
+  @if (items().length) {
+    <div class="profile-list">
+      @for (item of items(); track item.id) {
+        <div class="profile-item">
+          <div class="profile-item__main">
+            <div class="profile-item__title">{{ item.name }}</div>
+            <div class="profile-item__meta">
+              {{ proficiencyLabels[item.proficiency] }} &middot; {{ item.yearsExperience }} yr{{ item.yearsExperience === 1 ? '' : 's' }}
+            </div>
+          </div>
+          <div class="profile-item__actions">
+            <button mat-icon-button type="button" (click)="startEdit(item)" aria-label="Edit skill">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="remove(item)" aria-label="Remove skill">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (!formOpen()) {
+    <p class="profile-empty-hint">No skills added yet. Add at least 3 to boost your profile.</p>
+  }
+
+  @if (formOpen()) {
+    <form class="profile-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <mat-form-field appearance="outline" class="profile-form__row">
+        <mat-label>Skill</mat-label>
+        <input matInput formControlName="name" [matAutocomplete]="skillAuto" (input)="onSkillInput($event)" placeholder="e.g. Angular" />
+        <mat-autocomplete #skillAuto="matAutocomplete">
+          @for (skill of filteredSkills(); track skill) {
+            <mat-option [value]="skill">{{ skill }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>Skill is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Proficiency</mat-label>
+        <mat-select formControlName="proficiency">
+          @for (level of proficiencyOptions; track level) {
+            <mat-option [value]="level">{{ proficiencyLabels[level] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Years of experience</mat-label>
+        <input matInput type="number" formControlName="yearsExperience" min="0" max="50" />
+        @if (form.controls.yearsExperience.hasError('required') || form.controls.yearsExperience.hasError('min')) {
+          <mat-error>Enter a valid number of years.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="profile-form__actions">
+        <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+          {{ editingId() ? 'Update' : 'Add' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -1,0 +1,30 @@
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--jc-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &[data-tone='neutral'] {
+    background: var(--jc-gray-100);
+    color: var(--jc-gray-700);
+  }
+  &[data-tone='info'] {
+    background: var(--jc-info-surface);
+    color: #1e40af;
+  }
+  &[data-tone='progress'] {
+    background: var(--jc-warning-surface);
+    color: #92400e;
+  }
+  &[data-tone='success'] {
+    background: var(--jc-success-surface);
+    color: #166534;
+  }
+  &[data-tone='danger'] {
+    background: var(--jc-danger-surface);
+    color: #991b1b;
+  }
+}

@@ -1,0 +1,121 @@
+<section class="profile-section">
+  <div class="profile-section__head">
+    <h2 class="profile-section__title">Employment preferences</h2>
+    @if (!editing()) {
+      <button mat-button color="primary" type="button" (click)="startEdit()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+    }
+  </div>
+
+  @if (store.profile(); as p) {
+    @if (!editing()) {
+      <div class="profile-grid">
+        <div class="profile-field profile-field--full">
+          <span class="profile-field__label">Preferred job titles</span>
+          @if (p.preferredJobTitles.length) {
+            <div class="profile-chips">
+              @for (title of p.preferredJobTitles; track title) {
+                <mat-chip disableRipple>{{ title }}</mat-chip>
+              }
+            </div>
+          } @else {
+            <span class="profile-field__value profile-field__value--empty">Not provided</span>
+          }
+        </div>
+        <div class="profile-field profile-field--full">
+          <span class="profile-field__label">Preferred locations</span>
+          @if (p.preferredLocations.length) {
+            <div class="profile-chips">
+              @for (location of p.preferredLocations; track location) {
+                <mat-chip disableRipple>{{ location }}</mat-chip>
+              }
+            </div>
+          } @else {
+            <span class="profile-field__value profile-field__value--empty">Not provided</span>
+          }
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Employment type</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.employmentTypes.length">{{ p.employmentTypes.length ? formatTypes(p.employmentTypes) : 'Not provided' }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Work mode</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.workMode">{{ p.workMode ? workModeLabels[p.workMode] : 'Not provided' }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Expected salary</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.expectedSalary">
+            {{ p.expectedSalary ? (p.expectedSalary | number) + ' ' + (p.currency || '') : 'Not provided' }}
+          </span>
+        </div>
+      </div>
+    } @else {
+      <form class="profile-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Preferred job titles</mat-label>
+          <mat-chip-grid #titleGrid>
+            @for (title of titles(); track title) {
+              <mat-chip-row (removed)="removeTitle(title)">
+                {{ title }}
+                <button matChipRemove [attr.aria-label]="'Remove ' + title"><mat-icon>cancel</mat-icon></button>
+              </mat-chip-row>
+            }
+          </mat-chip-grid>
+          <input placeholder="Add a title and press Enter" [matChipInputFor]="titleGrid" (matChipInputTokenEnd)="addTitle($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Preferred locations</mat-label>
+          <mat-chip-grid #locationGrid>
+            @for (location of locations(); track location) {
+              <mat-chip-row (removed)="removeLocation(location)">
+                {{ location }}
+                <button matChipRemove [attr.aria-label]="'Remove ' + location"><mat-icon>cancel</mat-icon></button>
+              </mat-chip-row>
+            }
+          </mat-chip-grid>
+          <input placeholder="Add a location and press Enter" [matChipInputFor]="locationGrid" (matChipInputTokenEnd)="addLocation($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Employment type</mat-label>
+          <mat-select formControlName="employmentTypes" multiple>
+            @for (type of employmentTypeOptions; track type) {
+              <mat-option [value]="type">{{ employmentTypeLabels[type] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Work mode</mat-label>
+          <mat-select formControlName="workMode">
+            <mat-option [value]="null">No preference</mat-option>
+            @for (mode of workModeOptions; track mode) {
+              <mat-option [value]="mode">{{ workModeLabels[mode] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Expected salary</mat-label>
+          <input matInput type="number" formControlName="expectedSalary" min="0" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Currency</mat-label>
+          <mat-select formControlName="currency">
+            @for (currency of currencies; track currency) {
+              <mat-option [value]="currency">{{ currency }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <div class="profile-form__actions">
+          <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving()">Save</button>
+        </div>
+      </form>
+    }
+  }
+</section>

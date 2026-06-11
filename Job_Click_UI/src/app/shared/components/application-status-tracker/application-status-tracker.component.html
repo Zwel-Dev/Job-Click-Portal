@@ -1,0 +1,23 @@
+<div class="tracker">
+  <ol class="tracker__steps">
+    @for (stage of stages(); track stage.label; let i = $index) {
+      <li class="tracker__step" [attr.data-state]="stage.state">
+        <span class="tracker__node">
+          @if (stage.state === 'done') {
+            <mat-icon aria-hidden="true">check</mat-icon>
+          } @else {
+            {{ i + 1 }}
+          }
+        </span>
+        <span class="tracker__label">{{ stage.label }}</span>
+      </li>
+    }
+  </ol>
+
+  @if (terminalMeta(); as terminal) {
+    <div class="tracker__terminal" [attr.data-tone]="terminal.tone">
+      <mat-icon aria-hidden="true">{{ terminalIcon() }}</mat-icon>
+      <span>{{ terminal.label }}</span>
+    </div>
+  }
+</div>

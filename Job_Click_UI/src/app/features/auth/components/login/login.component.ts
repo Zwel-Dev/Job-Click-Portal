@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { environment } from '@env';
 import { AuthService } from '@core/auth/auth.service';
+import { CurrentUserStore } from '@core/auth/current-user.store';
+import { defaultRouteForRoles } from '@core/auth/home-route';
 import { ApiError } from '@core/models/common.model';
 import { MOCK_AUTH_USERS, MOCK_DEMO_PASSWORD } from '@core/auth/mock/mock-users';
 import { roleLabel } from '@core/utils/role-label';
@@ -22,6 +24,7 @@ interface DemoAccount {
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly currentUser = inject(CurrentUserStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -75,6 +78,6 @@ export class LoginComponent {
 
   private redirectAfterLogin(): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    this.router.navigateByUrl(returnUrl ?? '/welcome');
+    this.router.navigateByUrl(returnUrl ?? defaultRouteForRoles(this.currentUser.roles()));
   }
 }

@@ -1,0 +1,24 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--jc-space-3);
+  flex-wrap: wrap;
+
+  &__info {
+    font-size: 0.875rem;
+    color: var(--jc-text-muted);
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+  }
+
+  &__page {
+    font-size: 0.875rem;
+    color: var(--jc-text-secondary);
+    white-space: nowrap;
+  }
+}

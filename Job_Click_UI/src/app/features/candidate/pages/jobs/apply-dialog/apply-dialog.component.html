@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Apply to {{ data.job.title }}</h2>
+
+<mat-dialog-content>
+  @if (loading()) {
+    <app-skeleton height="140px" radius="var(--jc-radius-md)" />
+  } @else if (!ready()) {
+    <p class="apply__intro">Complete these steps before you can apply:</p>
+    <ul class="apply__checklist">
+      @for (item of checklist(); track item.label) {
+        <li class="apply__check" [class.apply__check--met]="item.met">
+          <mat-icon class="apply__check-icon">{{ item.met ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          <span class="apply__check-label">{{ item.label }}</span>
+          @if (!item.met) {
+            <a mat-button color="primary" [routerLink]="item.actionLink" (click)="cancel()">{{ item.actionLabel }}</a>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <form class="apply__form" [formGroup]="form" novalidate>
+      <p class="apply__company">{{ data.job.companyName }} &middot; {{ data.job.location }}</p>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Resume</mat-label>
+        <mat-select formControlName="resumeId">
+          @for (resume of resumes(); track resume.id) {
+            <mat-option [value]="resume.id">
+              {{ resume.fileName }}@if (resume.isDefault) { (default) }
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Cover note (optional)</mat-label>
+        <textarea
+          matInput
+          rows="4"
+          maxlength="1000"
+          formControlName="coverNote"
+          placeholder="Briefly tell the recruiter why you're a great fit."
+        ></textarea>
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+  @if (ready() && !loading()) {
+    <button mat-flat-button color="primary" type="button" class="apply__submit" (click)="submit()" [disabled]="submitting() || form.invalid">
+      @if (submitting()) {
+        <mat-progress-spinner diameter="18" mode="indeterminate" />
+        <span>Submitting...</span>
+      } @else {
+        <span>Submit application</span>
+      }
+    </button>
+  }
+</mat-dialog-actions>

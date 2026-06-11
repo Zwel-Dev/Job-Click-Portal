@@ -1,0 +1,60 @@
+<app-page-header title="My applications" subtitle="Track the status of every job you've applied to." />
+
+<div class="apps__bar">
+  <mat-form-field appearance="outline" class="apps__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="statusFilter()" (selectionChange)="onFilterChange($event.value)">
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="apps__sort">
+    <mat-label>Sort</mat-label>
+    <mat-select [value]="sort()" (selectionChange)="onSortChange($event.value)">
+      <mat-option value="newest">Newest first</mat-option>
+      <mat-option value="oldest">Oldest first</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (loading()) {
+  <div class="apps__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="66px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (total()) {
+  <p class="apps__count">{{ total() }} application{{ total() === 1 ? '' : 's' }}</p>
+  <div class="apps__list">
+    @for (app of paged(); track app.id) {
+      <a class="apps__row" [routerLink]="['/candidate/applications', app.id]">
+        <div class="apps__row-main">
+          <div class="apps__row-title">{{ app.job.title }}</div>
+          <div class="apps__row-sub">{{ app.job.companyName }} &middot; Applied {{ formatDate(app.appliedAt) }}</div>
+        </div>
+        <div class="apps__row-meta">
+          @if (app.matchScore) {
+            <span class="apps__match">{{ app.matchScore }}% match</span>
+          }
+          <app-application-status-chip [status]="app.status" />
+          <mat-icon class="apps__chevron">chevron_right</mat-icon>
+        </div>
+      </a>
+    }
+  </div>
+  <div class="apps__pagination">
+    <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="total()" (pageChange)="onPageChange($event)" />
+  </div>
+} @else {
+  <app-empty-state
+    icon="description"
+    title="No applications found"
+    message="Try a different status filter, or browse jobs to apply."
+  >
+    <a mat-flat-button color="primary" routerLink="/candidate/jobs">Find jobs</a>
+  </app-empty-state>
+}

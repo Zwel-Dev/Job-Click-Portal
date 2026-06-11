@@ -1,0 +1,163 @@
+// Shared styling for candidate profile section cards (global, un-encapsulated).
+
+.profile-section {
+  padding: var(--jc-space-6);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+
+  & + & {
+    margin-top: var(--jc-space-5);
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jc-space-3);
+    margin-bottom: var(--jc-space-4);
+  }
+
+  &__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+}
+
+// Read view: label / value rows.
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--jc-space-4);
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+
+  &__value {
+    color: var(--jc-text);
+    word-break: break-word;
+
+    &--empty {
+      color: var(--jc-text-muted);
+      font-style: italic;
+    }
+  }
+}
+
+// Edit form.
+.profile-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--jc-space-4);
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  &__row {
+    grid-column: 1 / -1;
+  }
+
+  &__actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--jc-space-2);
+    margin-top: var(--jc-space-2);
+  }
+}
+
+// Item lists (experience, education, skills, certifications, portfolio).
+.profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-3);
+}
+
+.profile-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--jc-space-3);
+  padding: var(--jc-space-4);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-md);
+  background: var(--jc-surface);
+
+  &__main {
+    min-width: 0;
+  }
+
+  &__title {
+    font-weight: 600;
+    color: var(--jc-text);
+  }
+
+  &__sub {
+    margin-top: 2px;
+    font-size: 0.875rem;
+    color: var(--jc-text-secondary);
+  }
+
+  &__meta {
+    margin-top: var(--jc-space-1);
+    font-size: 0.8125rem;
+    color: var(--jc-text-muted);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 2px;
+    flex: 0 0 auto;
+  }
+}
+
+.profile-empty-hint {
+  padding: var(--jc-space-4) 0;
+  color: var(--jc-text-muted);
+  font-size: 0.9375rem;
+}
+
+// Inline add/edit form shown beneath an item list.
+.profile-list + .profile-form,
+.profile-empty-hint + .profile-form {
+  margin-top: var(--jc-space-5);
+  padding-top: var(--jc-space-5);
+  border-top: 1px solid var(--jc-border);
+}
+
+.profile-item__link {
+  color: var(--jc-primary);
+  font-size: 0.875rem;
+  word-break: break-all;
+}
+
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--jc-space-2);
+}
+
+@media (max-width: 640px) {
+  .profile-grid,
+  .profile-form {
+    grid-template-columns: 1fr;
+  }
+}

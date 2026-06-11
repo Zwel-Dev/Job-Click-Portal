@@ -1,0 +1,63 @@
+<section class="profile-section">
+  <div class="profile-section__head">
+    <h2 class="profile-section__title">Portfolio &amp; links</h2>
+    @if (!formOpen()) {
+      <button mat-button color="primary" type="button" (click)="startAdd()">
+        <mat-icon>add</mat-icon> Add
+      </button>
+    }
+  </div>
+
+  @if (items().length) {
+    <div class="profile-list">
+      @for (item of items(); track item.id) {
+        <div class="profile-item">
+          <div class="profile-item__main">
+            <div class="profile-item__title">{{ platformLabels[item.platform] }}</div>
+            <a class="profile-item__link" [href]="item.url" target="_blank" rel="noopener noreferrer">{{ item.url }}</a>
+          </div>
+          <div class="profile-item__actions">
+            <button mat-icon-button type="button" (click)="startEdit(item)" aria-label="Edit link">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="remove(item)" aria-label="Remove link">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (!formOpen()) {
+    <p class="profile-empty-hint">No portfolio links added yet.</p>
+  }
+
+  @if (formOpen()) {
+    <form class="profile-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Platform</mat-label>
+        <mat-select formControlName="platform">
+          @for (platform of platformOptions; track platform) {
+            <mat-option [value]="platform">{{ platformLabels[platform] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>URL</mat-label>
+        <input matInput formControlName="url" placeholder="https://..." />
+        @if (form.controls.url.hasError('required')) {
+          <mat-error>URL is required.</mat-error>
+        } @else if (form.controls.url.hasError('pattern')) {
+          <mat-error>Enter a valid URL starting with http(s)://</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="profile-form__actions">
+        <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+          {{ editingId() ? 'Update' : 'Add' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -1,0 +1,40 @@
+<article class="job-card">
+  <header class="job-card__head">
+    <span class="job-card__company">
+      <span class="job-card__logo">{{ companyInitial() }}</span>
+      <span class="job-card__company-name">{{ job().companyName }}</span>
+    </span>
+    <button
+      mat-icon-button
+      class="job-card__save"
+      [class.job-card__save--on]="job().isSaved"
+      (click)="toggleSave()"
+      [attr.aria-label]="job().isSaved ? 'Remove from saved jobs' : 'Save job'"
+    >
+      <mat-icon>{{ job().isSaved ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+    </button>
+  </header>
+
+  <a class="job-card__title" [routerLink]="[detailLinkBase(), job().id]">{{ job().title }}</a>
+
+  @if (job().matchScore) {
+    <span class="job-card__match">{{ job().matchScore }}% match</span>
+  }
+
+  <div class="job-card__tags">
+    <span class="job-tag"><mat-icon aria-hidden="true">place</mat-icon>{{ job().location }}</span>
+    <span class="job-tag"><mat-icon aria-hidden="true">work_outline</mat-icon>{{ employmentLabel() }}</span>
+    <span class="job-tag"><mat-icon aria-hidden="true">laptop_mac</mat-icon>{{ workModeLabel() }}</span>
+  </div>
+
+  <footer class="job-card__foot">
+    <span class="job-card__salary">{{ salary() }}</span>
+    <span class="job-card__posted">{{ posted() }}</span>
+  </footer>
+
+  @if (showApply()) {
+    <button mat-flat-button color="primary" class="job-card__apply" type="button" (click)="onApply()">
+      Apply
+    </button>
+  }
+</article>

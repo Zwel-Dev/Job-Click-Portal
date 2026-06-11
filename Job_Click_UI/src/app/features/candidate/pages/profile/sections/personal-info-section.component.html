@@ -1,0 +1,97 @@
+<section class="profile-section">
+  <div class="profile-section__head">
+    <h2 class="profile-section__title">Personal information</h2>
+    @if (!editing()) {
+      <button mat-button color="primary" type="button" (click)="startEdit()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+    }
+  </div>
+
+  @if (store.profile(); as p) {
+    @if (!editing()) {
+      <div class="profile-grid">
+        <div class="profile-field">
+          <span class="profile-field__label">Full name</span>
+          <span class="profile-field__value">{{ p.fullName }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Email</span>
+          <span class="profile-field__value">{{ p.email }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Phone</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.phone">{{ p.phone || 'Not provided' }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Date of birth</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.dateOfBirth">{{ p.dateOfBirth || 'Not provided' }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Gender</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.gender">{{ p.gender || 'Not provided' }}</span>
+        </div>
+        <div class="profile-field">
+          <span class="profile-field__label">Nationality</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.nationality">{{ p.nationality || 'Not provided' }}</span>
+        </div>
+        <div class="profile-field profile-field--full">
+          <span class="profile-field__label">Address</span>
+          <span class="profile-field__value" [class.profile-field__value--empty]="!p.address">{{ p.address || 'Not provided' }}</span>
+        </div>
+      </div>
+    } @else {
+      <form class="profile-form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <mat-form-field appearance="outline">
+          <mat-label>Full name</mat-label>
+          <input matInput formControlName="fullName" autocomplete="name" />
+          @if (form.controls.fullName.hasError('required')) {
+            <mat-error>Full name is required.</mat-error>
+          } @else if (form.controls.fullName.hasError('minlength')) {
+            <mat-error>Enter your full name.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Phone number</mat-label>
+          <input matInput type="tel" formControlName="phone" autocomplete="tel" />
+          @if (form.controls.phone.hasError('required')) {
+            <mat-error>Phone number is required.</mat-error>
+          } @else if (form.controls.phone.hasError('pattern')) {
+            <mat-error>Enter a valid phone number.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date of birth</mat-label>
+          <input matInput type="date" formControlName="dateOfBirth" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Gender</mat-label>
+          <mat-select formControlName="gender">
+            <mat-option [value]="''">Prefer not to say</mat-option>
+            @for (gender of genders; track gender) {
+              <mat-option [value]="gender">{{ gender }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nationality</mat-label>
+          <input matInput formControlName="nationality" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="profile-form__row">
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="address" />
+        </mat-form-field>
+
+        <div class="profile-form__actions">
+          <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving()">Save</button>
+        </div>
+      </form>
+    }
+  }
+</section>

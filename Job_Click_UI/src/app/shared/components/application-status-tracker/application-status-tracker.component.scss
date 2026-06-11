@@ -1,0 +1,114 @@
+.tracker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-4);
+}
+
+.tracker__steps {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: var(--jc-space-2) 0;
+  overflow-x: auto;
+}
+
+.tracker__step {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--jc-space-2);
+  text-align: center;
+
+  // Connector line to the previous step.
+  &:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--jc-gray-200);
+  }
+
+  &[data-state='done']::before,
+  &[data-state='current']::before {
+    background: var(--jc-primary-500);
+  }
+}
+
+.tracker__node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--jc-surface);
+  border: 2px solid var(--jc-gray-300);
+  color: var(--jc-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.tracker__label {
+  font-size: 0.75rem;
+  color: var(--jc-text-muted);
+}
+
+.tracker__step[data-state='done'] {
+  .tracker__node {
+    background: var(--jc-primary-600);
+    border-color: var(--jc-primary-600);
+    color: #fff;
+  }
+  .tracker__label {
+    color: var(--jc-text-secondary);
+  }
+}
+
+.tracker__step[data-state='current'] {
+  .tracker__node {
+    border-color: var(--jc-primary-600);
+    color: var(--jc-primary-700);
+  }
+  .tracker__label {
+    color: var(--jc-primary-700);
+    font-weight: 600;
+  }
+}
+
+.tracker__terminal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: var(--jc-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &[data-tone='danger'] {
+    background: var(--jc-danger-surface);
+    color: #991b1b;
+  }
+  &[data-tone='neutral'] {
+    background: var(--jc-gray-100);
+    color: var(--jc-gray-700);
+  }
+}

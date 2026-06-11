@@ -1,0 +1,88 @@
+@if (job(); as job) {
+  <a class="detail__back" routerLink="/candidate/jobs">
+    <mat-icon>arrow_back</mat-icon> Back to jobs
+  </a>
+
+  <div class="detail">
+    <div class="detail__main">
+      <header class="detail__header">
+        <div class="detail__company">
+          <span class="detail__logo">{{ job.companyName.charAt(0) }}</span>
+          <span>{{ job.companyName }}</span>
+        </div>
+        <h1 class="detail__title">{{ job.title }}</h1>
+        <div class="detail__tags">
+          <span class="detail-tag"><mat-icon aria-hidden="true">place</mat-icon>{{ job.location }}</span>
+          <span class="detail-tag"><mat-icon aria-hidden="true">work_outline</mat-icon>{{ employmentTypeLabels[job.employmentType] }}</span>
+          <span class="detail-tag"><mat-icon aria-hidden="true">laptop_mac</mat-icon>{{ workModeLabels[job.workMode] }}</span>
+          <span class="detail-tag"><mat-icon aria-hidden="true">military_tech</mat-icon>{{ seniorityLabels[job.seniorityLevel] }}</span>
+        </div>
+      </header>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Job description</h2>
+        <p class="detail__text">{{ job.description }}</p>
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Requirements</h2>
+        <p class="detail__text">{{ job.requirements }}</p>
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Skills</h2>
+        <div class="detail__skills">
+          @for (skill of job.skills; track skill.skillId) {
+            <span class="detail-skill" [class.detail-skill--req]="skill.required">{{ skill.name }}</span>
+          }
+        </div>
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Benefits</h2>
+        <ul class="detail__benefits">
+          @for (benefit of job.benefits; track benefit) {
+            <li><mat-icon aria-hidden="true">check_circle</mat-icon>{{ benefit }}</li>
+          }
+        </ul>
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Location</h2>
+        @for (location of job.locations; track $index) {
+          <p class="detail__text">{{ location.city }}@if (location.country) {, {{ location.country }}}</p>
+        }
+      </section>
+    </div>
+
+    <aside class="detail__side">
+      <div class="detail__card">
+        <div class="detail__salary">{{ formatSalary(job) }}</div>
+        <div class="detail__posted">Posted {{ formatDate(job.publishedAt) }}</div>
+
+        @if (application(); as app) {
+          <div class="detail__applied">
+            <app-application-status-chip [status]="app.status" />
+            <span class="detail__applied-text">You applied {{ formatDate(app.appliedAt) }}</span>
+          </div>
+          <a mat-stroked-button color="primary" class="detail__action" routerLink="/candidate/applications">
+            View application
+          </a>
+        } @else {
+          <button mat-flat-button color="primary" class="detail__action" type="button" (click)="apply()">
+            Apply now
+          </button>
+        }
+
+        <button mat-stroked-button class="detail__action" type="button" (click)="toggleSave()">
+          <mat-icon>{{ job.isSaved ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+          {{ job.isSaved ? 'Saved' : 'Save job' }}
+        </button>
+      </div>
+    </aside>
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="320px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

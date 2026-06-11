@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from '@core/auth/guards/auth.guard';
 import { guestGuard } from '@core/auth/guards/guest.guard';
+import { candidateGuard } from '@core/auth/guards/candidate.guard';
 import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
@@ -10,6 +11,11 @@ const routes: Routes = [
     path: 'auth',
     canActivate: [guestGuard],
     loadChildren: () => import('@features/auth/auth.module').then((m) => m.AuthModule),
+  },
+  {
+    path: 'candidate',
+    canActivate: [authGuard, candidateGuard],
+    loadChildren: () => import('@features/candidate/candidate.module').then((m) => m.CandidateModule),
   },
   {
     path: 'welcome',

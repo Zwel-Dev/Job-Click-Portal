@@ -1,0 +1,14 @@
+<div class="kpi">
+  @if (icon()) {
+    <span class="kpi__icon">
+      <mat-icon aria-hidden="true">{{ icon() }}</mat-icon>
+    </span>
+  }
+  <div class="kpi__body">
+    <span class="kpi__value">{{ value() }}</span>
+    <span class="kpi__label">{{ label() }}</span>
+    @if (hint()) {
+      <span class="kpi__hint">{{ hint() }}</span>
+    }
+  </div>
+</div>

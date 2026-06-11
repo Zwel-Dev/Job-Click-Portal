@@ -1,0 +1,55 @@
+.apply__intro {
+  margin: 0 0 var(--jc-space-3);
+  color: var(--jc-text-secondary);
+}
+
+.apply__checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+}
+
+.apply__check {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-3);
+  padding: var(--jc-space-2) 0;
+
+  &-icon {
+    flex: 0 0 auto;
+    color: var(--jc-text-muted);
+  }
+
+  &--met &-icon {
+    color: var(--jc-success);
+  }
+
+  &-label {
+    flex: 1 1 auto;
+    color: var(--jc-text);
+  }
+}
+
+.apply__form {
+  display: flex;
+  flex-direction: column;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.apply__company {
+  margin: 0 0 var(--jc-space-4);
+  color: var(--jc-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.apply__submit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+}

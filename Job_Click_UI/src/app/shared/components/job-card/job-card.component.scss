@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.job-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--jc-space-5);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: var(--jc-primary-300);
+    box-shadow: var(--jc-shadow-sm);
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jc-space-2);
+    margin-bottom: var(--jc-space-2);
+  }
+
+  &__company {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+    min-width: 0;
+  }
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--jc-radius-sm);
+    background: var(--jc-primary-50);
+    color: var(--jc-primary-700);
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  &__company-name {
+    font-size: 0.875rem;
+    color: var(--jc-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__save {
+    flex: 0 0 auto;
+    color: var(--jc-text-muted);
+
+    &--on {
+      color: var(--jc-primary-600);
+    }
+  }
+
+  &__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--jc-text);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--jc-primary-700);
+      text-decoration: none;
+    }
+  }
+
+  &__match {
+    align-self: flex-start;
+    margin-top: var(--jc-space-2);
+    padding: 1px 8px;
+    border-radius: var(--jc-radius-pill);
+    background: var(--jc-success-surface);
+    color: #166534;
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--jc-space-2);
+    margin: var(--jc-space-3) 0;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jc-space-2);
+    margin-top: auto;
+    padding-top: var(--jc-space-3);
+    border-top: 1px solid var(--jc-border);
+  }
+
+  &__salary {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--jc-primary-700);
+  }
+
+  &__posted {
+    font-size: 0.75rem;
+    color: var(--jc-text-muted);
+  }
+
+  &__apply {
+    margin-top: var(--jc-space-3);
+    width: 100%;
+  }
+}
+
+.job-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  color: var(--jc-text-secondary);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--jc-text-muted);
+  }
+}

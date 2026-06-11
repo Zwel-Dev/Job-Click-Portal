@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  margin-bottom: var(--jc-space-6);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--jc-space-4);
+  flex-wrap: wrap;
+
+  &__title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    margin-top: var(--jc-space-1);
+    color: var(--jc-text-secondary);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+  }
+}

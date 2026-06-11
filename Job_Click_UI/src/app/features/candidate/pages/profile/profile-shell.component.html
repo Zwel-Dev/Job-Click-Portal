@@ -1,0 +1,49 @@
+@if (store.profile(); as profile) {
+  <header class="profile-hero">
+    <div class="profile-hero__avatar">
+      @if (profile.profilePhotoUrl) {
+        <img [src]="profile.profilePhotoUrl" alt="" />
+      } @else {
+        <span>{{ initials(profile.fullName) }}</span>
+      }
+    </div>
+
+    <div class="profile-hero__info">
+      <h1 class="profile-hero__name">{{ profile.fullName }}</h1>
+      <p class="profile-hero__headline">{{ profile.headline || 'Add a professional headline' }}</p>
+      <div class="profile-hero__badges">
+        <span class="profile-badge">{{ availabilityLabels[profile.availabilityStatus] }}</span>
+        <span class="profile-badge profile-badge--muted">
+          <mat-icon aria-hidden="true">visibility</mat-icon>
+          {{ visibilityLabels[profile.profileVisibility] }}
+        </span>
+      </div>
+    </div>
+
+    <div class="profile-hero__ring" [style.--p]="store.completion()">
+      <span class="profile-hero__ring-num">{{ store.completion() }}%</span>
+      <span class="profile-hero__ring-cap">Complete</span>
+    </div>
+  </header>
+
+  <nav class="profile-nav">
+    @for (section of sections; track section.id) {
+      <button type="button" class="profile-nav__btn" (click)="scrollTo(section.id)">{{ section.label }}</button>
+    }
+  </nav>
+
+  <div class="profile-sections">
+    <div id="section-personal"><app-personal-info-section /></div>
+    <div id="section-summary"><app-professional-summary-section /></div>
+    <div id="section-preferences"><app-employment-preferences-section /></div>
+    <div id="section-experience"><app-work-experience-section /></div>
+    <div id="section-education"><app-education-section /></div>
+    <div id="section-skills"><app-skills-section /></div>
+    <div id="section-certifications"><app-certifications-section /></div>
+    <div id="section-portfolio"><app-portfolio-section /></div>
+  </div>
+} @else if (store.loading()) {
+  <app-skeleton height="148px" radius="var(--jc-radius-lg)" />
+} @else if (store.error()) {
+  <app-error-state [message]="store.error()!" (retry)="store.load(true)" />
+}

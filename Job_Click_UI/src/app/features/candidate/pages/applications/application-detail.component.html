@@ -1,0 +1,62 @@
+@if (application(); as app) {
+  <a class="ad__back" routerLink="/candidate/applications">
+    <mat-icon>arrow_back</mat-icon> Back to applications
+  </a>
+
+  <div class="ad">
+    <div class="ad__main">
+      <header class="ad__header">
+        <div class="ad__header-text">
+          <h1 class="ad__title">{{ app.job.title }}</h1>
+          <p class="ad__company">{{ app.job.companyName }} &middot; {{ app.job.location }}</p>
+        </div>
+        <app-application-status-chip [status]="app.status" />
+      </header>
+
+      <section class="ad__section">
+        <h2 class="ad__heading">Application progress</h2>
+        <app-application-status-tracker [status]="app.status" [history]="app.statusHistory" />
+      </section>
+
+      <section class="ad__section">
+        <h2 class="ad__heading">History</h2>
+        <ol class="ad__timeline">
+          @for (event of historyDesc(); track event.changedAt) {
+            <li class="ad__event">
+              <span class="ad__event-dot" [attr.data-tone]="statusMeta[event.status].tone"></span>
+              <div class="ad__event-body">
+                <div class="ad__event-status">{{ statusMeta[event.status].label }}</div>
+                <div class="ad__event-date">{{ formatDate(event.changedAt) }}</div>
+                @if (event.remarks) {
+                  <p class="ad__event-remark">{{ event.remarks }}</p>
+                }
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+    </div>
+
+    <aside class="ad__side">
+      <div class="ad__card">
+        <div class="ad__salary">{{ formatSalary(app.job) }}</div>
+        <div class="ad__meta">Applied {{ formatDate(app.appliedAt) }}</div>
+        @if (app.matchScore) {
+          <div class="ad__meta">{{ app.matchScore }}% match</div>
+        }
+        <a mat-stroked-button color="primary" class="ad__action" [routerLink]="['/candidate/jobs', app.job.id]">
+          View job posting
+        </a>
+        @if (canWithdraw()) {
+          <button mat-stroked-button color="warn" class="ad__action" type="button" (click)="withdraw()">
+            Withdraw application
+          </button>
+        }
+      </div>
+    </aside>
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="320px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

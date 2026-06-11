@@ -1,0 +1,118 @@
+<app-page-header [title]="greeting()" subtitle="Here's what's happening with your job search." />
+
+<div class="dash-kpis">
+  <app-kpi-card
+    icon="donut_large"
+    [value]="store.completion() + '%'"
+    label="Profile completion"
+    hint="Complete your profile to stand out"
+  />
+  <app-kpi-card icon="description" [value]="loading() ? '—' : applications().length" label="Applications" hint="Total submitted" />
+  <app-kpi-card icon="bookmark_border" [value]="loading() ? '—' : savedJobs().length" label="Saved jobs" hint="Bookmarked roles" />
+  <app-kpi-card icon="event" value="0" label="Interviews" hint="Available soon" />
+</div>
+
+@if (error()) {
+  <app-error-state [message]="error()!" (retry)="loadWidgets()" />
+} @else {
+  <div class="dash-grid">
+    <section class="dash-card dash-card--main">
+      <div class="dash-card__head">
+        <h2 class="dash-card__title">Recent applications</h2>
+        <a mat-button color="primary" routerLink="/candidate/applications">View all</a>
+      </div>
+
+      @if (loading()) {
+        @for (item of skeletons; track item) {
+          <app-skeleton height="56px" radius="var(--jc-radius-md)" />
+        }
+      } @else if (recentApplications().length) {
+        <div class="dash-list">
+          @for (application of recentApplications(); track application.id) {
+            <a class="dash-row" routerLink="/candidate/applications">
+              <div class="dash-row__main">
+                <div class="dash-row__title">{{ application.job.title }}</div>
+                <div class="dash-row__sub">
+                  {{ application.job.companyName }} &middot; Applied {{ formatDate(application.appliedAt) }}
+                </div>
+              </div>
+              <app-application-status-chip [status]="application.status" />
+            </a>
+          }
+        </div>
+      } @else {
+        <app-empty-state icon="description" title="No applications yet" message="Browse jobs and apply to get started.">
+          <a mat-flat-button color="primary" routerLink="/candidate/jobs">Find jobs</a>
+        </app-empty-state>
+      }
+    </section>
+
+    <div class="dash-side">
+      <section class="dash-card">
+        <div class="dash-card__head">
+          <h2 class="dash-card__title">Saved jobs</h2>
+          <a mat-button color="primary" routerLink="/candidate/saved-jobs">View all</a>
+        </div>
+
+        @if (loading()) {
+          @for (item of skeletons; track item) {
+            <app-skeleton height="44px" radius="var(--jc-radius-md)" />
+          }
+        } @else if (savedPreview().length) {
+          <div class="dash-list">
+            @for (saved of savedPreview(); track saved.id) {
+              <a class="dash-row" [routerLink]="['/candidate/jobs', saved.job.id]">
+                <div class="dash-row__main">
+                  <div class="dash-row__title">{{ saved.job.title }}</div>
+                  <div class="dash-row__sub">{{ saved.job.companyName }}</div>
+                </div>
+                <mat-icon class="dash-row__chevron">chevron_right</mat-icon>
+              </a>
+            }
+          </div>
+        } @else {
+          <app-empty-state icon="bookmark_border" title="No saved jobs" message="Save jobs to revisit them later." />
+        }
+      </section>
+
+      @if (store.completion() < 100) {
+        <section class="dash-card dash-prompt">
+          <mat-icon class="dash-prompt__icon">verified_user</mat-icon>
+          <div>
+            <div class="dash-card__title">Complete your profile</div>
+            <p class="dash-prompt__text">A complete profile gets more recruiter views.</p>
+            <a mat-flat-button color="primary" routerLink="/candidate/profile">Update profile</a>
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+
+  <section class="dash-card dash-card--jobs">
+    <div class="dash-card__head">
+      <h2 class="dash-card__title">Newest jobs</h2>
+      <a mat-button color="primary" routerLink="/candidate/jobs">Browse all</a>
+    </div>
+
+    @if (loading()) {
+      <div class="dash-jobs-grid">
+        @for (item of skeletons; track item) {
+          <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+        }
+      </div>
+    } @else if (newestJobs().length) {
+      <div class="dash-jobs-grid">
+        @for (job of newestJobs(); track job.id) {
+          <a class="dash-job" [routerLink]="['/candidate/jobs', job.id]">
+            <div class="dash-job__title">{{ job.title }}</div>
+            <div class="dash-job__company">{{ job.companyName }}</div>
+            <div class="dash-job__meta">{{ job.location }} &middot; {{ employmentTypeLabels[job.employmentType] }}</div>
+            <div class="dash-job__salary">{{ formatSalary(job) }}</div>
+          </a>
+        }
+      </div>
+    } @else {
+      <app-empty-state icon="work_outline" title="No jobs available" />
+    }
+  </section>
+}
