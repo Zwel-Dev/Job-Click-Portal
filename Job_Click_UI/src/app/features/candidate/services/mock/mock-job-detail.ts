@@ -1,5 +1,7 @@
 import { Job, JobLocation, JobSkillRequirement, JobSummary } from '@core/models/job.model';
 import { JobStatus } from '@core/enums/job-status.enum';
+import { ScreeningQuestion } from '@core/models/screening.model';
+import { ScreeningQuestionType } from '@core/enums/screening-question-type.enum';
 
 const SKILL_MAP: ReadonlyArray<{ match: RegExp; skills: string[] }> = [
   { match: /angular|frontend/i, skills: ['Angular', 'TypeScript', 'RxJS', 'HTML5', 'CSS3'] },
@@ -36,6 +38,24 @@ function parseLocation(location: string): JobLocation {
   return { country: country || 'Myanmar', city: city || location };
 }
 
+/**
+ * Screening questions for a subset of jobs (odd ids) — demonstrates that the
+ * feature is optional per job. Even-id jobs apply with no extra questions.
+ */
+function deriveScreeningQuestions(jobId: number): ScreeningQuestion[] | undefined {
+  if (jobId % 2 === 0) {
+    return undefined;
+  }
+  return [
+    { id: 1, type: ScreeningQuestionType.YesNo, prompt: 'Are you legally authorized to work in Myanmar?', required: true },
+    { id: 2, type: ScreeningQuestionType.Numeric, prompt: 'How many years of relevant experience do you have?', required: true },
+    {
+      id: 3, type: ScreeningQuestionType.SingleChoice, prompt: 'When can you start?', required: false,
+      options: ['Immediately', 'Within 1 month', 'Within 2 months', 'Flexible'],
+    },
+  ];
+}
+
 /** Expands a job summary into a full detail record (mock backend). */
 export function buildJobDetail(summary: JobSummary): Job {
   return {
@@ -56,5 +76,6 @@ export function buildJobDetail(summary: JobSummary): Job {
     skills: deriveSkills(summary.title),
     benefits: BENEFITS,
     locations: [parseLocation(summary.location)],
+    screeningQuestions: deriveScreeningQuestions(Number(summary.id)),
   };
 }

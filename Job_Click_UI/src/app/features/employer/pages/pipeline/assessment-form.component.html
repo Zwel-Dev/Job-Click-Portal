@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content>
+  <p class="af__intro">For <strong>{{ data.candidateName }}</strong></p>
+
+  <form class="af" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="af__field">
+      <mat-label>Assessment name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. Coding Challenge" maxlength="80" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <mat-error>A name is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="af__row">
+      <mat-form-field appearance="outline" class="af__status">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="af__score">
+        <mat-label>Score</mat-label>
+        <input matInput type="number" formControlName="score" min="0" max="100" />
+        <span matSuffix>/ 100</span>
+        @if (form.controls.score.invalid) {
+          <mat-error>0–100 only.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="af__field">
+      <mat-label>Remarks (optional)</mat-label>
+      <textarea matInput rows="2" formControlName="remarks" maxlength="240" placeholder="Evaluator notes"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Save</button>
+</mat-dialog-actions>

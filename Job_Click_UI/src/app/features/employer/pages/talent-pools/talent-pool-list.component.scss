@@ -1,0 +1,79 @@
+:host {
+  display: block;
+}
+
+.pools__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--jc-space-3);
+}
+
+.pool-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--jc-space-4);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-md);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.pool-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--jc-space-2);
+}
+
+.pool-card__name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--jc-text);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.pool-card__desc {
+  margin: var(--jc-space-2) 0 0;
+  color: var(--jc-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.pool-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--jc-space-4);
+  padding-top: var(--jc-space-3);
+  border-top: 1px solid var(--jc-border);
+}
+
+.pool-card__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--jc-text-secondary);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--jc-text-muted);
+  }
+}
+
+.pool-card__open {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--jc-primary-700);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

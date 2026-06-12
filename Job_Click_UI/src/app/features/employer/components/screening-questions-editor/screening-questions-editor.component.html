@@ -1,0 +1,62 @@
+<div class="sqe">
+  <p class="sqe__hint">
+    Add custom questions applicants answer when they apply. Leave empty if this job needs none.
+  </p>
+
+  <div class="sqe__add">
+    <button mat-stroked-button type="button" [matMenuTriggerFor]="tplMenu">
+      <mat-icon>library_add</mat-icon> Add from template
+    </button>
+    <mat-menu #tplMenu="matMenu">
+      @for (template of templates; track template.prompt) {
+        <button mat-menu-item type="button" (click)="addTemplate(template)">{{ template.prompt }}</button>
+      }
+    </mat-menu>
+    <button mat-button type="button" (click)="addCustom()">
+      <mat-icon>edit_note</mat-icon> Add custom question
+    </button>
+  </div>
+
+  @if (form.length) {
+    <div class="sqe__list">
+      @for (group of form.controls; track $index; let i = $index) {
+        <div class="sqe-card" [formGroup]="asGroup(group)">
+          <div class="sqe-card__top">
+            <span class="sqe-card__num">{{ i + 1 }}</span>
+            <mat-form-field appearance="outline" class="sqe-card__prompt">
+              <mat-label>Question</mat-label>
+              <input matInput formControlName="prompt" placeholder="Ask the candidate something..." maxlength="160" />
+              @if (asGroup(group).get('prompt')!.touched && asGroup(group).get('prompt')!.invalid) {
+                <mat-error>A question is required.</mat-error>
+              }
+            </mat-form-field>
+            <button mat-icon-button type="button" (click)="removeAt(i)" aria-label="Remove question">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+
+          <div class="sqe-card__row">
+            <mat-form-field appearance="outline" class="sqe-card__type">
+              <mat-label>Answer type</mat-label>
+              <mat-select formControlName="type">
+                @for (type of types; track type) {
+                  <mat-option [value]="type">{{ typeLabels[type] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-slide-toggle formControlName="required">Required</mat-slide-toggle>
+          </div>
+
+          @if (asGroup(group).get('type')!.value === QType.SingleChoice) {
+            <mat-form-field appearance="outline" class="sqe-card__options">
+              <mat-label>Options (comma separated)</mat-label>
+              <input matInput formControlName="optionsText" placeholder="e.g. Immediate, 2 weeks, 1 month" />
+            </mat-form-field>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="sqe__empty">No screening questions — applicants won't be asked anything extra.</p>
+  }
+</div>

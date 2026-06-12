@@ -18,6 +18,27 @@
         <app-application-status-tracker [status]="app.status" [history]="app.statusHistory" />
       </section>
 
+      @if (app.coverNote) {
+        <section class="ad__section">
+          <h2 class="ad__heading">Your cover note</h2>
+          <p class="ad__cover-note">{{ app.coverNote }}</p>
+        </section>
+      }
+
+      @if (app.screeningAnswers?.length) {
+        <section class="ad__section">
+          <h2 class="ad__heading">Your answers</h2>
+          <dl class="ad__answers">
+            @for (answer of app.screeningAnswers; track answer.questionId) {
+              <div class="ad__answer">
+                <dt>{{ answer.prompt }}</dt>
+                <dd>{{ answer.answer }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+      }
+
       <section class="ad__section">
         <h2 class="ad__heading">History</h2>
         <ol class="ad__timeline">

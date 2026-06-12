@@ -1,0 +1,152 @@
+@if (job(); as job) {
+  <a class="detail__back" routerLink="/employer/jobs">
+    <mat-icon>arrow_back</mat-icon> Back to jobs
+  </a>
+
+  <div class="detail">
+    <div class="detail__main">
+      <header class="detail__header">
+        <h1 class="detail__title">{{ job.title }}</h1>
+        <div class="detail__badges">
+          <app-status-badge [label]="jobStatusMeta[job.status].label" [tone]="jobStatusMeta[job.status].tone" />
+          @if (job.approvalStage) {
+            <app-status-badge [label]="approvalStageMeta[job.approvalStage].label" [tone]="approvalStageMeta[job.approvalStage].tone" />
+          }
+        </div>
+        <div class="detail__tags">
+          <span class="detail-tag"><mat-icon aria-hidden="true">place</mat-icon>{{ job.location }}</span>
+          <span class="detail-tag"><mat-icon aria-hidden="true">work_outline</mat-icon>{{ employmentTypeLabels[job.employmentType] }}</span>
+          <span class="detail-tag"><mat-icon aria-hidden="true">laptop_mac</mat-icon>{{ workModeLabels[job.workMode] }}</span>
+          <span class="detail-tag"><mat-icon aria-hidden="true">military_tech</mat-icon>{{ seniorityLabels[job.seniorityLevel] }}</span>
+          @if (job.department) {
+            <span class="detail-tag"><mat-icon aria-hidden="true">business</mat-icon>{{ job.department }}</span>
+          }
+        </div>
+      </header>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Description</h2>
+        <p class="detail__text">{{ job.description }}</p>
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Requirements</h2>
+        <p class="detail__text">{{ job.requirements }}</p>
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Skills</h2>
+        @if (job.skills.length) {
+          <div class="detail__skills">
+            @for (skill of job.skills; track skill.name) {
+              <span class="detail-skill" [class.detail-skill--req]="skill.required">{{ skill.name }}</span>
+            }
+          </div>
+        } @else {
+          <p class="detail__empty">No skills specified.</p>
+        }
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Benefits</h2>
+        @if (job.benefits.length) {
+          <ul class="detail__benefits">
+            @for (benefit of job.benefits; track benefit) {
+              <li><mat-icon aria-hidden="true">check_circle</mat-icon>{{ benefit }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="detail__empty">No benefits specified.</p>
+        }
+      </section>
+
+      <section class="detail__section">
+        <h2 class="detail__heading">Screening questions</h2>
+        @if (job.screeningQuestions.length) {
+          <ol class="detail__questions">
+            @for (question of job.screeningQuestions; track question.id) {
+              <li class="detail-question">
+                <span class="detail-question__prompt">
+                  {{ question.prompt }}
+                  @if (question.required) { <span class="detail-question__req">Required</span> }
+                </span>
+                <span class="detail-question__type">
+                  {{ screeningTypeLabels[question.type] }}@if (question.options?.length) { · {{ question.options!.join(', ') }} }
+                </span>
+              </li>
+            }
+          </ol>
+        } @else {
+          <p class="detail__empty">No screening questions — candidates apply without extra questions.</p>
+        }
+      </section>
+    </div>
+
+    <aside class="detail__side">
+      <div class="detail__card">
+        <div class="detail__metric">
+          <span class="detail__metric-value">{{ job.applicantCount }}</span>
+          <span class="detail__metric-label">Applicants</span>
+        </div>
+        <a mat-stroked-button color="primary" class="detail__action" [routerLink]="['/employer/jobs', job.id, 'applicants']">
+          <mat-icon>group</mat-icon> View applicants
+        </a>
+
+        <dl class="detail__facts">
+          <div><dt>Salary</dt><dd>{{ formatSalary(job) }}</dd></div>
+          <div><dt>Owner</dt><dd>{{ job.ownerName }}</dd></div>
+          <div><dt>Created</dt><dd>{{ formatDate(job.createdAt) }}</dd></div>
+          @if (job.publishedAt) {
+            <div><dt>Published</dt><dd>{{ formatDate(job.publishedAt) }}</dd></div>
+          }
+        </dl>
+
+        @if (canApprove()) {
+          <div class="detail__approval">
+            <button mat-flat-button color="primary" class="detail__action" type="button" (click)="approve()">Approve</button>
+            <button mat-stroked-button color="warn" class="detail__action" type="button" (click)="reject()">Reject</button>
+          </div>
+        }
+
+        @if (context.isRecruiter()) {
+          <mat-divider class="detail__divider" />
+          @if (job.status === JobStatus.Draft) {
+            <button mat-flat-button color="primary" class="detail__action" type="button" (click)="submitForApproval()">
+              Submit for approval
+            </button>
+          }
+          <a mat-stroked-button class="detail__action" [routerLink]="['/employer/jobs', job.id, 'edit']">
+            <mat-icon>edit</mat-icon> Edit
+          </a>
+          <button mat-stroked-button class="detail__action" type="button" (click)="duplicate()">
+            <mat-icon>content_copy</mat-icon> Duplicate
+          </button>
+          @if (job.status === JobStatus.Published) {
+            <button mat-stroked-button class="detail__action" type="button" (click)="pause()">
+              <mat-icon>pause_circle_outline</mat-icon> Pause
+            </button>
+          }
+          @if (job.status === JobStatus.Paused) {
+            <button mat-stroked-button class="detail__action" type="button" (click)="resume()">
+              <mat-icon>play_circle_outline</mat-icon> Resume
+            </button>
+          }
+          @if (job.status !== JobStatus.Closed && job.status !== JobStatus.Archived) {
+            <button mat-stroked-button class="detail__action" type="button" (click)="close()">
+              <mat-icon>cancel</mat-icon> Close
+            </button>
+          }
+          @if (job.status !== JobStatus.Archived) {
+            <button mat-stroked-button class="detail__action" type="button" (click)="archive()">
+              <mat-icon>archive</mat-icon> Archive
+            </button>
+          }
+        }
+      </div>
+    </aside>
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="360px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

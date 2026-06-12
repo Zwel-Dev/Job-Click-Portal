@@ -1,0 +1,62 @@
+<app-page-header [title]="jobTitle() || 'Applicants'" subtitle="Drag candidates between stages to move them through the pipeline.">
+  <a actions mat-stroked-button [routerLink]="['/employer/jobs', jobId]">
+    <mat-icon>arrow_back</mat-icon> Job detail
+  </a>
+</app-page-header>
+
+@if (loading()) {
+  <div class="board">
+    @for (item of [0, 1, 2, 3, 4]; track item) {
+      <app-skeleton height="280px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else {
+  <p class="board__count">{{ total() }} applicant{{ total() === 1 ? '' : 's' }} in pipeline</p>
+  <div class="board">
+    @for (column of columns(); track column.status) {
+      <section class="column">
+        <header class="column__head">
+          <span class="column__title">{{ column.label }}</span>
+          <span class="column__badge" [attr.data-tone]="column.tone">{{ column.applicants.length }}</span>
+        </header>
+
+        <div
+          class="column__body"
+          cdkDropList
+          [id]="listId(column.status)"
+          [cdkDropListData]="column.applicants"
+          [cdkDropListConnectedTo]="connectedLists()"
+          (cdkDropListDropped)="drop($event, column)">
+          @for (applicant of column.applicants; track applicant.applicationId) {
+            <article class="applicant-card" cdkDrag>
+              <div class="applicant-card__placeholder" *cdkDragPlaceholder></div>
+              <a class="applicant-card__name" [routerLink]="['/employer/applications', applicant.applicationId]">
+                {{ applicant.fullName }}
+              </a>
+              @if (applicant.headline) {
+                <p class="applicant-card__headline">{{ applicant.headline }}</p>
+              }
+              <div class="applicant-card__meta">
+                @if (applicant.matchScore !== undefined) {
+                  <app-match-score-badge [score]="applicant.matchScore" />
+                }
+                <span class="applicant-card__date">{{ formatDate(applicant.appliedAt) }}</span>
+              </div>
+              @if (applicant.tags.length) {
+                <div class="applicant-card__tags">
+                  @for (tag of applicant.tags; track tag) {
+                    <span class="applicant-card__tag">{{ tag }}</span>
+                  }
+                </div>
+              }
+            </article>
+          } @empty {
+            <p class="column__empty">Drop here</p>
+          }
+        </div>
+      </section>
+    }
+  </div>
+}

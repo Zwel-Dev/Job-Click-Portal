@@ -1,0 +1,111 @@
+<app-page-header title="Candidates" subtitle="Search your talent pool. Private profiles are never shown." />
+
+<div class="cs__bar">
+  <mat-form-field appearance="outline" class="cs__search">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="keywordControl" placeholder="Name, title, or skill" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="cs__filter">
+    <mat-label>Location</mat-label>
+    <input matInput [formControl]="locationControl" placeholder="City or remote" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="cs__filter">
+    <mat-label>Seniority</mat-label>
+    <mat-select multiple [value]="seniority()" (selectionChange)="onSeniorityChange($event.value)">
+      @for (option of seniorityOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="cs__filter">
+    <mat-label>Availability</mat-label>
+    <mat-select multiple [value]="availability()" (selectionChange)="onAvailabilityChange($event.value)">
+      @for (option of availabilityOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="cs__filter">
+    <mat-label>Sort</mat-label>
+    <mat-select [value]="sort()" (selectionChange)="onSortChange($event.value)">
+      <mat-option value="recent">Recently active</mat-option>
+      <mat-option value="experience">Most experience</mat-option>
+      <mat-option value="name">Name</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-slide-toggle class="cs__remote" [checked]="remoteOnly()" (change)="onRemoteToggle($event.checked)">
+    Remote only
+  </mat-slide-toggle>
+</div>
+
+@if (result(); as res) {
+  @if (res.data.length) {
+    <p class="cs__count">{{ res.totalItems }} candidate{{ res.totalItems === 1 ? '' : 's' }}</p>
+    <div class="cs__grid">
+      @for (candidate of res.data; track candidate.candidateId) {
+        <article class="cand-card">
+          <header class="cand-card__head">
+            <div class="cand-card__avatar" aria-hidden="true">{{ candidate.fullName.charAt(0) }}</div>
+            <div class="cand-card__id">
+              <h2 class="cand-card__name">{{ candidate.fullName }}</h2>
+              @if (candidate.headline) {
+                <p class="cand-card__headline">{{ candidate.headline }}</p>
+              }
+            </div>
+            <app-status-badge
+              [label]="availabilityLabels[candidate.availabilityStatus]"
+              [tone]="availabilityTone[candidate.availabilityStatus]" />
+          </header>
+
+          <div class="cand-card__meta">
+            @if (candidate.location) {
+              <span><mat-icon aria-hidden="true">place</mat-icon>{{ candidate.location }}</span>
+            }
+            <span><mat-icon aria-hidden="true">military_tech</mat-icon>{{ seniorityLabels[candidate.seniorityLevel] }}</span>
+            <span><mat-icon aria-hidden="true">timeline</mat-icon>{{ candidate.yearsExperience }} yr{{ candidate.yearsExperience === 1 ? '' : 's' }}</span>
+            @if (candidate.workMode) {
+              <span><mat-icon aria-hidden="true">laptop_mac</mat-icon>{{ workModeLabels[candidate.workMode] }}</span>
+            }
+          </div>
+
+          @if (candidate.topSkills.length) {
+            <div class="cand-card__skills">
+              @for (skill of candidate.topSkills; track skill) {
+                <span class="cand-card__skill">{{ skill }}</span>
+              }
+            </div>
+          }
+
+          <footer class="cand-card__foot">
+            <span class="cand-card__salary">Expects {{ formatSalary({ salaryMin: candidate.expectedSalary, currency: candidate.currency }) }}</span>
+            <button mat-stroked-button type="button" (click)="addToPool(candidate)">
+              <mat-icon>group_add</mat-icon> Add to pool
+            </button>
+          </footer>
+        </article>
+      }
+    </div>
+    <div class="cs__pagination">
+      <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+    </div>
+  } @else {
+    <app-empty-state
+      icon="person_search"
+      title="No candidates found"
+      message="Try broadening your filters or search terms." />
+  }
+} @else if (loading()) {
+  <div class="cs__grid">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="220px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

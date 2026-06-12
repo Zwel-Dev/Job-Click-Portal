@@ -1,0 +1,123 @@
+<app-page-header title="Jobs" subtitle="Create and manage your company's job postings.">
+  @if (context.isRecruiter()) {
+    <a actions mat-flat-button color="primary" routerLink="/employer/jobs/new">
+      <mat-icon>add</mat-icon> Create job
+    </a>
+  }
+</app-page-header>
+
+<div class="jobs__bar">
+  <mat-form-field appearance="outline" class="jobs__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="statusFilter()" (selectionChange)="onStatusChange($event.value)">
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="jobs__filter">
+    <mat-label>Owner</mat-label>
+    <mat-select [value]="ownerScope()" (selectionChange)="onOwnerChange($event.value)">
+      <mat-option value="all">All owners</mat-option>
+      <mat-option value="mine">My jobs</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="jobs__search">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="searchControl" placeholder="Job title" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="jobs__filter">
+    <mat-label>Sort</mat-label>
+    <mat-select [value]="sort()" (selectionChange)="onSortChange($event.value)">
+      <mat-option value="newest">Newest</mat-option>
+      <mat-option value="title">Title</mat-option>
+      <mat-option value="applicants">Applicants</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (result(); as res) {
+  @if (res.data.length) {
+    <p class="jobs__count">{{ res.totalItems }} job{{ res.totalItems === 1 ? '' : 's' }}</p>
+    <div class="jobs__list">
+      @for (job of res.data; track job.id) {
+        <div class="job-row">
+          <div class="job-row__main">
+            <a class="job-row__title" [routerLink]="['/employer/jobs', job.id]">{{ job.title }}</a>
+            <div class="job-row__meta">
+              {{ employmentTypeLabels[job.employmentType] }} &middot; {{ job.location }} &middot; {{ formatSalary(job) }}
+            </div>
+            <div class="job-row__sub">Owner: {{ job.ownerName }} &middot; Created {{ formatDate(job.createdAt) }}</div>
+          </div>
+
+          <div class="job-row__side">
+            <app-status-badge [label]="jobStatusMeta[job.status].label" [tone]="jobStatusMeta[job.status].tone" />
+            <a class="job-row__applicants" [routerLink]="['/employer/jobs', job.id, 'applicants']" matTooltip="View applicants">
+              <mat-icon>group</mat-icon> {{ job.applicantCount }}
+            </a>
+            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Job actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <a mat-menu-item [routerLink]="['/employer/jobs', job.id]">
+                <mat-icon>visibility</mat-icon><span>View</span>
+              </a>
+              <a mat-menu-item [routerLink]="['/employer/jobs', job.id, 'applicants']">
+                <mat-icon>group</mat-icon><span>Applicants</span>
+              </a>
+              @if (context.isRecruiter()) {
+                <a mat-menu-item [routerLink]="['/employer/jobs', job.id, 'edit']">
+                  <mat-icon>edit</mat-icon><span>Edit</span>
+                </a>
+                <button mat-menu-item type="button" (click)="duplicate(job)">
+                  <mat-icon>content_copy</mat-icon><span>Duplicate</span>
+                </button>
+                @if (job.status === JobStatus.Published) {
+                  <button mat-menu-item type="button" (click)="pause(job)">
+                    <mat-icon>pause_circle_outline</mat-icon><span>Pause</span>
+                  </button>
+                }
+                @if (job.status === JobStatus.Paused) {
+                  <button mat-menu-item type="button" (click)="resume(job)">
+                    <mat-icon>play_circle_outline</mat-icon><span>Resume</span>
+                  </button>
+                }
+                @if (job.status !== JobStatus.Closed && job.status !== JobStatus.Archived) {
+                  <button mat-menu-item type="button" (click)="close(job)">
+                    <mat-icon>cancel</mat-icon><span>Close</span>
+                  </button>
+                }
+                @if (job.status !== JobStatus.Archived) {
+                  <button mat-menu-item type="button" (click)="archive(job)">
+                    <mat-icon>archive</mat-icon><span>Archive</span>
+                  </button>
+                }
+              }
+            </mat-menu>
+          </div>
+        </div>
+      }
+    </div>
+    <div class="jobs__pagination">
+      <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+    </div>
+  } @else {
+    <app-empty-state icon="work_outline" title="No jobs found" message="Try a different filter, or create your first job.">
+      @if (context.isRecruiter()) {
+        <a mat-flat-button color="primary" routerLink="/employer/jobs/new">Create job</a>
+      }
+    </app-empty-state>
+  }
+} @else if (loading()) {
+  <div class="jobs__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="76px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

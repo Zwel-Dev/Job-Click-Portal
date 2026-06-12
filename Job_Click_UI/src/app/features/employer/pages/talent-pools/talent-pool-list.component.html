@@ -1,0 +1,52 @@
+<app-page-header title="Talent pools" subtitle="Organise saved candidates into named collections.">
+  <button actions mat-flat-button color="primary" type="button" (click)="create()">
+    <mat-icon>add</mat-icon> New pool
+  </button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="pools__grid">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="140px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (pools().length) {
+  <div class="pools__grid">
+    @for (pool of pools(); track pool.id) {
+      <article class="pool-card">
+        <header class="pool-card__head">
+          <a class="pool-card__name" [routerLink]="['/employer/talent-pools', pool.id]">{{ pool.name }}</a>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Pool actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <a mat-menu-item [routerLink]="['/employer/talent-pools', pool.id]">
+              <mat-icon>visibility</mat-icon><span>Open</span>
+            </a>
+            <button mat-menu-item type="button" (click)="remove(pool)">
+              <mat-icon>delete_outline</mat-icon><span>Delete</span>
+            </button>
+          </mat-menu>
+        </header>
+
+        @if (pool.description) {
+          <p class="pool-card__desc">{{ pool.description }}</p>
+        }
+
+        <footer class="pool-card__foot">
+          <span class="pool-card__count">
+            <mat-icon aria-hidden="true">groups</mat-icon>
+            {{ pool.candidateCount }} candidate{{ pool.candidateCount === 1 ? '' : 's' }}
+          </span>
+          <a class="pool-card__open" [routerLink]="['/employer/talent-pools', pool.id]">Open</a>
+        </footer>
+      </article>
+    }
+  </div>
+} @else {
+  <app-empty-state icon="groups" title="No talent pools yet" message="Create a pool, then add candidates from search.">
+    <button mat-flat-button color="primary" type="button" (click)="create()">New pool</button>
+  </app-empty-state>
+}

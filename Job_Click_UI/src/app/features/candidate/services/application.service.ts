@@ -85,6 +85,8 @@ export class ApplicationService {
       id: this.nextId++,
       job: { ...summary },
       resumeId: request.resumeId,
+      coverNote: request.coverNote,
+      screeningAnswers: request.answers,
       status: ApplicationStatus.Applied,
       appliedAt: now,
       statusHistory: [{ status: ApplicationStatus.Applied, changedAt: now }],

@@ -1,0 +1,18 @@
+.pool-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.pool-form__field {
+  width: 100%;
+}
+
+mat-dialog-content {
+  min-width: 360px;
+}
+
+@media (max-width: 480px) {
+  mat-dialog-content {
+    min-width: 0;
+  }
+}

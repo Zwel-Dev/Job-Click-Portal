@@ -17,6 +17,8 @@ export const MOCK_APPLICATIONS: Application[] = [
     id: 9001,
     job: job(1),
     resumeId: 1,
+    coverNote:
+      'I have over four years building Angular applications and led the rebuild of my current team’s design system. I’m excited about this role because of your focus on enterprise UX, and I can start within a month.',
     status: ApplicationStatus.Interview,
     matchScore: 88,
     appliedAt: '2026-06-02T10:15:00Z',
@@ -57,6 +59,8 @@ export const MOCK_APPLICATIONS: Application[] = [
     id: 9004,
     job: job(6),
     resumeId: 1,
+    coverNote:
+      'My background in data pipelines and cloud infrastructure maps closely to this position. I’m particularly drawn to the remote setup and the scale of data you work with.',
     status: ApplicationStatus.Offer,
     matchScore: 79,
     appliedAt: '2026-05-20T08:00:00Z',

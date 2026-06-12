@@ -3,6 +3,7 @@ import { EmploymentType } from '@core/enums/employment-type.enum';
 import { WorkMode } from '@core/enums/work-mode.enum';
 import { SeniorityLevel } from '@core/enums/seniority-level.enum';
 import { JobStatus } from '@core/enums/job-status.enum';
+import { ScreeningQuestion } from './screening.model';
 
 /** Lightweight job for list/card surfaces. */
 export interface JobSummary {
@@ -47,6 +48,8 @@ export interface Job extends JobSummary {
   locations: JobLocation[];
   status: JobStatus;
   expiredAt?: string;
+  /** Custom application questions the candidate answers when applying (optional). */
+  screeningQuestions?: ScreeningQuestion[];
 }
 
 export interface SavedJob {

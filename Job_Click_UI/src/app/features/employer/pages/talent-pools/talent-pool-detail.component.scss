@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.tpd__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-1);
+  margin-bottom: var(--jc-space-4);
+  color: var(--jc-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.tpd__actions {
+  display: flex;
+  gap: var(--jc-space-2);
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.tpd__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-3);
+}
+
+.member-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--jc-space-3);
+  padding: var(--jc-space-4);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-md);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.member-card__avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--jc-primary-50);
+  color: var(--jc-primary-700);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.member-card__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.member-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-3);
+}
+
+.member-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.member-card__headline {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: var(--jc-text-secondary);
+}
+
+.member-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--jc-space-3);
+  margin-top: var(--jc-space-2);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    color: var(--jc-text-secondary);
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--jc-text-muted);
+  }
+}
+
+.member-card__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--jc-space-2);
+}
+
+.member-card__skill {
+  padding: 3px 10px;
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-surface-muted);
+  color: var(--jc-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.member-card__remove {
+  flex-shrink: 0;
+  color: var(--jc-text-muted);
+}

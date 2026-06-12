@@ -1,0 +1,41 @@
+<mat-form-field appearance="outline" class="skills__field">
+  <mat-label>Add a skill</mat-label>
+  <input
+    #skillInput
+    matInput
+    [matAutocomplete]="auto"
+    [disabled]="disabled()"
+    (input)="onInput($event)"
+    (keydown.enter)="onEnter($event, skillInput)"
+    placeholder="e.g. Angular"
+  />
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelected($event, skillInput)">
+    @for (skill of filtered(); track skill) {
+      <mat-option [value]="skill">{{ skill }}</mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>
+
+@if (skills().length) {
+  <div class="skills__list">
+    @for (skill of skills(); track skill.name) {
+      <div class="skills__item">
+        <span class="skills__name">{{ skill.name }}</span>
+        <button
+          type="button"
+          class="skills__req"
+          [class.skills__req--on]="skill.required"
+          [disabled]="disabled()"
+          (click)="toggleRequired(skill)"
+        >
+          {{ skill.required ? 'Required' : 'Optional' }}
+        </button>
+        <button mat-icon-button type="button" [disabled]="disabled()" (click)="remove(skill)" aria-label="Remove skill">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+} @else {
+  <p class="skills__empty">No skills added yet. Type to search and press Enter.</p>
+}

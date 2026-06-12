@@ -36,3 +36,14 @@ export const APPLICATION_PIPELINE: readonly ApplicationStatus[] = [
   ApplicationStatus.Offer,
   ApplicationStatus.Hired,
 ];
+
+/** Columns shown on the recruiter pipeline Kanban (each applicant maps to one). */
+export const PIPELINE_BOARD_STAGES: readonly ApplicationStatus[] = [
+  ApplicationStatus.Applied,
+  ApplicationStatus.Screening,
+  ApplicationStatus.Shortlisted,
+  ApplicationStatus.Interview,
+  ApplicationStatus.Offer,
+  ApplicationStatus.Hired,
+  ApplicationStatus.Rejected,
+];

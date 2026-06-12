@@ -48,6 +48,39 @@
   font-size: 0.9375rem;
 }
 
+.apply__questions {
+  margin-top: var(--jc-space-2);
+  padding-top: var(--jc-space-4);
+  border-top: 1px solid var(--jc-border);
+}
+
+.apply__questions-title {
+  margin: 0 0 var(--jc-space-3);
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.apply__q {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--jc-space-2);
+}
+
+.apply__q-label {
+  margin-bottom: var(--jc-space-1);
+  font-size: 0.875rem;
+  color: var(--jc-text);
+}
+
+.apply__q-req {
+  color: var(--jc-danger);
+  font-weight: 700;
+}
+
+.apply__q-field {
+  width: 100%;
+}
+
 .apply__submit {
   display: inline-flex;
   align-items: center;

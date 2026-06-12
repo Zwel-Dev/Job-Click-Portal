@@ -1,0 +1,80 @@
+<app-page-header [title]="greeting()" [subtitle]="subtitle()">
+  <div actions class="edash__actions">
+    @if (context.isManager()) {
+      <a mat-stroked-button routerLink="/employer/approvals">
+        <mat-icon>fact_check</mat-icon> Review approvals
+      </a>
+    }
+    @if (context.isRecruiter()) {
+      <a mat-flat-button color="primary" routerLink="/employer/jobs/new">
+        <mat-icon>add</mat-icon> Create job
+      </a>
+    }
+  </div>
+</app-page-header>
+
+@if (kpis(); as kpis) {
+  <div class="edash__kpis">
+    <app-kpi-card icon="work_outline" [value]="kpis.activeJobs" label="Active jobs" hint="Currently published" />
+    <app-kpi-card icon="groups" [value]="kpis.totalApplicants" label="Applicants" hint="Across all pipelines" />
+    <app-kpi-card icon="event_available" [value]="kpis.inInterview" label="In interview" hint="Awaiting outcome" />
+    <app-kpi-card icon="card_giftcard" [value]="kpis.offersOut" label="Offers out" hint="Pending response" />
+  </div>
+
+  <div class="edash__grid">
+    <section class="edash__card">
+      <header class="edash__card-head">
+        <h2 class="edash__card-title">Recent applicants</h2>
+        <a class="edash__link" routerLink="/employer/jobs">View jobs</a>
+      </header>
+
+      @if (recentApplicants().length) {
+        <ul class="edash__applicants">
+          @for (applicant of recentApplicants(); track applicant.applicationId) {
+            <li class="edash-applicant">
+              <div class="edash-applicant__avatar" aria-hidden="true">{{ applicant.fullName.charAt(0) }}</div>
+              <div class="edash-applicant__main">
+                <a class="edash-applicant__name" [routerLink]="['/employer/applications', applicant.applicationId]">
+                  {{ applicant.fullName }}
+                </a>
+                <span class="edash-applicant__job">{{ applicant.jobTitle }}</span>
+              </div>
+              <div class="edash-applicant__side">
+                <app-status-badge [label]="statusMeta[applicant.status].label" [tone]="statusMeta[applicant.status].tone" />
+                <span class="edash-applicant__date">{{ formatDate(applicant.appliedAt) }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="inbox" title="No applicants yet" message="Applicants will appear here as candidates apply." />
+      }
+    </section>
+
+    <section class="edash__card">
+      <header class="edash__card-head">
+        <h2 class="edash__card-title">Pipeline snapshot</h2>
+      </header>
+
+      <ul class="edash__pipeline">
+        @for (stage of pipeline(); track stage.status) {
+          <li class="edash-stage">
+            <span class="edash-stage__label">{{ stage.label }}</span>
+            <span class="edash-stage__bar">
+              <span class="edash-stage__fill" [attr.data-tone]="stage.tone" [style.width]="barWidth(stage.count)"></span>
+            </span>
+            <span class="edash-stage__count">{{ stage.count }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+} @else if (loading()) {
+  <div class="edash__kpis">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="load()" />
+}

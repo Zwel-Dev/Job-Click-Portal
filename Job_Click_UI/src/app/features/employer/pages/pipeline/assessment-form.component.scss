@@ -1,0 +1,40 @@
+.af__intro {
+  margin: 0 0 var(--jc-space-3);
+  color: var(--jc-text-secondary);
+}
+
+.af {
+  display: flex;
+  flex-direction: column;
+}
+
+.af__field {
+  width: 100%;
+}
+
+.af__row {
+  display: flex;
+  gap: var(--jc-space-3);
+}
+
+.af__status {
+  flex: 2 1 auto;
+}
+
+.af__score {
+  flex: 1 1 120px;
+}
+
+mat-dialog-content {
+  min-width: 380px;
+}
+
+@media (max-width: 480px) {
+  mat-dialog-content {
+    min-width: 0;
+  }
+  .af__row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

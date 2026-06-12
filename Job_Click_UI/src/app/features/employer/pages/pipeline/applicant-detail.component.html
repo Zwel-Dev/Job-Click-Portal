@@ -1,0 +1,295 @@
+@if (applicant(); as applicant) {
+  <a class="ad__back" routerLink="/employer/jobs">
+    <mat-icon>arrow_back</mat-icon> Back to jobs
+  </a>
+
+  <header class="ad__header">
+    <div class="ad__avatar" aria-hidden="true">{{ applicant.fullName.charAt(0) }}</div>
+    <div class="ad__id">
+      <h1 class="ad__name">{{ applicant.fullName }}</h1>
+      @if (applicant.headline) {
+        <p class="ad__headline">{{ applicant.headline }}</p>
+      }
+      <div class="ad__badges">
+        <app-status-badge [label]="statusMeta[applicant.status].label" [tone]="statusMeta[applicant.status].tone" />
+        @if (applicant.matchScore !== undefined) {
+          <app-match-score-badge [score]="applicant.matchScore" />
+        }
+      </div>
+    </div>
+  </header>
+
+  <div class="ad">
+    <div class="ad__main">
+      <mat-tab-group animationDuration="0ms" mat-stretch-tabs="false">
+        <mat-tab label="Application">
+          <div class="ad__tab">
+            <section class="ad__section">
+              <h2 class="ad__heading">Applied for</h2>
+              <p class="ad__applied">
+                {{ applicant.jobTitle }}
+                <span class="ad__applied-date">· submitted {{ formatDate(applicant.appliedAt) }}</span>
+              </p>
+            </section>
+
+            <section class="ad__section">
+              <h2 class="ad__heading">Cover note</h2>
+              @if (applicant.coverNote) {
+                <p class="ad__cover-note">{{ applicant.coverNote }}</p>
+              } @else {
+                <p class="ad__empty">The candidate did not include a cover note.</p>
+              }
+            </section>
+
+            @if (applicant.screeningAnswers?.length) {
+              <section class="ad__section">
+                <h2 class="ad__heading">Screening answers</h2>
+                <dl class="ad__answers">
+                  @for (answer of applicant.screeningAnswers; track answer.questionId) {
+                    <div class="ad__answer">
+                      <dt>{{ answer.prompt }}</dt>
+                      <dd>{{ answer.answer }}</dd>
+                    </div>
+                  }
+                </dl>
+              </section>
+            }
+
+            <section class="ad__section">
+              <h2 class="ad__heading">Attached resume</h2>
+              @if (applicant.resumeUrl) {
+                <a class="ad-resume-file" [href]="applicant.resumeUrl" target="_blank" rel="noopener">
+                  <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
+                  <span class="ad-resume-file__name">{{ applicant.resumeName || 'Resume.pdf' }}</span>
+                  <span class="ad-resume-file__open">Open</span>
+                </a>
+              } @else {
+                <p class="ad__empty">No resume was attached to this application.</p>
+              }
+            </section>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Profile">
+          <div class="ad__tab">
+            <section class="ad__section">
+              <h2 class="ad__heading">Skills</h2>
+              @if (applicant.skills.length) {
+                <div class="ad__skills">
+                  @for (skill of applicant.skills; track skill.name) {
+                    <span class="ad-skill">{{ skill.name }}<em>{{ proficiencyLabels[skill.proficiency] }}</em></span>
+                  }
+                </div>
+              } @else {
+                <p class="ad__empty">No skills listed.</p>
+              }
+            </section>
+
+            <section class="ad__section">
+              <h2 class="ad__heading">Experience</h2>
+              @if (applicant.experiences.length) {
+                <ul class="ad__timeline">
+                  @for (exp of applicant.experiences; track exp.id) {
+                    <li>
+                      <p class="ad__timeline-title">{{ exp.jobTitle }}</p>
+                      <p class="ad__timeline-sub">{{ exp.companyName }} &middot; {{ roleDates(exp) }}</p>
+                      @if (exp.responsibilities) {
+                        <p class="ad__timeline-body">{{ exp.responsibilities }}</p>
+                      }
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="ad__empty">No experience listed.</p>
+              }
+            </section>
+
+            <section class="ad__section">
+              <h2 class="ad__heading">Education</h2>
+              @if (applicant.educations.length) {
+                <ul class="ad__timeline">
+                  @for (edu of applicant.educations; track edu.id) {
+                    <li>
+                      <p class="ad__timeline-title">{{ edu.degree }}, {{ edu.major }}</p>
+                      <p class="ad__timeline-sub">{{ edu.institution }} &middot; {{ edu.graduationYear }}</p>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="ad__empty">No education listed.</p>
+              }
+            </section>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Match">
+          <div class="ad__tab">
+            @if (applicant.match) {
+              <app-match-breakdown [match]="applicant.match" />
+            } @else {
+              <app-empty-state icon="insights" title="No match score" message="A match score has not been calculated for this applicant." />
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Assessments">
+          <div class="ad__tab">
+            <div class="ad__assess-head">
+              <h2 class="ad__heading">Assessments</h2>
+              <button mat-stroked-button color="primary" type="button" (click)="addAssessment()">
+                <mat-icon>add</mat-icon> Add assessment
+              </button>
+            </div>
+
+            @if (assessments().length) {
+              <ul class="ad__assessments">
+                @for (assessment of assessments(); track assessment.id) {
+                  <li class="assess-card">
+                    <div class="assess-card__main">
+                      <div class="assess-card__head">
+                        <span class="assess-card__name">{{ assessment.name }}</span>
+                        <app-status-badge
+                          [label]="assessmentStatusMeta[assessment.status].label"
+                          [tone]="assessmentStatusMeta[assessment.status].tone" />
+                      </div>
+                      <div class="assess-card__meta">
+                        @if (assessment.score !== undefined) {
+                          <span class="assess-card__score">{{ assessment.score }}/100</span>
+                        }
+                        @if (assessment.submittedAt) {
+                          <span>Submitted {{ formatDate(assessment.submittedAt) }}</span>
+                        } @else {
+                          <span>Assigned {{ formatDate(assessment.assignedAt) }}</span>
+                        }
+                      </div>
+                      @if (assessment.remarks) {
+                        <p class="assess-card__remarks">{{ assessment.remarks }}</p>
+                      }
+                    </div>
+                    <div class="assess-card__actions">
+                      <button mat-icon-button type="button" (click)="editAssessment(assessment)" matTooltip="Edit" aria-label="Edit assessment">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="removeAssessment(assessment)" matTooltip="Remove" aria-label="Remove assessment">
+                        <mat-icon>delete_outline</mat-icon>
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="ad__empty">No assessments recorded. Add one to track this candidate's results.</p>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Activity">
+          <div class="ad__tab">
+            <app-application-status-tracker [status]="applicant.status" [history]="applicant.statusHistory" />
+            <section class="ad__section">
+              <h2 class="ad__heading">History</h2>
+              <ul class="ad__history">
+                @for (event of historyDesc(); track event.changedAt) {
+                  <li>
+                    <span class="ad__history-dot" [attr.data-tone]="statusMeta[event.status].tone"></span>
+                    <span class="ad__history-label">{{ statusMeta[event.status].label }}</span>
+                    <span class="ad__history-date">{{ formatDate(event.changedAt) }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Notes">
+          <div class="ad__tab">
+            <form class="ad__note-form" (ngSubmit)="addNote()">
+              <mat-form-field appearance="outline" class="ad__note-field">
+                <mat-label>Add an internal note</mat-label>
+                <textarea matInput rows="3" [formControl]="noteControl" placeholder="Visible to your hiring team only"></textarea>
+              </mat-form-field>
+              <button mat-flat-button color="primary" type="submit" [disabled]="!noteControl.value.trim() || savingNote()">
+                Add note
+              </button>
+            </form>
+
+            @if (notesDesc().length) {
+              <ul class="ad__notes">
+                @for (note of notesDesc(); track note.id) {
+                  <li class="ad-note">
+                    <div class="ad-note__head">
+                      <span class="ad-note__author">{{ note.author }}</span>
+                      <span class="ad-note__date">{{ formatDate(note.createdAt) }}</span>
+                    </div>
+                    <p class="ad-note__body">{{ note.body }}</p>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="ad__empty">No notes yet.</p>
+            }
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+    <aside class="ad__side">
+      <div class="ad__card">
+        <button mat-flat-button color="primary" class="ad__move" [matMenuTriggerFor]="stageMenu" type="button">
+          <mat-icon>swap_horiz</mat-icon> Move to stage
+        </button>
+        <mat-menu #stageMenu="matMenu">
+          @for (stage of boardStages; track stage) {
+            <button mat-menu-item type="button" [disabled]="stage === applicant.status" (click)="moveStage(stage)">
+              {{ statusMeta[stage].label }}
+            </button>
+          }
+        </mat-menu>
+
+        <button mat-stroked-button color="primary" class="ad__resume" type="button" (click)="createOffer()">
+          <mat-icon>card_giftcard</mat-icon> Create offer
+        </button>
+
+        <a mat-stroked-button class="ad__resume" [href]="applicant.resumeUrl || resumeUrl" target="_blank" rel="noopener">
+          <mat-icon>description</mat-icon> View resume
+        </a>
+      </div>
+
+      <div class="ad__card">
+        <h3 class="ad__card-title">Tags</h3>
+        <mat-chip-grid #chipGrid aria-label="Applicant tags">
+          @for (tag of applicant.tags; track tag) {
+            <mat-chip-row (removed)="removeTag(tag)">
+              {{ tag }}
+              <button matChipRemove [attr.aria-label]="'Remove ' + tag">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+          <input
+            placeholder="Add tag"
+            [matChipInputFor]="chipGrid"
+            (matChipInputTokenEnd)="addTag($event)" />
+        </mat-chip-grid>
+      </div>
+
+      <div class="ad__card">
+        <h3 class="ad__card-title">Contact</h3>
+        <dl class="ad__facts">
+          <div><dt>Email</dt><dd>{{ applicant.email }}</dd></div>
+          @if (applicant.phone) {
+            <div><dt>Phone</dt><dd>{{ applicant.phone }}</dd></div>
+          }
+          @if (applicant.location) {
+            <div><dt>Location</dt><dd>{{ applicant.location }}</dd></div>
+          }
+          <div><dt>Applied</dt><dd>{{ formatDate(applicant.appliedAt) }}</dd></div>
+        </dl>
+      </div>
+    </aside>
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="360px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

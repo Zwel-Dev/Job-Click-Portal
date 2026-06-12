@@ -1,0 +1,62 @@
+@if (pool(); as pool) {
+  <a class="tpd__back" routerLink="/employer/talent-pools">
+    <mat-icon>arrow_back</mat-icon> Back to pools
+  </a>
+
+  <app-page-header [title]="pool.name" [subtitle]="pool.description || (pool.candidateCount + ' candidates')">
+    <div actions class="tpd__actions">
+      <button mat-stroked-button type="button" (click)="rename()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+      <a mat-flat-button color="primary" routerLink="/employer/candidates">
+        <mat-icon>person_add</mat-icon> Add candidates
+      </a>
+    </div>
+  </app-page-header>
+
+  @if (pool.members.length) {
+    <div class="tpd__list">
+      @for (member of pool.members; track member.candidateId) {
+        <article class="member-card">
+          <div class="member-card__avatar" aria-hidden="true">{{ member.fullName.charAt(0) }}</div>
+          <div class="member-card__main">
+            <div class="member-card__head">
+              <span class="member-card__name">{{ member.fullName }}</span>
+              <app-status-badge
+                [label]="availabilityLabels[member.availabilityStatus]"
+                [tone]="availabilityTone[member.availabilityStatus]" />
+            </div>
+            @if (member.headline) {
+              <p class="member-card__headline">{{ member.headline }}</p>
+            }
+            <div class="member-card__meta">
+              @if (member.location) {
+                <span><mat-icon aria-hidden="true">place</mat-icon>{{ member.location }}</span>
+              }
+              <span><mat-icon aria-hidden="true">military_tech</mat-icon>{{ seniorityLabels[member.seniorityLevel] }}</span>
+              <span><mat-icon aria-hidden="true">schedule</mat-icon>Added {{ formatDate(member.addedAt) }}</span>
+            </div>
+            @if (member.topSkills.length) {
+              <div class="member-card__skills">
+                @for (skill of member.topSkills; track skill) {
+                  <span class="member-card__skill">{{ skill }}</span>
+                }
+              </div>
+            }
+          </div>
+          <button mat-icon-button class="member-card__remove" type="button" (click)="removeMember(member)" matTooltip="Remove from pool" aria-label="Remove from pool">
+            <mat-icon>close</mat-icon>
+          </button>
+        </article>
+      }
+    </div>
+  } @else {
+    <app-empty-state icon="person_off" title="No candidates in this pool" message="Add candidates from the search page.">
+      <a mat-flat-button color="primary" routerLink="/employer/candidates">Find candidates</a>
+    </app-empty-state>
+  }
+} @else if (loading()) {
+  <app-skeleton height="320px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

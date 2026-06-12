@@ -42,13 +42,56 @@
         ></textarea>
       </mat-form-field>
     </form>
+
+    @if (questions().length) {
+      <div class="apply__questions">
+        <p class="apply__questions-title">A few questions from the employer</p>
+        @for (question of questions(); track question.id; let i = $index) {
+          <div class="apply__q">
+            <label class="apply__q-label">
+              {{ question.prompt }}@if (question.required) { <span class="apply__q-req">*</span> }
+            </label>
+
+            @switch (question.type) {
+              @case (QType.YesNo) {
+                <mat-form-field appearance="outline" class="apply__q-field">
+                  <mat-select [formControl]="answerControl(i)" placeholder="Select">
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              }
+              @case (QType.SingleChoice) {
+                <mat-form-field appearance="outline" class="apply__q-field">
+                  <mat-select [formControl]="answerControl(i)" placeholder="Select">
+                    @for (option of question.options ?? []; track option) {
+                      <mat-option [value]="option">{{ option }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+              @case (QType.Numeric) {
+                <mat-form-field appearance="outline" class="apply__q-field">
+                  <input matInput type="number" min="0" [formControl]="answerControl(i)" placeholder="Enter a number" />
+                </mat-form-field>
+              }
+              @default {
+                <mat-form-field appearance="outline" class="apply__q-field">
+                  <input matInput maxlength="300" [formControl]="answerControl(i)" placeholder="Your answer" />
+                </mat-form-field>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
   }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
   @if (ready() && !loading()) {
-    <button mat-flat-button color="primary" type="button" class="apply__submit" (click)="submit()" [disabled]="submitting() || form.invalid">
+    <button mat-flat-button color="primary" type="button" class="apply__submit" (click)="submit()" [disabled]="submitting() || form.invalid || answers.invalid">
       @if (submitting()) {
         <mat-progress-spinner diameter="18" mode="indeterminate" />
         <span>Submitting...</span>

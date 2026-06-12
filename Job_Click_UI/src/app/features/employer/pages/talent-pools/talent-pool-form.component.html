@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content>
+  <form class="pool-form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="pool-form__field">
+      <mat-label>Pool name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. Senior Frontend Engineers" maxlength="60" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <mat-error>A pool name is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="pool-form__field">
+      <mat-label>Description (optional)</mat-label>
+      <textarea matInput rows="2" formControlName="description" maxlength="160" placeholder="What is this pool for?"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Save</button>
+</mat-dialog-actions>

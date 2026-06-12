@@ -1,0 +1,71 @@
+<app-page-header title="Approvals" subtitle="Review jobs your team has submitted for approval.">
+  <a actions mat-stroked-button routerLink="/employer/jobs">
+    <mat-icon>work_outline</mat-icon> All jobs
+  </a>
+</app-page-header>
+
+@if (loading()) {
+  <div class="queue__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="120px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (jobs().length) {
+  <p class="queue__count">{{ jobs().length }} job{{ jobs().length === 1 ? '' : 's' }} awaiting approval</p>
+  <div class="queue__list">
+    @for (job of jobs(); track job.id) {
+      <article class="queue-card">
+        <div class="queue-card__head">
+          <a class="queue-card__title" [routerLink]="['/employer/jobs', job.id]">{{ job.title }}</a>
+          @if (job.approvalStage) {
+            <app-status-badge [label]="approvalStageMeta[job.approvalStage].label" [tone]="approvalStageMeta[job.approvalStage].tone" />
+          }
+        </div>
+
+        <div class="queue-card__meta">
+          <span><mat-icon aria-hidden="true">place</mat-icon>{{ job.location }}</span>
+          <span><mat-icon aria-hidden="true">work_outline</mat-icon>{{ employmentTypeLabels[job.employmentType] }}</span>
+          <span><mat-icon aria-hidden="true">laptop_mac</mat-icon>{{ workModeLabels[job.workMode] }}</span>
+          <span><mat-icon aria-hidden="true">payments</mat-icon>{{ formatSalary(job) }}</span>
+        </div>
+
+        <div class="queue-card__sub">
+          Submitted by {{ job.ownerName }} &middot; {{ formatDate(job.createdAt) }}
+        </div>
+
+        <div class="queue-card__actions">
+          @if (canActOn(job)) {
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              [disabled]="acting() === job.id"
+              (click)="approve(job)">
+              Approve
+            </button>
+            <button
+              mat-stroked-button
+              color="warn"
+              type="button"
+              [disabled]="acting() === job.id"
+              (click)="reject(job)">
+              Reject
+            </button>
+          } @else {
+            <span class="queue-card__locked">
+              <mat-icon aria-hidden="true">lock_outline</mat-icon> Awaiting another approver
+            </span>
+          }
+          <a mat-button class="queue-card__view" [routerLink]="['/employer/jobs', job.id]">View</a>
+        </div>
+      </article>
+    }
+  </div>
+} @else {
+  <app-empty-state
+    icon="task_alt"
+    title="Nothing to approve"
+    message="Jobs submitted for approval by your recruiters will appear here." />
+}

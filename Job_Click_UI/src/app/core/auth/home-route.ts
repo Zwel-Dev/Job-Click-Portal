@@ -15,7 +15,7 @@ export function defaultRouteForRoles(roles: readonly RoleCode[]): string {
     return '/welcome'; // TODO: '/admin/dashboard'
   }
   if (roles.some((role) => EMPLOYER_ROLES.includes(role))) {
-    return '/welcome'; // TODO: '/employer/dashboard'
+    return '/employer/dashboard';
   }
   return '/welcome';
 }

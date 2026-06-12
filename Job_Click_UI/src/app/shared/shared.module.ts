@@ -19,6 +19,8 @@ import { ApplicationStatusTrackerComponent } from './components/application-stat
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { MatchScoreBadgeComponent } from './components/match-score-badge/match-score-badge.component';
 import { MatchBreakdownComponent } from './components/match-breakdown/match-breakdown.component';
+import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
+import { SkillSelectorComponent } from './components/skill-selector/skill-selector.component';
 
 /** Reusable presentational components exported to every feature module. */
 const SHARED_COMPONENTS = [
@@ -38,6 +40,8 @@ const SHARED_COMPONENTS = [
   FileUploadComponent,
   MatchScoreBadgeComponent,
   MatchBreakdownComponent,
+  StatusBadgeComponent,
+  SkillSelectorComponent,
 ];
 
 /**

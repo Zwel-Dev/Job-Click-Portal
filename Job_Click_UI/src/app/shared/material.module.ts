@@ -21,6 +21,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 const MATERIAL_MODULES = [
   MatButtonModule,
@@ -45,6 +46,7 @@ const MATERIAL_MODULES = [
   MatAutocompleteModule,
   MatTabsModule,
   MatSlideToggleModule,
+  DragDropModule,
 ];
 
 /** Single import surface for Angular Material modules used across features. */

@@ -1,0 +1,150 @@
+:host {
+  display: block;
+}
+
+.cs__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--jc-space-3);
+  margin-bottom: var(--jc-space-4);
+}
+
+.cs__search {
+  flex: 2 1 260px;
+}
+
+.cs__filter {
+  flex: 1 1 160px;
+}
+
+.cs__remote {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.cs__count {
+  margin: 0 0 var(--jc-space-3);
+  color: var(--jc-text-muted);
+  font-size: 0.875rem;
+}
+
+.cs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--jc-space-3);
+}
+
+.cand-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--jc-space-4);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-md);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.cand-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--jc-space-3);
+}
+
+.cand-card__avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--jc-primary-50);
+  color: var(--jc-primary-700);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.cand-card__id {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cand-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cand-card__headline {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: var(--jc-text-secondary);
+}
+
+.cand-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--jc-space-3);
+  margin-top: var(--jc-space-3);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    color: var(--jc-text-secondary);
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--jc-text-muted);
+  }
+}
+
+.cand-card__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--jc-space-3);
+}
+
+.cand-card__skill {
+  padding: 3px 10px;
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-surface-muted);
+  color: var(--jc-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.cand-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--jc-space-2);
+  margin-top: var(--jc-space-4);
+  padding-top: var(--jc-space-3);
+  border-top: 1px solid var(--jc-border);
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.cand-card__salary {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--jc-text);
+}
+
+.cs__pagination {
+  margin-top: var(--jc-space-4);
+}
+
+@media (max-width: 720px) {
+  .cs__remote {
+    margin-left: 0;
+  }
+}

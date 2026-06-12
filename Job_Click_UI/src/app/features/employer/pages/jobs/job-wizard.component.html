@@ -1,0 +1,244 @@
+<app-page-header
+  [title]="isEdit() ? 'Edit job' : 'Create a job'"
+  subtitle="Fill in the details, then save as a draft or submit for approval."
+/>
+
+@if (loading()) {
+  <app-skeleton height="420px" radius="var(--jc-radius-lg)" />
+} @else {
+  <div class="wizard">
+    <mat-stepper class="wizard__stepper" [linear]="true">
+      <!-- Step 1: Basic -->
+      <mat-step [stepControl]="basicForm" label="Basic">
+        <form class="wizard__form" [formGroup]="basicForm" novalidate>
+          <mat-form-field appearance="outline" class="wizard__row">
+            <mat-label>Job title</mat-label>
+            <input matInput formControlName="title" placeholder="e.g. Senior Frontend Developer" />
+            @if (basicForm.controls.title.hasError('required')) {
+              <mat-error>Title is required.</mat-error>
+            } @else if (basicForm.controls.title.hasError('minlength')) {
+              <mat-error>Enter a longer title.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="department">
+              <mat-option [value]="''">None</mat-option>
+              @for (dept of departments; track dept) {
+                <mat-option [value]="dept">{{ dept }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Location</mat-label>
+            <input matInput formControlName="location" placeholder="e.g. Yangon, Myanmar" />
+            @if (basicForm.controls.location.hasError('required')) {
+              <mat-error>Location is required.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Employment type</mat-label>
+            <mat-select formControlName="employmentType">
+              @for (type of employmentTypeOptions; track type) {
+                <mat-option [value]="type">{{ employmentTypeLabels[type] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Work mode</mat-label>
+            <mat-select formControlName="workMode">
+              @for (mode of workModeOptions; track mode) {
+                <mat-option [value]="mode">{{ workModeLabels[mode] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Seniority level</mat-label>
+            <mat-select formControlName="seniorityLevel">
+              @for (level of seniorityOptions; track level) {
+                <mat-option [value]="level">{{ seniorityLabels[level] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="wizard__actions wizard__row">
+            <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+            <button mat-flat-button color="primary" type="button" matStepperNext [disabled]="basicForm.invalid">Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 2: Requirements -->
+      <mat-step [stepControl]="requirementsForm" label="Requirements">
+        <form class="wizard__form" [formGroup]="requirementsForm" novalidate>
+          <mat-form-field appearance="outline" class="wizard__row">
+            <mat-label>Job description</mat-label>
+            <textarea matInput rows="5" formControlName="description" placeholder="What the role is about, the team, the impact..."></textarea>
+            @if (requirementsForm.controls.description.hasError('required')) {
+              <mat-error>Description is required.</mat-error>
+            } @else if (requirementsForm.controls.description.hasError('minlength')) {
+              <mat-error>Add a bit more detail (20+ characters).</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="wizard__row">
+            <mat-label>Requirements</mat-label>
+            <textarea matInput rows="4" formControlName="requirements" placeholder="Experience, must-haves, nice-to-haves..."></textarea>
+            @if (requirementsForm.controls.requirements.hasError('required')) {
+              <mat-error>Requirements are required.</mat-error>
+            } @else if (requirementsForm.controls.requirements.hasError('minlength')) {
+              <mat-error>Add a bit more detail.</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="wizard__actions wizard__row">
+            <button mat-stroked-button type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button color="primary" type="button" matStepperNext [disabled]="requirementsForm.invalid">Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 3: Compensation -->
+      <mat-step label="Compensation">
+        <form class="wizard__form" [formGroup]="compensationForm" novalidate>
+          <mat-form-field appearance="outline">
+            <mat-label>Minimum salary</mat-label>
+            <input matInput type="number" formControlName="salaryMin" min="0" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Maximum salary</mat-label>
+            <input matInput type="number" formControlName="salaryMax" min="0" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Currency</mat-label>
+            <mat-select formControlName="currency">
+              @for (currency of currencies; track currency) {
+                <mat-option [value]="currency">{{ currency }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="wizard__row">
+            <mat-label>Benefits</mat-label>
+            <mat-chip-grid #benefitGrid>
+              @for (benefit of benefits(); track benefit) {
+                <mat-chip-row (removed)="removeBenefit(benefit)">
+                  {{ benefit }}
+                  <button matChipRemove [attr.aria-label]="'Remove ' + benefit"><mat-icon>cancel</mat-icon></button>
+                </mat-chip-row>
+              }
+            </mat-chip-grid>
+            <input placeholder="Add a benefit and press Enter" [matChipInputFor]="benefitGrid" (matChipInputTokenEnd)="addBenefit($event)" />
+          </mat-form-field>
+
+          <div class="wizard__actions wizard__row">
+            <button mat-stroked-button type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button color="primary" type="button" matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 4: Skills -->
+      <mat-step label="Skills">
+        <form class="wizard__form" [formGroup]="skillsForm" novalidate>
+          <div class="wizard__row">
+            <app-skill-selector formControlName="skills" />
+          </div>
+          <div class="wizard__actions wizard__row">
+            <button mat-stroked-button type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button color="primary" type="button" matStepperNext>Review</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 5: Screening questions -->
+      <mat-step label="Screening">
+        <div class="wizard__form">
+          <div class="wizard__row">
+            <app-screening-questions-editor
+              [initialQuestions]="screeningQuestions()"
+              (questionsChange)="screeningQuestions.set($event)" />
+          </div>
+          <div class="wizard__actions wizard__row">
+            <button mat-stroked-button type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button color="primary" type="button" matStepperNext>Review</button>
+          </div>
+        </div>
+      </mat-step>
+
+      <!-- Step 6: Review -->
+      <mat-step label="Review">
+        <div class="wizard__review">
+          <h3 class="wizard__review-title">{{ basicForm.controls.title.value || 'Untitled job' }}</h3>
+          <div class="wizard__review-tags">
+            <span>{{ employmentTypeLabels[basicForm.controls.employmentType.value] }}</span>
+            <span>{{ workModeLabels[basicForm.controls.workMode.value] }}</span>
+            <span>{{ seniorityLabels[basicForm.controls.seniorityLevel.value] }}</span>
+            <span>{{ basicForm.controls.location.value }}</span>
+          </div>
+
+          <dl class="wizard__review-grid">
+            <div>
+              <dt>Department</dt>
+              <dd>{{ basicForm.controls.department.value || 'None' }}</dd>
+            </div>
+            <div>
+              <dt>Salary</dt>
+              <dd>{{ reviewSalary() }}</dd>
+            </div>
+          </dl>
+
+          <div class="wizard__review-block">
+            <dt>Skills</dt>
+            @if (skillsForm.controls.skills.value.length) {
+              <div class="wizard__review-chips">
+                @for (skill of skillsForm.controls.skills.value; track skill.name) {
+                  <span class="wizard__review-chip" [class.wizard__review-chip--req]="skill.required">{{ skill.name }}</span>
+                }
+              </div>
+            } @else {
+              <dd class="wizard__review-empty">None added</dd>
+            }
+          </div>
+
+          <div class="wizard__review-block">
+            <dt>Benefits</dt>
+            @if (benefits().length) {
+              <div class="wizard__review-chips">
+                @for (benefit of benefits(); track benefit) {
+                  <span class="wizard__review-chip">{{ benefit }}</span>
+                }
+              </div>
+            } @else {
+              <dd class="wizard__review-empty">None added</dd>
+            }
+          </div>
+
+          <div class="wizard__review-block">
+            <dt>Screening questions</dt>
+            @if (screeningQuestions().length) {
+              <ol class="wizard__review-questions">
+                @for (question of screeningQuestions(); track question.id) {
+                  <li>{{ question.prompt }} @if (question.required) { <span class="wizard__review-req">required</span> }</li>
+                }
+              </ol>
+            } @else {
+              <dd class="wizard__review-empty">None — applicants apply without extra questions</dd>
+            }
+          </div>
+        </div>
+
+        <div class="wizard__actions wizard__actions--end">
+          <button mat-stroked-button type="button" matStepperPrevious>Back</button>
+          <button mat-stroked-button color="primary" type="button" (click)="saveDraft()" [disabled]="saving()">Save as draft</button>
+          <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="saving()">Submit for approval</button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+}

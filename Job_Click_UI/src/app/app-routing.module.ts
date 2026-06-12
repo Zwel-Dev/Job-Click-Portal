@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from '@core/auth/guards/auth.guard';
 import { guestGuard } from '@core/auth/guards/guest.guard';
 import { candidateGuard } from '@core/auth/guards/candidate.guard';
+import { employerGuard } from '@core/auth/guards/employer.guard';
 import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
@@ -16,6 +17,11 @@ const routes: Routes = [
     path: 'candidate',
     canActivate: [authGuard, candidateGuard],
     loadChildren: () => import('@features/candidate/candidate.module').then((m) => m.CandidateModule),
+  },
+  {
+    path: 'employer',
+    canActivate: [authGuard, employerGuard],
+    loadChildren: () => import('@features/employer/employer.module').then((m) => m.EmployerModule),
   },
   {
     path: 'welcome',

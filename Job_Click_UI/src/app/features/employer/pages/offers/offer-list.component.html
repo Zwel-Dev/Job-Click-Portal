@@ -1,0 +1,62 @@
+<app-page-header title="Offers" subtitle="Track offers extended to candidates and their outcomes." />
+
+<div class="offers__bar">
+  <mat-form-field appearance="outline" class="offers__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="statusFilter()" (selectionChange)="onStatusChange($event.value)">
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (loading()) {
+  <div class="offers__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="96px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (offers().length) {
+  <p class="offers__count">{{ offers().length }} offer{{ offers().length === 1 ? '' : 's' }}</p>
+  <div class="offers__list">
+    @for (offer of offers(); track offer.id) {
+      <article class="offer-row">
+        <div class="offer-row__main">
+          <div class="offer-row__head">
+            <a class="offer-row__name" [routerLink]="['/employer/applications', offer.applicationId]">{{ offer.candidateName }}</a>
+            <app-status-badge [label]="statusMeta[offer.status].label" [tone]="statusMeta[offer.status].tone" />
+          </div>
+          <div class="offer-row__meta">{{ offer.jobTitle }}</div>
+          <div class="offer-row__facts">
+            <span><mat-icon aria-hidden="true">payments</mat-icon>{{ offer.offeredSalary | number }} {{ offer.currency }}</span>
+            @if (offer.joiningDate) {
+              <span><mat-icon aria-hidden="true">event</mat-icon>Joins {{ formatDate(offer.joiningDate) }}</span>
+            }
+            <span><mat-icon aria-hidden="true">schedule</mat-icon>Offered {{ formatDate(offer.offeredAt) }}</span>
+          </div>
+        </div>
+
+        <div class="offer-row__actions">
+          @if (offer.status === OfferStatus.Draft) {
+            <button mat-flat-button color="primary" type="button" [disabled]="acting() === offer.id" (click)="send(offer)">Send</button>
+            <button mat-stroked-button type="button" [disabled]="acting() === offer.id" (click)="withdraw(offer)">Withdraw</button>
+          } @else if (offer.status === OfferStatus.Sent) {
+            <button mat-flat-button color="primary" type="button" [disabled]="acting() === offer.id" (click)="accept(offer)">Accepted</button>
+            <button mat-stroked-button color="warn" type="button" [disabled]="acting() === offer.id" (click)="reject(offer)">Rejected</button>
+            <button mat-button type="button" [disabled]="acting() === offer.id" (click)="withdraw(offer)">Withdraw</button>
+          } @else {
+            <span class="offer-row__final">{{ statusMeta[offer.status].label }}</span>
+          }
+        </div>
+      </article>
+    }
+  </div>
+} @else {
+  <app-empty-state
+    icon="card_giftcard"
+    title="No offers yet"
+    message="Create an offer from a candidate's profile in the pipeline." />
+}

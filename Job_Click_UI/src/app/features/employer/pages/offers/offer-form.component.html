@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Create offer</h2>
+
+<mat-dialog-content>
+  <p class="offer-form__intro">
+    Offer for <strong>{{ data.candidateName }}</strong> &middot; {{ data.jobTitle }}
+  </p>
+
+  <form class="offer-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="offer-form__row">
+      <mat-form-field appearance="outline" class="offer-form__salary">
+        <mat-label>Offered salary</mat-label>
+        <input matInput type="number" formControlName="offeredSalary" min="1" />
+        @if (form.controls.offeredSalary.touched && form.controls.offeredSalary.invalid) {
+          <mat-error>Enter a salary amount.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="offer-form__currency">
+        <mat-label>Currency</mat-label>
+        <mat-select formControlName="currency">
+          @for (currency of currencies; track currency) {
+            <mat-option [value]="currency">{{ currency }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="offer-form__field">
+      <mat-label>Joining date</mat-label>
+      <input matInput type="date" formControlName="joiningDate" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="offer-form__field">
+      <mat-label>Notes (optional)</mat-label>
+      <textarea matInput rows="3" formControlName="notes" placeholder="Internal notes or offer terms"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Create offer</button>
+</mat-dialog-actions>
