@@ -22,23 +22,26 @@ Everything a job seeker does after authenticating:
 
 ## 2. Delivery phases at a glance
 
-| # | Feature | Phase | Priority | Primary screens |
-| --- | --- | :---: | :---: | --- |
-| 1 | Candidate shell (header + sidebar layout) | P1 | Must | layout |
-| 2 | Dashboard | P1 | Must | `/candidate/dashboard` |
-| 3 | Profile (multi-section editor) | P1 | Must | `/candidate/profile` |
-| 4 | Resume manager | P1 | Must | `/candidate/resumes` |
-| 5 | Job search + filters | P1 | Must | `/candidate/jobs` |
-| 6 | Job detail + apply flow | P1 | Must | `/candidate/jobs/:id` |
-| 7 | Saved jobs | P1 | Should | `/candidate/saved-jobs` |
-| 8 | Applications list + status tracker | P1 | Must | `/candidate/applications`, `/:id` |
-| 9 | Account settings | P1 | Should | `/candidate/settings` |
-| 10 | Recommendations (match bands) | P2 | Must | `/candidate/recommendations` |
-| 11 | Interviews | P2 | Must | `/candidate/interviews` |
-| 12 | Messages | P2 | Should | `/candidate/messages` |
-| 13 | Notifications | P2 | Should | `/candidate/notifications` |
-| 14 | Behavioral tracking hooks | P2 | Could | (cross-cutting) |
-| 15 | AI resume review / parse-to-profile | P3 | Could | within profile/resume |
+| # | Feature | Phase | Priority | Status | Primary screens |
+| --- | --- | :---: | :---: | :---: | --- |
+| 1 | Candidate shell (header + sidebar layout) | P1 | Must | ✅ Done | layout |
+| 2 | Dashboard | P1 | Must | ✅ Done | `/candidate/dashboard` |
+| 3 | Profile (multi-section editor) | P1 | Must | ✅ Done | `/candidate/profile` |
+| 4 | Resume manager | P1 | Must | ✅ Done | `/candidate/resumes` |
+| 5 | Job search + filters | P1 | Must | ✅ Done | `/candidate/jobs` |
+| 6 | Job detail + apply flow | P1 | Must | ✅ Done | `/candidate/jobs/:id` |
+| 7 | Saved jobs | P1 | Should | ✅ Done | `/candidate/saved-jobs` |
+| 8 | Applications list + status tracker | P1 | Must | ✅ Done | `/candidate/applications`, `/:id` |
+| 9 | Account settings | P1 | Should | ✅ Done | `/candidate/settings` |
+| 10 | Recommendations (match bands) | P2 | Must | ✅ Done | `/candidate/recommendations` |
+| 11 | Interviews | P2 | Must | 🔒 Hidden | `/candidate/interviews` |
+| 12 | Messages | P2 | Should | 🔒 Hidden | `/candidate/messages` |
+| 13 | Notifications | P2 | Should | ⬜ Stub | `/candidate/notifications` |
+| 14 | Behavioral tracking hooks | P2 | Could | ⬜ Pending | (cross-cutting) |
+| 15 | AI resume review / parse-to-profile | P3 | Could | ⬜ Pending | within profile/resume |
+
+> **Status legend:** ✅ done & build-verified · ⬜ pending · 🔒 hidden in the UI (nav + routes removed; deferred to Phase 2).
+> **Phase 1 (MVP) is fully complete & build-verified** — all P1 features incl. the **Resume manager** (slice **C1.7**). **Interviews & Messages were intentionally hidden** from the candidate UI (sidebar, header, dashboard, routes) and are deferred to Phase 2 (C2.1 / C2.2).
 
 ---
 
@@ -366,34 +369,39 @@ All IDs must cross-resolve (every `jobId`/`companyId` exists).
 
 Built as **vertical slices**, each independently shippable and **build-verified** before the next — the same cadence used for Auth (Phase 0 → 1 → 2). Slice IDs map to the high-level phases in §2 (P1 = `C1.x`, P2 = `C2.x`, P3 = `C3.x`).
 
+> **Current status:** **Phase 1 (C1.0–C1.7) ✅ complete.** **Phase 2: C2.0 Recommendations ✅ complete & build-verified** (5 match bands, breakdown popover, badge wired into job cards + dashboard "Recommended for you"). **Interviews & Messages remain 🔒 hidden** (re-enabled in C2.1 / C2.2). **Next: C2.3 Behavioral tracking** (or un-hide C2.1 / C2.2 when ready).
+
 ### 13.1 Sequence & dependencies
 
 ```text
-C1.0 Foundation ─► C1.1 Profile ─► C1.2 Dashboard
-        │                              ▲
-        ├─► C1.3 Job Search ─► C1.4 Job Detail + Apply ─► C1.5 Saved + Applications
-        │                                                         │
-        └─► C1.6 Settings                                         ▼
-                                                          (P1 complete)
-P2:  C2.0 Recommendations ─► C2.1 Interviews ─► C2.2 Comms (msgs+notifs) ─► C2.3 Behavior tracking
-P3:  C3.0 AI resume review ─► C3.1 AI parse → profile pre-fill
+Phase 1 (MVP) — ✅ COMPLETE
+  C1.0 Foundation ─► C1.1 Profile ─► C1.2 Dashboard
+          │                              ▲
+          ├─► C1.3 Job Search ─► C1.4 Job Detail + Apply ─► C1.5 Saved + Applications
+          ├─► C1.6 Settings
+          └─► C1.7 Resume manager   ✅
+
+Phase 2:  C2.0 Recommendations ─► C2.1 Interviews 🔒 ─► C2.2 Messages 🔒 ─► C2.3 Behavior tracking
+Phase 3:  C3.0 AI resume review ─► C3.1 AI parse → profile pre-fill
+(🔒 = re-adds the nav items + routes currently hidden in the build)
 ```
 
-| Slice | Goal | Depends on | Size |
-| --- | --- | --- | :---: |
-| **C1.0** | Foundation & shell (walking skeleton) | Auth | M |
-| **C1.1** | Profile (8 sections, CRUD) | C1.0 | L |
-| **C1.2** | Dashboard widgets | C1.0, C1.1 | M |
-| **C1.3** | Job search + filters | C1.0 | L |
-| **C1.4** | Job detail + apply flow | C1.3 | M |
-| **C1.5** | Saved jobs + applications tracker | C1.4 | M |
-| **C1.6** | Account settings | C1.0 | S |
-| **C2.0** | Recommendations (match bands) | C1.3, Reco engine | M |
-| **C2.1** | Interviews | C1.5 | S |
-| **C2.2** | Messages + notifications | CommsModule | M |
-| **C2.3** | Behavioral tracking hooks | C1.3–C1.5 | S |
-| **C3.0** | AI resume review | C1.4, AiModule | M |
-| **C3.1** | AI parse → profile pre-fill | C1.1, C1.4 | M |
+| Slice | Goal | Depends on | Size | Status |
+| --- | --- | --- | :---: | :---: |
+| **C1.0** | Foundation & shell (walking skeleton) | Auth | M | ✅ Done |
+| **C1.1** | Profile (8 sections, CRUD) | C1.0 | L | ✅ Done |
+| **C1.2** | Dashboard widgets | C1.0, C1.1 | M | ✅ Done |
+| **C1.3** | Job search + filters | C1.0 | L | ✅ Done |
+| **C1.4** | Job detail + apply flow | C1.3 | M | ✅ Done |
+| **C1.5** | Saved jobs + applications tracker | C1.4 | M | ✅ Done |
+| **C1.6** | Account settings | C1.0 | S | ✅ Done |
+| **C1.7** | Resume manager | C1.4 | M | ✅ Done |
+| **C2.0** | Recommendations (match bands) | C1.3, Reco engine | M | ✅ Done |
+| **C2.1** | Interviews | C1.5 | S | 🔒 Hidden |
+| **C2.2** | Messages + notifications | CommsModule | M | 🔒 Hidden (msgs) |
+| **C2.3** | Behavioral tracking hooks | C1.3–C1.5 | S | ⬜ Pending |
+| **C3.0** | AI resume review | C1.4, AiModule | M | ⬜ Pending |
+| **C3.1** | AI parse → profile pre-fill | C1.1, C1.4 | M | ⬜ Pending |
 
 ---
 
@@ -450,30 +458,42 @@ P3:  C3.0 AI resume review ─► C3.1 AI parse → profile pre-fill
 - [ ] `ApplicationService.list/getById/withdraw`
 - **Exit:** save state consistent everywhere; tracker renders all statuses incl. Rejected/Withdrawn; build green. **→ P1 candidate complete.**
 
-#### C1.6 — Settings
+#### C1.6 — Settings  ✅ Done
 **Goal:** candidate can manage account, privacy, notification prefs.
-- [ ] `AccountSettingsComponent` tabs: Account (email/phone/password — reuse `app-password-strength`), Privacy (`profileVisibility`, `availabilityStatus`), Notifications (channel toggles)
-- **Exit:** each tab saves to mock + toast; build green. *(Can run in parallel with C1.3–C1.5.)*
+- [x] `AccountSettingsComponent` tabs: Account (email/phone/password — reuse `app-password-strength`), Privacy (`profileVisibility`, `availabilityStatus`), Notifications (channel toggles)
+- **Exit:** each tab saves to mock + toast; build green. *(Ran in parallel with C1.3–C1.5.)*
+
+#### C1.7 — Resume manager  ✅ Done (last P1 slice)
+**Goal:** candidate can upload, manage, preview, and set a default resume.
+- [x] `ResumeManagerComponent` at `/candidate/resumes` (replaced the coming-soon route; sidebar nav already present)
+- [x] Extended `ResumeService` with stateful `upload` / `setDefault` / `remove` (uploads use an object URL so preview/download hit the real file)
+- [x] Shared `app-file-upload` (drag/drop, PDF/DOC ≤ `environment.allowFileSizeMb`, type+size validation) + `ResumePreviewDialogComponent` (PDF iframe), download, remove (confirm)
+- [x] Apply dialog (C1.4) reads the same stateful `ResumeService` — uploaded resumes appear in the gate + dropdown
+- **Exit:** upload/list/default/preview/remove work against mock; build green. **→ P1 candidate fully complete.** ✅
+
+> A 646-byte valid placeholder PDF (`assets/mock/files/sample-resume.pdf`) backs the seed resumes so preview renders; uploaded files preview via their object URL.
 
 ---
 
 ### Phase 2 — Engagement
 
-#### C2.0 — Recommendations
-- [ ] `recommendation` models + `RecommendationService.getRecommendedJobs(category)`/`getMatchBreakdown`
-- [ ] `RecommendationsComponent` with 5 bands (Best/Good/Growth/Trending/New)
-- [ ] `app-match-score-badge` + `match-breakdown` popover (weighted skill/exp/loc/salary/edu bars)
-- [ ] Wire match badge into `app-job-card` + dashboard "recommended" widget
-- **Exit:** bands populate from mock match scores; breakdown explains the score; build green.
+#### C2.0 — Recommendations  ✅ Done
+- [x] `recommendation` models + `RecommendationService.getRecommendedJobs(category)` / `getTopRecommendations` / `getMatchBreakdown` (mock scores via §9 weights)
+- [x] `RecommendationsComponent` with 5 bands (Best/Good/Growth/Trending/New) as a segmented tab bar, lazy per-band load
+- [x] Shared `app-match-score-badge` (band-colored) + `app-match-breakdown` popover (weighted skill/exp/loc/salary/edu bars), surfaced via `RecommendationCardComponent`
+- [x] Wired match badge into `app-job-card` + turned the dashboard widget into "Recommended for you"
+- **Exit:** bands populate from mock match scores; breakdown explains the score; build green. ✅
 
-#### C2.1 — Interviews
+#### C2.1 — Interviews  *(🔒 currently hidden in the UI)*
+- [ ] Re-add the **Interviews** sidebar nav item + `/candidate/interviews` route (both removed in the current build)
 - [ ] `CandidateInterviewService` + `InterviewListComponent` (upcoming/past, join link via `safeUrl`, reschedule request dialog)
-- [ ] Activate dashboard interview-invitations widget
+- [ ] Re-add the dashboard interview KPI / invitations widget
 - **Exit:** interviews list + reschedule against mock; build green.
 
-#### C2.2 — Messages & notifications
+#### C2.2 — Messages & notifications  *(🔒 messaging currently hidden in the UI)*
+- [ ] Re-add the **Messages** sidebar nav item + header icon + `/candidate/messages` route (all removed in the current build)
 - [ ] Consume `CommsModule` (`MessagingService`, `NotificationService`, thread/list/composer, bell + panel in header)
-- [ ] `MessagesComponent` + `NotificationsPageComponent` host pages; unread badges in shell
+- [ ] `MessagesComponent` + `NotificationsPageComponent` host pages (replace the notifications coming-soon placeholder); unread badges in shell
 - **Exit:** threads + notifications render/mark-read from mock; build green.
 
 #### C2.3 — Behavioral tracking

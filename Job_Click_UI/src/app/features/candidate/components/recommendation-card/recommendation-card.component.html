@@ -1,0 +1,11 @@
+<div class="rec-card">
+  <app-job-card [job]="rec().job" (save)="save.emit($event)" />
+  <button mat-button color="primary" class="rec-card__why" [matMenuTriggerFor]="menu">
+    <mat-icon>insights</mat-icon> Why this match?
+  </button>
+  <mat-menu #menu="matMenu" xPosition="before">
+    <div (click)="$event.stopPropagation()">
+      <app-match-breakdown [match]="rec().match" />
+    </div>
+  </mat-menu>
+</div>

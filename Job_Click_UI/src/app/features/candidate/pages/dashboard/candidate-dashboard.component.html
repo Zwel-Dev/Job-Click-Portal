@@ -9,7 +9,6 @@
   />
   <app-kpi-card icon="description" [value]="loading() ? '—' : applications().length" label="Applications" hint="Total submitted" />
   <app-kpi-card icon="bookmark_border" [value]="loading() ? '—' : savedJobs().length" label="Saved jobs" hint="Bookmarked roles" />
-  <app-kpi-card icon="event" value="0" label="Interviews" hint="Available soon" />
 </div>
 
 @if (error()) {
@@ -90,29 +89,32 @@
 
   <section class="dash-card dash-card--jobs">
     <div class="dash-card__head">
-      <h2 class="dash-card__title">Newest jobs</h2>
-      <a mat-button color="primary" routerLink="/candidate/jobs">Browse all</a>
+      <h2 class="dash-card__title">Recommended for you</h2>
+      <a mat-button color="primary" routerLink="/candidate/recommendations">See all</a>
     </div>
 
     @if (loading()) {
       <div class="dash-jobs-grid">
         @for (item of skeletons; track item) {
-          <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+          <app-skeleton height="116px" radius="var(--jc-radius-md)" />
         }
       </div>
-    } @else if (newestJobs().length) {
+    } @else if (recommended().length) {
       <div class="dash-jobs-grid">
-        @for (job of newestJobs(); track job.id) {
-          <a class="dash-job" [routerLink]="['/candidate/jobs', job.id]">
-            <div class="dash-job__title">{{ job.title }}</div>
-            <div class="dash-job__company">{{ job.companyName }}</div>
-            <div class="dash-job__meta">{{ job.location }} &middot; {{ employmentTypeLabels[job.employmentType] }}</div>
-            <div class="dash-job__salary">{{ formatSalary(job) }}</div>
+        @for (rec of recommended(); track rec.job.id) {
+          <a class="dash-job" [routerLink]="['/candidate/jobs', rec.job.id]">
+            <div class="dash-job__top">
+              <span class="dash-job__title">{{ rec.job.title }}</span>
+              <app-match-score-badge [score]="rec.match.total" />
+            </div>
+            <div class="dash-job__company">{{ rec.job.companyName }}</div>
+            <div class="dash-job__meta">{{ rec.job.location }} &middot; {{ employmentTypeLabels[rec.job.employmentType] }}</div>
+            <div class="dash-job__salary">{{ formatSalary(rec.job) }}</div>
           </a>
         }
       </div>
     } @else {
-      <app-empty-state icon="work_outline" title="No jobs available" />
+      <app-empty-state icon="auto_awesome" title="No recommendations yet" />
     }
   </section>
 }

@@ -1,0 +1,33 @@
+.match-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px 2px 6px;
+  border-radius: var(--jc-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &[data-band='best'] {
+    background: var(--jc-success-surface);
+    color: #166534;
+  }
+  &[data-band='good'] {
+    background: var(--jc-info-surface);
+    color: #1e40af;
+  }
+  &[data-band='growth'] {
+    background: var(--jc-warning-surface);
+    color: #92400e;
+  }
+  &[data-band='low'] {
+    background: var(--jc-gray-100);
+    color: var(--jc-gray-700);
+  }
+}

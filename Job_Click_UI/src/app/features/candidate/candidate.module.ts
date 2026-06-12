@@ -11,6 +11,10 @@ import { SavedJobsComponent } from './pages/saved-jobs/saved-jobs.component';
 import { ApplicationListComponent } from './pages/applications/application-list.component';
 import { ApplicationDetailComponent } from './pages/applications/application-detail.component';
 import { AccountSettingsComponent } from './pages/settings/account-settings.component';
+import { ResumeManagerComponent } from './pages/resumes/resume-manager.component';
+import { ResumePreviewDialogComponent } from './pages/resumes/resume-preview-dialog.component';
+import { RecommendationsComponent } from './pages/recommendations/recommendations.component';
+import { RecommendationCardComponent } from './components/recommendation-card/recommendation-card.component';
 import { ProfileShellComponent } from './pages/profile/profile-shell.component';
 import { PersonalInfoSectionComponent } from './pages/profile/sections/personal-info-section.component';
 import { ProfessionalSummarySectionComponent } from './pages/profile/sections/professional-summary-section.component';
@@ -32,6 +36,10 @@ import { PortfolioSectionComponent } from './pages/profile/sections/portfolio-se
     ApplicationListComponent,
     ApplicationDetailComponent,
     AccountSettingsComponent,
+    ResumeManagerComponent,
+    ResumePreviewDialogComponent,
+    RecommendationsComponent,
+    RecommendationCardComponent,
     ProfileShellComponent,
     PersonalInfoSectionComponent,
     ProfessionalSummarySectionComponent,

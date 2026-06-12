@@ -1,0 +1,18 @@
+.preview__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview {
+  padding-top: var(--jc-space-2);
+}
+
+.preview__frame {
+  display: block;
+  width: 100%;
+  height: 68vh;
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-sm);
+  background: var(--jc-surface-muted);
+}

@@ -1,0 +1,46 @@
+<app-page-header
+  title="Recommended for you"
+  subtitle="Jobs matched to your skills, experience, and preferences."
+/>
+
+<div class="recs__tabs" role="tablist" aria-label="Recommendation categories">
+  @for (cat of categories; track cat.key; let i = $index) {
+    <button
+      type="button"
+      class="recs__tab"
+      role="tab"
+      [class.recs__tab--active]="activeIndex() === i"
+      [attr.aria-selected]="activeIndex() === i"
+      (click)="select(i)"
+    >
+      {{ cat.label }}
+      @if (cat.hint) {
+        <span class="recs__tab-hint">{{ cat.hint }}</span>
+      }
+    </button>
+  }
+</div>
+
+@if (loading()) {
+  <div class="recs__grid">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="260px" radius="var(--jc-radius-lg)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (jobs().length) {
+  <div class="recs__grid">
+    @for (rec of jobs(); track rec.job.id) {
+      <app-recommendation-card [rec]="rec" (save)="onSave($event)" />
+    }
+  </div>
+} @else {
+  <app-empty-state
+    icon="auto_awesome"
+    title="No recommendations in this band yet"
+    message="Complete your profile and add more skills to improve your matches."
+  >
+    <a mat-flat-button color="primary" routerLink="/candidate/profile">Update profile</a>
+  </app-empty-state>
+}

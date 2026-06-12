@@ -16,6 +16,9 @@ import { ApplicationStatusChipComponent } from './components/application-status-
 import { JobCardComponent } from './components/job-card/job-card.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { ApplicationStatusTrackerComponent } from './components/application-status-tracker/application-status-tracker.component';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { MatchScoreBadgeComponent } from './components/match-score-badge/match-score-badge.component';
+import { MatchBreakdownComponent } from './components/match-breakdown/match-breakdown.component';
 
 /** Reusable presentational components exported to every feature module. */
 const SHARED_COMPONENTS = [
@@ -32,6 +35,9 @@ const SHARED_COMPONENTS = [
   JobCardComponent,
   PaginationComponent,
   ApplicationStatusTrackerComponent,
+  FileUploadComponent,
+  MatchScoreBadgeComponent,
+  MatchBreakdownComponent,
 ];
 
 /**

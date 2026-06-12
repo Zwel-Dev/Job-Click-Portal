@@ -17,8 +17,10 @@
 
   <a class="job-card__title" [routerLink]="[detailLinkBase(), job().id]">{{ job().title }}</a>
 
-  @if (job().matchScore) {
-    <span class="job-card__match">{{ job().matchScore }}% match</span>
+  @if (job().matchScore != null) {
+    <div class="job-card__match">
+      <app-match-score-badge [score]="job().matchScore!" />
+    </div>
   }
 
   <div class="job-card__tags">

@@ -1,0 +1,67 @@
+:host {
+  display: block;
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jc-space-1);
+  padding: var(--jc-space-8) var(--jc-space-6);
+  border: 2px dashed var(--jc-border-strong);
+  border-radius: var(--jc-radius-lg);
+  background: var(--jc-surface);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: var(--jc-primary-400);
+    background: var(--jc-primary-50);
+  }
+
+  &--over {
+    border-color: var(--jc-primary-600);
+    background: var(--jc-primary-50);
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--jc-primary-600);
+  }
+
+  &__text {
+    color: var(--jc-text-secondary);
+
+    strong {
+      color: var(--jc-primary-700);
+    }
+  }
+
+  &__hint {
+    font-size: 0.8125rem;
+    color: var(--jc-text-muted);
+  }
+}
+
+.upload__error {
+  margin: var(--jc-space-2) 0 0;
+  color: var(--jc-danger);
+  font-size: 0.8125rem;
+}

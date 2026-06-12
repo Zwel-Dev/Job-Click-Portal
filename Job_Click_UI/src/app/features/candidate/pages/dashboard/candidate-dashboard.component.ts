@@ -1,14 +1,15 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { Application } from '@core/models/application.model';
-import { JobSummary, SavedJob } from '@core/models/job.model';
+import { SavedJob } from '@core/models/job.model';
+import { RecommendedJob } from '@core/models/recommendation.model';
 import { ApiError } from '@core/models/common.model';
 import { EMPLOYMENT_TYPE_LABELS } from '@core/enums/employment-type.enum';
 import { formatDate, formatSalary } from '@core/utils/format';
 import { CandidateProfileStore } from '../../state/candidate-profile.store';
 import { ApplicationService } from '../../services/application.service';
 import { SavedJobService } from '../../services/saved-job.service';
-import { JobSearchService } from '../../services/job-search.service';
+import { RecommendationService } from '../../services/recommendation.service';
 
 @Component({
   selector: 'app-candidate-dashboard',
@@ -20,13 +21,13 @@ export class CandidateDashboardComponent implements OnInit {
   readonly store = inject(CandidateProfileStore);
   private readonly applicationService = inject(ApplicationService);
   private readonly savedJobService = inject(SavedJobService);
-  private readonly jobSearchService = inject(JobSearchService);
+  private readonly recommendationService = inject(RecommendationService);
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly applications = signal<Application[]>([]);
   readonly savedJobs = signal<SavedJob[]>([]);
-  readonly newestJobs = signal<JobSummary[]>([]);
+  readonly recommended = signal<RecommendedJob[]>([]);
 
   readonly employmentTypeLabels = EMPLOYMENT_TYPE_LABELS;
   readonly formatSalary = formatSalary;
@@ -51,12 +52,12 @@ export class CandidateDashboardComponent implements OnInit {
     forkJoin({
       applications: this.applicationService.list(),
       saved: this.savedJobService.list(),
-      newest: this.jobSearchService.getNewest(5),
+      recommended: this.recommendationService.getTopRecommendations(6),
     }).subscribe({
       next: (data) => {
         this.applications.set(data.applications);
         this.savedJobs.set(data.saved);
-        this.newestJobs.set(data.newest);
+        this.recommended.set(data.recommended);
         this.loading.set(false);
       },
       error: (error: ApiError) => {

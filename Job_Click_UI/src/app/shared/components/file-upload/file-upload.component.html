@@ -1,0 +1,25 @@
+<label
+  class="upload"
+  [class.upload--over]="dragOver()"
+  [class.upload--disabled]="disabled()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <input
+    type="file"
+    class="upload__input"
+    [accept]="accept()"
+    [disabled]="disabled()"
+    (change)="onInputChange($event)"
+  />
+  <mat-icon class="upload__icon" aria-hidden="true">cloud_upload</mat-icon>
+  <div class="upload__text"><strong>Click to upload</strong> or drag and drop</div>
+  @if (hint()) {
+    <div class="upload__hint">{{ hint() }}</div>
+  }
+</label>
+
+@if (errorMessage()) {
+  <p class="upload__error" role="alert">{{ errorMessage() }}</p>
+}

@@ -1,0 +1,19 @@
+<div class="breakdown">
+  <div class="breakdown__head">
+    <span class="breakdown__title">Match breakdown</span>
+    <span class="breakdown__total">{{ match().total }}%</span>
+  </div>
+  <ul class="breakdown__rows">
+    @for (row of rows(); track row.label) {
+      <li class="breakdown__row">
+        <div class="breakdown__label">
+          <span>{{ row.label }} <em class="breakdown__weight">&middot; {{ row.weight }}%</em></span>
+          <span class="breakdown__value">{{ row.value }}%</span>
+        </div>
+        <div class="breakdown__bar">
+          <span class="breakdown__fill" [style.width.%]="row.value"></span>
+        </div>
+      </li>
+    }
+  </ul>
+</div>

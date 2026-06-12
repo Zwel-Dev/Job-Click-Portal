@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.rec-card {
+  display: flex;
+  flex-direction: column;
+
+  &__why {
+    align-self: flex-start;
+    margin-top: var(--jc-space-1);
+    font-size: 0.8125rem;
+  }
+}

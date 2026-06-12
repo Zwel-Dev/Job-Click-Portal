@@ -1,0 +1,55 @@
+<app-page-header title="Resumes" subtitle="Upload and manage the resumes you apply with." />
+
+<app-file-upload
+  class="resumes__upload"
+  accept=".pdf,.doc,.docx"
+  [maxSizeMb]="maxSizeMb"
+  [disabled]="uploading()"
+  [hint]="'PDF or Word document, up to ' + maxSizeMb + ' MB'"
+  (fileSelected)="onFileSelected($event)"
+/>
+
+@if (loading()) {
+  <div class="resumes__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="72px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (resumes().length) {
+  <div class="resumes__list">
+    @for (resume of resumes(); track resume.id) {
+      <div class="resume-row">
+        <span class="resume-row__icon"><mat-icon aria-hidden="true">description</mat-icon></span>
+        <div class="resume-row__main">
+          <div class="resume-row__name">
+            {{ resume.fileName }}
+            @if (resume.isDefault) {
+              <span class="resume-row__badge">Default</span>
+            }
+          </div>
+          <div class="resume-row__meta">
+            {{ formatFileSize(resume.sizeBytes) }} &middot; Uploaded {{ formatDate(resume.uploadedAt) }}
+          </div>
+        </div>
+        <div class="resume-row__actions">
+          @if (!resume.isDefault) {
+            <button mat-button color="primary" type="button" (click)="setDefault(resume)">Set default</button>
+          }
+          <button mat-icon-button type="button" (click)="preview(resume)" matTooltip="Preview" aria-label="Preview resume">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="download(resume)" matTooltip="Download" aria-label="Download resume">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="remove(resume)" matTooltip="Remove" aria-label="Remove resume">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <app-empty-state icon="description" title="No resumes yet" message="Upload a resume to start applying for jobs." />
+}

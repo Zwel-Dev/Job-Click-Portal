@@ -76,14 +76,7 @@
   }
 
   &__match {
-    align-self: flex-start;
     margin-top: var(--jc-space-2);
-    padding: 1px 8px;
-    border-radius: var(--jc-radius-pill);
-    background: var(--jc-success-surface);
-    color: #166534;
-    font-size: 0.6875rem;
-    font-weight: 600;
   }
 
   &__tags {
