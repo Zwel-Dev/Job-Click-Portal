@@ -1,0 +1,233 @@
+:host {
+  display: block;
+}
+
+.sub__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-1);
+  margin-bottom: var(--jc-space-3);
+  color: var(--jc-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.sub__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--jc-space-4);
+  align-items: start;
+  margin-bottom: var(--jc-space-6);
+}
+
+.sub__card {
+  padding: var(--jc-space-5);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.sub__card-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin-bottom: var(--jc-space-4);
+}
+
+.sub__current-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--jc-space-3);
+
+  > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+  }
+}
+
+.sub__plan-name {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.sub__price-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.sub__price-unit {
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.sub__renews {
+  margin: var(--jc-space-2) 0 var(--jc-space-4);
+  font-size: 0.875rem;
+  color: var(--jc-text-muted);
+}
+
+.sub__features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+    color: var(--jc-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--jc-success);
+  }
+}
+
+/* Plan comparison */
+.sub__plans-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin-bottom: var(--jc-space-3);
+}
+
+.sub__plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--jc-space-3);
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--jc-space-5);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+
+  &--current {
+    border-color: var(--jc-primary-400);
+    box-shadow: 0 0 0 1px var(--jc-primary-400);
+  }
+}
+
+.plan-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.plan-card__name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.plan-card__tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--jc-primary-700);
+  background: var(--jc-primary-50);
+  padding: 2px 8px;
+  border-radius: var(--jc-radius-pill);
+}
+
+.plan-card__price {
+  margin: var(--jc-space-2) 0 var(--jc-space-3);
+}
+
+.plan-card__price-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.plan-card__price-unit {
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.plan-card__specs {
+  list-style: none;
+  margin: 0 0 var(--jc-space-3);
+  padding: 0 0 var(--jc-space-3);
+  border-bottom: 1px solid var(--jc-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--jc-text-secondary);
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--jc-success);
+  }
+
+  .plan-card__spec--off {
+    color: var(--jc-text-muted);
+
+    mat-icon {
+      color: var(--jc-text-muted);
+    }
+  }
+}
+
+.plan-card__features {
+  list-style: none;
+  margin: 0 0 var(--jc-space-4);
+  padding: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  li {
+    font-size: 0.8125rem;
+    color: var(--jc-text-muted);
+  }
+}
+
+.sub__note {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+  margin-top: var(--jc-space-4);
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 900px) {
+  .sub__grid {
+    grid-template-columns: 1fr;
+  }
+  .sub__plans {
+    grid-template-columns: 1fr;
+  }
+}

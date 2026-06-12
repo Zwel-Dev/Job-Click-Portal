@@ -1,0 +1,145 @@
+<a class="tm__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+<app-page-header title="Team" subtitle="Members, roles, and invitations for your company.">
+  <button actions mat-flat-button color="primary" type="button" (click)="invite()">
+    <mat-icon>person_add</mat-icon> Invite member
+  </button>
+</app-page-header>
+
+<div class="tm__bar">
+  <mat-form-field appearance="outline" class="tm__search">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="searchControl" placeholder="Name or email" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="tm__filter">
+    <mat-label>Role</mat-label>
+    <mat-select [value]="roleFilter()" (selectionChange)="roleFilter.set($event.value)">
+      <mat-option value="ALL">All roles</mat-option>
+      @for (role of matrixRoles; track role) {
+        <mat-option [value]="role">{{ roleLabel(role) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="tm__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="statusFilter()" (selectionChange)="statusFilter.set($event.value)">
+      <mat-option value="ALL">All statuses</mat-option>
+      @for (status of statusOptions; track status) {
+        <mat-option [value]="status">{{ statusMeta[status].label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (loading()) {
+  <div class="tm__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="72px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (filtered().length) {
+  <div class="tm__list">
+    @for (member of filtered(); track member.userId) {
+      <article class="member-row">
+        <div class="member-row__avatar" aria-hidden="true">{{ member.fullName.charAt(0) }}</div>
+        <div class="member-row__main">
+          <div class="member-row__head">
+            <span class="member-row__name">{{ member.fullName }}</span>
+            @if (isSelf(member)) { <span class="member-row__you">You</span> }
+          </div>
+          <span class="member-row__email">{{ member.email }}</span>
+        </div>
+
+        <span class="member-row__role">{{ roleLabel(member.role) }}</span>
+        <app-status-badge [label]="statusMeta[member.status].label" [tone]="statusMeta[member.status].tone" />
+        <span class="member-row__jobs" matTooltip="Jobs owned">
+          <mat-icon aria-hidden="true">work_outline</mat-icon> {{ member.jobsOwned }}
+        </span>
+
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Member actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          @if (member.status === MemberStatus.Invited) {
+            <button mat-menu-item type="button" (click)="copyInviteLink(member)">
+              <mat-icon>link</mat-icon><span>Copy invite link</span>
+            </button>
+            <button mat-menu-item type="button" (click)="resendInvite(member)">
+              <mat-icon>mail</mat-icon><span>Resend invite</span>
+            </button>
+            <button mat-menu-item type="button" [disabled]="isLastAdmin(member)" (click)="revokeInvite(member)">
+              <mat-icon>cancel</mat-icon><span>Revoke invite</span>
+            </button>
+          } @else {
+            <button mat-menu-item [matMenuTriggerFor]="roleMenu" [disabled]="isLastAdmin(member)">
+              <mat-icon>badge</mat-icon><span>Change role</span>
+            </button>
+            @if (member.role !== RoleCode.CompanyAdmin && member.status === MemberStatus.Active) {
+              <button mat-menu-item type="button" (click)="transferOwnership(member)">
+                <mat-icon>shield</mat-icon><span>Transfer ownership</span>
+              </button>
+            }
+            @if (member.status === MemberStatus.Active) {
+              <button mat-menu-item type="button" [disabled]="isLastAdmin(member)" (click)="deactivate(member)">
+                <mat-icon>block</mat-icon><span>Deactivate</span>
+              </button>
+            } @else if (member.status === MemberStatus.Deactivated) {
+              <button mat-menu-item type="button" (click)="reactivate(member)">
+                <mat-icon>check_circle</mat-icon><span>Reactivate</span>
+              </button>
+            }
+          }
+        </mat-menu>
+
+        <mat-menu #roleMenu="matMenu">
+          @for (role of assignableRoles; track role) {
+            <button mat-menu-item type="button" [disabled]="member.role === role" (click)="changeRole(member, role)">
+              {{ roleLabel(role) }}
+            </button>
+          }
+        </mat-menu>
+      </article>
+    }
+  </div>
+} @else {
+  <app-empty-state icon="group" title="No members found" message="Try a different filter, or invite a member." />
+}
+
+<section class="tm__matrix">
+  <h2 class="tm__matrix-title">Role permissions</h2>
+  <div class="tm__matrix-scroll">
+    <table class="perm">
+      <thead>
+        <tr>
+          <th scope="col" class="perm__cap">Capability</th>
+          @for (role of matrixRoles; track role) {
+            <th scope="col">{{ roleLabel(role) }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of matrix; track row.capability) {
+          <tr>
+            <th scope="row" class="perm__cap">{{ row.capability }}</th>
+            @for (role of matrixRoles; track role) {
+              <td>
+                @if (hasCapability(row.allowed, role)) {
+                  <mat-icon class="perm__yes" aria-label="Allowed">check</mat-icon>
+                } @else {
+                  <span class="perm__no" aria-label="Not allowed">—</span>
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

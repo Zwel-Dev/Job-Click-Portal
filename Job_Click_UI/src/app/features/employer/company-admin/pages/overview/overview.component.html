@@ -1,0 +1,90 @@
+<app-page-header title="Company" subtitle="Manage your organization on Job Click." />
+
+@if (store.overview(); as data) {
+  <section class="co-identity">
+    <div class="co-identity__logo" aria-hidden="true">
+      @if (data.company.logoUrl) {
+        <img [src]="data.company.logoUrl" [alt]="data.company.name" />
+      } @else {
+        <span>{{ initial() }}</span>
+      }
+    </div>
+    <div class="co-identity__main">
+      <div class="co-identity__head">
+        <h1 class="co-identity__name">{{ data.company.name }}</h1>
+        <app-status-badge [label]="verificationMeta[data.verification.status].label" [tone]="verificationMeta[data.verification.status].tone" />
+        <app-status-badge [label]="companyStatusMeta[data.company.status].label" [tone]="companyStatusMeta[data.company.status].tone" />
+      </div>
+      <div class="co-identity__meta">
+        <span><mat-icon aria-hidden="true">tag</mat-icon>{{ data.company.companyCode }}</span>
+        @if (data.company.industry) {
+          <span><mat-icon aria-hidden="true">domain</mat-icon>{{ data.company.industry }}</span>
+        }
+        @if (data.company.companySize) {
+          <span><mat-icon aria-hidden="true">groups</mat-icon>{{ companySizeLabels[data.company.companySize] }}</span>
+        }
+        @if (data.company.website) {
+          <a class="co-identity__link" [href]="data.company.website" target="_blank" rel="noopener">
+            <mat-icon aria-hidden="true">link</mat-icon>Website
+          </a>
+        }
+      </div>
+    </div>
+    <a mat-stroked-button color="primary" class="co-identity__edit" routerLink="/employer/company/profile">
+      <mat-icon>edit</mat-icon> Edit profile
+    </a>
+  </section>
+
+  <div class="co-kpis">
+    <app-kpi-card icon="group" [value]="data.counts.members" label="Team members" />
+    <app-kpi-card icon="account_tree" [value]="data.counts.departments" label="Departments" />
+    <app-kpi-card icon="place" [value]="data.counts.locations" label="Locations" />
+    <app-kpi-card icon="work_outline" [value]="data.usage.jobsUsed + ' / ' + data.usage.jobsLimit" label="Jobs used" [hint]="data.plan.name + ' plan'" />
+  </div>
+
+  <div class="co-grid">
+    <section class="co-card">
+      <header class="co-card__head">
+        <h2 class="co-card__title">Setup checklist</h2>
+        <span class="co-card__note">{{ completedCount() }} / {{ checklist().length }} complete</span>
+      </header>
+      <ul class="co-checklist">
+        @for (item of checklist(); track item.label) {
+          <li class="co-check" [class.co-check--done]="item.done">
+            <mat-icon aria-hidden="true">{{ item.done ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            <span class="co-check__label">{{ item.label }}</span>
+            @if (!item.done) {
+              <a mat-button color="primary" [routerLink]="item.link">Set up</a>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="co-card">
+      <header class="co-card__head">
+        <h2 class="co-card__title">Manage</h2>
+      </header>
+      <nav class="co-areas">
+        @for (area of areas; track area.link) {
+          <a class="co-area" [routerLink]="area.link">
+            <mat-icon class="co-area__icon" aria-hidden="true">{{ area.icon }}</mat-icon>
+            <span class="co-area__text">
+              <span class="co-area__label">{{ area.label }}</span>
+              <span class="co-area__desc">{{ area.description }}</span>
+            </span>
+            <mat-icon class="co-area__chevron" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+        }
+      </nav>
+    </section>
+  </div>
+} @else if (store.loading()) {
+  <div class="co-kpis">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (store.error()) {
+  <app-error-state [message]="store.error()!" (retry)="store.reload()" />
+}

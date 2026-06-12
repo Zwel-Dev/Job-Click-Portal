@@ -50,6 +50,12 @@
           <div class="shell__menu-name">{{ currentUser.displayName() }}</div>
           <div class="shell__menu-role">{{ context.activeRoleLabel() }}</div>
         </div>
+        @if (canSwitchToCandidate()) {
+          <a mat-menu-item routerLink="/candidate/dashboard">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>Switch to candidate</span>
+          </a>
+        }
         <button mat-menu-item type="button" (click)="logout()">
           <mat-icon>logout</mat-icon>
           <span>Sign out</span>

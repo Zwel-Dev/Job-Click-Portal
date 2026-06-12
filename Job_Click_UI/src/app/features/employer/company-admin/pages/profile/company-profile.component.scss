@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.cp__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-1);
+  margin-bottom: var(--jc-space-3);
+  color: var(--jc-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.cp {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--jc-space-4);
+  align-items: start;
+}
+
+.cp__card {
+  padding: var(--jc-space-5);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.cp__card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--jc-space-3);
+}
+
+.cp__logo-card {
+  position: sticky;
+  top: calc(var(--jc-header-height) + var(--jc-space-4));
+}
+
+.cp__logo {
+  width: 96px;
+  height: 96px;
+  margin-bottom: var(--jc-space-3);
+  border-radius: var(--jc-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--jc-primary-50);
+  color: var(--jc-primary-700);
+  font-size: 2.5rem;
+  font-weight: 700;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.cp__uploading {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+  margin: var(--jc-space-2) 0 0;
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.cp__form {
+  display: flex;
+  flex-direction: column;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.cp__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--jc-space-5);
+  margin: var(--jc-space-2) 0 var(--jc-space-4);
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--jc-text);
+  }
+}
+
+.cp__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 860px) {
+  .cp {
+    grid-template-columns: 1fr;
+  }
+  .cp__logo-card {
+    position: static;
+  }
+}

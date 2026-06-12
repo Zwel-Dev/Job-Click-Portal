@@ -5,16 +5,9 @@
 // from `src/appsettings.json` by AppConfigService so the API host can be changed
 // without rebuilding. This file holds build-time flags only.
 
-export interface AppEnvironment {
-  production: boolean;
-  /** When true, services return mock data via `of(...)` instead of calling HttpClient. */
-  useMock: boolean;
-  enableAi: boolean;
-  enableRealtime: boolean;
-  defaultPageSize: number;
-  /** Max upload size (MB) for resumes, logos, attachments. */
-  allowFileSizeMb: number;
-}
+import type { AppEnvironment } from './app-environment';
+
+export type { AppEnvironment };
 
 export const environment: AppEnvironment = {
   production: false,

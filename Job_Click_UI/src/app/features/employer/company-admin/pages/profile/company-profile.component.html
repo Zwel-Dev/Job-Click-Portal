@@ -1,0 +1,90 @@
+<a class="cp__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+<app-page-header title="Company profile" subtitle="Your public-facing company identity." />
+
+@if (company(); as company) {
+  <div class="cp">
+    <section class="cp__card cp__logo-card">
+      <h2 class="cp__card-title">Logo</h2>
+      <div class="cp__logo">
+        @if (logoUrl()) {
+          <img [src]="logoUrl()!" [alt]="company.name" />
+        } @else {
+          <span aria-hidden="true">{{ initial() }}</span>
+        }
+      </div>
+      <app-file-upload
+        accept=".png,.jpg,.jpeg,.svg"
+        [maxSizeMb]="2"
+        [disabled]="uploadingLogo()"
+        hint="PNG, JPG or SVG, up to 2 MB"
+        (fileSelected)="onLogoSelected($event)" />
+      @if (uploadingLogo()) {
+        <p class="cp__uploading"><mat-progress-spinner diameter="16" mode="indeterminate" /> Uploading…</p>
+      }
+    </section>
+
+    <section class="cp__card">
+      <h2 class="cp__card-title">Details</h2>
+      <form class="cp__form" [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field appearance="outline" class="cp__row">
+          <mat-label>Company name</mat-label>
+          <input matInput formControlName="name" maxlength="120" />
+          @if (form.controls.name.touched && form.controls.name.invalid) {
+            <mat-error>A company name is required.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Website</mat-label>
+          <input matInput formControlName="website" placeholder="https://example.com" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Industry</mat-label>
+          <mat-select formControlName="industry">
+            <mat-option [value]="''">Not set</mat-option>
+            @for (industry of industries; track industry) {
+              <mat-option [value]="industry">{{ industry }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Company size</mat-label>
+          <mat-select formControlName="companySize">
+            <mat-option [value]="''">Not set</mat-option>
+            @for (size of companySizeOptions; track size) {
+              <mat-option [value]="size">{{ companySizeLabels[size] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="cp__row">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="5" formControlName="description" maxlength="1000" placeholder="Tell candidates about your company."></textarea>
+        </mat-form-field>
+
+        <dl class="cp__facts">
+          <div><dt>Company code</dt><dd>{{ company.companyCode }}</dd></div>
+          <div><dt>Created</dt><dd>{{ formatDate(company.createdAt) }}</dd></div>
+          @if (company.updatedAt) {
+            <div><dt>Last updated</dt><dd>{{ formatDate(company.updatedAt) }}</dd></div>
+          }
+        </dl>
+
+        <div class="cp__actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving() || form.pristine">
+            Save changes
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="360px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

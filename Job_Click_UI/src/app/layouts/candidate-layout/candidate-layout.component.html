@@ -51,6 +51,12 @@
           <mat-icon>settings</mat-icon>
           <span>Settings</span>
         </a>
+        @if (canSwitchToEmployer()) {
+          <a mat-menu-item routerLink="/employer/dashboard">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>Switch to employer</span>
+          </a>
+        }
         <button mat-menu-item type="button" (click)="logout()">
           <mat-icon>logout</mat-icon>
           <span>Sign out</span>

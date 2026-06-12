@@ -14,6 +14,11 @@ const routes: Routes = [
     loadChildren: () => import('@features/auth/auth.module').then((m) => m.AuthModule),
   },
   {
+    // Invitation acceptance — guard-free (reachable signed in or out).
+    path: 'invite',
+    loadChildren: () => import('@features/invite/invite.module').then((m) => m.InviteModule),
+  },
+  {
     path: 'candidate',
     canActivate: [authGuard, candidateGuard],
     loadChildren: () => import('@features/candidate/candidate.module').then((m) => m.CandidateModule),

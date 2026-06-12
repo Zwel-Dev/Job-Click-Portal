@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { AuthService } from '@core/auth/auth.service';
 import { CurrentUserStore } from '@core/auth/current-user.store';
+import { RoleCode } from '@core/enums/role-code.enum';
 import { EmployerContextStore } from '@features/employer/state/employer-context.store';
 import { EMPLOYER_NAV } from './employer-nav';
 
@@ -24,13 +25,19 @@ export class EmployerLayoutComponent {
   readonly context = inject(EmployerContextStore);
 
   readonly nav = computed(() =>
-    EMPLOYER_NAV.filter((item) => !item.managerOnly || this.context.isManager()),
+    EMPLOYER_NAV.filter(
+      (item) =>
+        (!item.managerOnly || this.context.isManager()) &&
+        (!item.adminOnly || this.context.isCompanyAdmin()),
+    ),
   );
   readonly isHandset = toSignal(
     this.breakpointObserver.observe('(max-width: 960px)').pipe(map((state) => state.matches)),
     { initialValue: false },
   );
   readonly initials = computed(() => deriveInitials(this.currentUser.displayName()));
+  /** Multi-role users can hop to their candidate workspace (CA1.6 workspace switcher). */
+  readonly canSwitchToCandidate = computed(() => this.currentUser.hasRole(RoleCode.Candidate));
 
   logout(): void {
     this.auth.logout();

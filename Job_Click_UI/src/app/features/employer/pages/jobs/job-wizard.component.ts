@@ -15,6 +15,7 @@ import { JobSkillRequirement } from '@core/models/job.model';
 import { ScreeningQuestion } from '@core/models/screening.model';
 import { JobFormValue } from '../../models/job-form.model';
 import { JobService } from '../../services/job.service';
+import { CompanyService } from '../../company-admin/services/company.service';
 
 @Component({
   selector: 'app-job-wizard',
@@ -27,6 +28,7 @@ export class JobWizardComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly jobService = inject(JobService);
+  private readonly companyService = inject(CompanyService);
   private readonly toast = inject(ToastService);
 
   readonly jobId = signal<Id | null>(null);
@@ -36,15 +38,14 @@ export class JobWizardComponent {
   readonly benefits = signal<string[]>([]);
   readonly screeningQuestions = signal<ScreeningQuestion[]>([]);
 
-  readonly departments = [
+  /** Loaded from the company's departments (CA1.3); seeded with sensible defaults. */
+  readonly departments = signal<string[]>([
     'Engineering',
     'Design',
     'Product',
     'Data & Analytics',
     'Quality Assurance',
-    'Operations',
-    'Marketing',
-  ];
+  ]);
   readonly employmentTypeOptions = Object.values(EmploymentType);
   readonly employmentTypeLabels = EMPLOYMENT_TYPE_LABELS;
   readonly workModeOptions = Object.values(WorkMode);
@@ -84,6 +85,14 @@ export class JobWizardComponent {
         this.jobId.set(Number(id));
         this.loadForEdit(Number(id));
       }
+    });
+    this.companyService.listDepartments().subscribe({
+      next: (departments) => {
+        if (departments.length) {
+          this.departments.set(departments.map((department) => department.name));
+        }
+      },
+      error: () => undefined,
     });
   }
 

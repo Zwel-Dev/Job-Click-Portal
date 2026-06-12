@@ -261,7 +261,7 @@ Route `/employer/dashboard`. KPI strip (`app-kpi-card`): **Active jobs · New ap
 Route `/employer/jobs`. Table/cards of company jobs with status chip, applicant count, posted/expiry, owner. Filter by status + owner; search; sort; pagination. Row/bulk actions: **edit, duplicate, pause, close, archive, view applicants**. "Create job" → wizard (gated by `recruiterGuard` + `planLimitGuard`). Scoped: recruiters see assigned jobs; managers/admins see all company jobs.
 
 ### 8.4 Job create/edit wizard (`JobWizardComponent`) — P1
-Routes `/employer/jobs/new`, `/employer/jobs/:id/edit`. **Material stepper** (reuse the pattern from company registration): **Basic → Requirements → Compensation → Skills → Screening → Review**. Per-step reactive forms + validation; Skills step uses a **reusable `app-skill-selector`**; the **Screening** step (R1.2a) uses `app-screening-questions-editor` for optional LinkedIn-style application questions. Save as **Draft** or **Submit for approval**. Edit pre-loads `getById`.
+Routes `/employer/jobs/new`, `/employer/jobs/:id/edit`. **Material stepper** (reuse the pattern from company registration): **Basic → Requirements → Compensation → Skills → Review**. Per-step reactive forms + validation; Skills step uses a **reusable `app-skill-selector`** (extract from the candidate skills autocomplete). Save as **Draft** or **Submit for approval**. Edit pre-loads `getById`.
 
 ### 8.5 Job detail (employer view) (`EmployerJobDetailComponent`) — P1
 Route `/employer/jobs/:id`. Overview (description/requirements/skills/benefits/locations) + **metrics panel** (views, applicants by stage, days open) + **approval-state badge**. Actions: edit, duplicate, lifecycle transitions, "View applicants". Manager/admin see approve/reject when pending.

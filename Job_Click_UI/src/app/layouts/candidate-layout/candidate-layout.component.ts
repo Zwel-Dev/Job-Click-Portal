@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { AuthService } from '@core/auth/auth.service';
 import { CurrentUserStore } from '@core/auth/current-user.store';
+import { EMPLOYER_ROLES } from '@core/enums/role-code.enum';
 import { CandidateProfileStore } from '@features/candidate/state/candidate-profile.store';
 import { CANDIDATE_NAV } from './candidate-nav';
 
@@ -29,6 +30,8 @@ export class CandidateLayoutComponent implements OnInit {
     { initialValue: false },
   );
   readonly initials = computed(() => deriveInitials(this.currentUser.displayName()));
+  /** Users who also hold an employer role can hop to the employer workspace (CA1.6). */
+  readonly canSwitchToEmployer = computed(() => this.currentUser.hasAnyRole(EMPLOYER_ROLES));
 
   ngOnInit(): void {
     // Ensure the candidate's profile is available across all child pages.

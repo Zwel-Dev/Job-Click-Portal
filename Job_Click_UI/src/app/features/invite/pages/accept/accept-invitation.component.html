@@ -1,0 +1,94 @@
+<div class="ai">
+  <div class="ai__card">
+    <div class="ai__brand">
+      <app-logo [size]="36" />
+    </div>
+
+    @switch (view()) {
+      @case ('loading') {
+        <app-skeleton height="180px" radius="var(--jc-radius-md)" />
+      }
+
+      @case ('invalid') {
+        <mat-icon class="ai__icon ai__icon--bad" aria-hidden="true">link_off</mat-icon>
+        <h1 class="ai__title">Invitation unavailable</h1>
+        <p class="ai__text">{{ reasonMessage() }}</p>
+        <a mat-flat-button color="primary" routerLink="/auth/login">Go to sign in</a>
+      }
+
+      @case ('accept') {
+        @if (preview(); as preview) {
+          <mat-icon class="ai__icon" aria-hidden="true">group_add</mat-icon>
+          <h1 class="ai__title">Join {{ preview.companyName }}</h1>
+          <p class="ai__text">
+            You've been invited to join <strong>{{ preview.companyName }}</strong> as a
+            <strong>{{ roleLabel(preview.role) }}</strong>.
+          </p>
+          <p class="ai__note">Signed in as {{ signedInEmail() }}. Your existing account keeps all its access.</p>
+          <button mat-flat-button color="primary" type="button" [disabled]="submitting()" (click)="accept()">
+            Accept &amp; join
+          </button>
+        }
+      }
+
+      @case ('register') {
+        @if (preview(); as preview) {
+          <mat-icon class="ai__icon" aria-hidden="true">group_add</mat-icon>
+          <h1 class="ai__title">Join {{ preview.companyName }}</h1>
+          <p class="ai__text">
+            Create your account to join as a <strong>{{ roleLabel(preview.role) }}</strong>.
+          </p>
+          <form class="ai__form" [formGroup]="form" (ngSubmit)="register()">
+            <mat-form-field appearance="outline" class="ai__field">
+              <mat-label>Email</mat-label>
+              <input matInput [value]="preview.email" disabled />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="ai__field">
+              <mat-label>Full name</mat-label>
+              <input matInput formControlName="fullName" />
+              @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+                <mat-error>Enter your name.</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="ai__field">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" formControlName="password" />
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <mat-error>At least 8 characters.</mat-error>
+              }
+            </mat-form-field>
+            <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+              Create account &amp; join
+            </button>
+          </form>
+        }
+      }
+
+      @case ('signin') {
+        @if (preview(); as preview) {
+          <mat-icon class="ai__icon" aria-hidden="true">lock_outline</mat-icon>
+          <h1 class="ai__title">Sign in to accept</h1>
+          <p class="ai__text">
+            You already have an account for <strong>{{ preview.email }}</strong>. Sign in, then reopen this invite to
+            join <strong>{{ preview.companyName }}</strong>.
+          </p>
+          <a mat-flat-button color="primary" routerLink="/auth/login">Sign in</a>
+        }
+      }
+
+      @case ('mismatch') {
+        @if (preview(); as preview) {
+          <mat-icon class="ai__icon ai__icon--bad" aria-hidden="true">person_off</mat-icon>
+          <h1 class="ai__title">Different account</h1>
+          <p class="ai__text">
+            You're signed in as <strong>{{ signedInEmail() }}</strong>, but this invitation is for
+            <strong>{{ preview.email }}</strong>.
+          </p>
+          <button mat-stroked-button color="primary" type="button" (click)="signOut()">
+            Sign out &amp; switch account
+          </button>
+        }
+      }
+    }
+  </div>
+</div>

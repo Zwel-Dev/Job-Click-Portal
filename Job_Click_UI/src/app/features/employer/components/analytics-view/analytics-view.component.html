@@ -1,0 +1,71 @@
+@if (data(); as data) {
+  <div class="an__kpis">
+    <app-kpi-card icon="work_outline" [value]="data.kpis.openJobs" label="Open jobs" />
+    <app-kpi-card icon="groups" [value]="data.kpis.totalApplicants" label="Applicants" hint="This period" />
+    <app-kpi-card icon="how_to_reg" [value]="data.kpis.hires" label="Hires" />
+    <app-kpi-card icon="schedule" [value]="data.kpis.avgTimeToHireDays" label="Avg time to hire" hint="days" />
+    <app-kpi-card icon="task_alt" [value]="data.kpis.offerAcceptanceRate + '%'" label="Offer acceptance" />
+  </div>
+
+  <div class="an__grid">
+    <section class="an__card">
+      <header class="an__card-head">
+        <h2 class="an__card-title">Hiring funnel</h2>
+        <span class="an__card-note">Applied → Hired</span>
+      </header>
+      <ul class="funnel">
+        @for (stage of data.funnel; track stage.label) {
+          <li class="funnel-row">
+            <span class="funnel-row__label">{{ stage.label }}</span>
+            <span class="funnel-row__bar">
+              <span class="funnel-row__fill" [style.width]="funnelWidth(stage.count)"></span>
+            </span>
+            <span class="funnel-row__count">{{ stage.count }}</span>
+            <span class="funnel-row__pct">{{ pctOfApplied(stage.count) }}%</span>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="an__card">
+      <header class="an__card-head">
+        <h2 class="an__card-title">Applications by job</h2>
+      </header>
+      <ul class="byjob">
+        @for (job of data.applicationsByJob; track job.jobTitle) {
+          <li class="byjob-row">
+            <span class="byjob-row__label">{{ job.jobTitle }}</span>
+            <span class="byjob-row__bar">
+              <span class="byjob-row__fill" [style.width]="jobBarWidth(job.applicants)"></span>
+            </span>
+            <span class="byjob-row__count">{{ job.applicants }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <section class="an__card">
+    <header class="an__card-head">
+      <h2 class="an__card-title">Recruiter performance</h2>
+    </header>
+    <table class="perf">
+      <thead>
+        <tr>
+          <th scope="col">Recruiter</th>
+          <th scope="col" class="perf__num">Jobs posted</th>
+          <th scope="col" class="perf__num">Hires</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (recruiter of data.recruiterPerformance; track recruiter.name) {
+          <tr>
+            <td>{{ recruiter.name }}</td>
+            <td class="perf__num">{{ recruiter.jobsPosted }}</td>
+            <td class="perf__num">{{ recruiter.hires }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+}

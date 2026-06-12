@@ -1,0 +1,42 @@
+.loc-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.loc-form__row {
+  display: flex;
+  gap: var(--jc-space-3);
+
+  mat-form-field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.loc-form__full {
+  width: 100%;
+}
+
+.loc-form__toggle {
+  margin: var(--jc-space-1) 0;
+}
+
+.loc-form__hint {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+mat-dialog-content {
+  min-width: 420px;
+}
+
+@media (max-width: 520px) {
+  mat-dialog-content {
+    min-width: 0;
+  }
+  .loc-form__row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

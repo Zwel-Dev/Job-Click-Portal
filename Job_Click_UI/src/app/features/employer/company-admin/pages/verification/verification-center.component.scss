@@ -1,0 +1,223 @@
+:host {
+  display: block;
+}
+
+.vc__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-1);
+  margin-bottom: var(--jc-space-3);
+  color: var(--jc-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.vc__card,
+.vc__status-card {
+  padding: var(--jc-space-5);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.vc__status-card {
+  margin-bottom: var(--jc-space-4);
+}
+
+.vc__status-head {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-3);
+  margin-bottom: var(--jc-space-4);
+}
+
+.vc__submitted {
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.vc__card-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin-bottom: var(--jc-space-4);
+}
+
+/* Timeline */
+.vc__timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.vc-step {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+  flex: 1 1 0;
+
+  &:not(:last-child)::after {
+    content: '';
+    flex: 1 1 auto;
+    height: 2px;
+    background: var(--jc-border);
+    margin: 0 var(--jc-space-2);
+  }
+
+  &[data-state='done']::after {
+    background: var(--jc-success);
+  }
+}
+
+.vc-step__dot {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--jc-border);
+  background: var(--jc-surface);
+  color: var(--jc-text-on-primary, #fff);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.vc-step[data-state='done'] .vc-step__dot {
+  background: var(--jc-success);
+  border-color: var(--jc-success);
+}
+
+.vc-step[data-state='current'] .vc-step__dot {
+  border-color: var(--jc-primary-500);
+  box-shadow: 0 0 0 4px var(--jc-primary-50);
+}
+
+.vc-step[data-state='rejected'] .vc-step__dot {
+  background: var(--jc-danger);
+  border-color: var(--jc-danger);
+}
+
+.vc-step__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--jc-text-secondary);
+  white-space: nowrap;
+}
+
+/* Verified */
+.vc__verified {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-4);
+}
+
+.vc__verified-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--jc-success);
+}
+
+.vc__verified-text {
+  margin: 0;
+  color: var(--jc-text-secondary);
+}
+
+/* Rejected banner */
+.vc__rejected {
+  display: flex;
+  gap: var(--jc-space-3);
+  padding: var(--jc-space-4);
+  margin-bottom: var(--jc-space-4);
+  border: 1px solid var(--jc-danger);
+  border-radius: var(--jc-radius-md);
+  background: color-mix(in srgb, var(--jc-danger) 8%, transparent);
+
+  mat-icon {
+    flex: 0 0 auto;
+    color: var(--jc-danger);
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: var(--jc-text-secondary);
+  }
+}
+
+/* Form */
+.vc__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.vc__row {
+  display: flex;
+  gap: var(--jc-space-3);
+
+  mat-form-field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.vc__docs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-4);
+  margin: var(--jc-space-2) 0 var(--jc-space-4);
+}
+
+.vc__doc-label {
+  display: block;
+  margin-bottom: var(--jc-space-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.vc__req {
+  color: var(--jc-danger);
+  font-weight: 700;
+}
+
+.vc__doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-2);
+  padding: var(--jc-space-1) var(--jc-space-1) var(--jc-space-1) var(--jc-space-3);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-surface-muted);
+
+  mat-icon {
+    color: var(--jc-text-muted);
+  }
+
+  span {
+    font-size: 0.875rem;
+    word-break: break-word;
+  }
+}
+
+.vc__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .vc__row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

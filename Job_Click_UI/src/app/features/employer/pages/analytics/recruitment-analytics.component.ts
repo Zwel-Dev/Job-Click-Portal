@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ApiError } from '@core/models/common.model';
 import { EmployerAnalyticsService } from '../../services/employer-analytics.service';
 import { RecruitmentAnalytics } from '../../models/employer-analytics.model';
@@ -18,11 +18,6 @@ export class RecruitmentAnalyticsComponent implements OnInit {
 
   readonly skeletons = [0, 1, 2, 3, 4];
 
-  private readonly funnelTop = computed(() => this.analytics()?.funnel[0]?.count ?? 1);
-  private readonly maxJobApplicants = computed(() =>
-    Math.max(1, ...(this.analytics()?.applicationsByJob.map((job) => job.applicants) ?? [1])),
-  );
-
   ngOnInit(): void {
     this.load();
   }
@@ -41,20 +36,5 @@ export class RecruitmentAnalyticsComponent implements OnInit {
         this.loading.set(false);
       },
     });
-  }
-
-  /** Funnel bar width relative to the top stage. */
-  funnelWidth(count: number): string {
-    return `${Math.round((count / this.funnelTop()) * 100)}%`;
-  }
-
-  /** Conversion of a stage as a percentage of the top (Applied) stage. */
-  pctOfApplied(count: number): number {
-    return Math.round((count / this.funnelTop()) * 100);
-  }
-
-  /** Applications-by-job bar width relative to the busiest job. */
-  jobBarWidth(applicants: number): string {
-    return `${Math.round((applicants / this.maxJobApplicants()) * 100)}%`;
   }
 }

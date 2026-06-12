@@ -73,6 +73,19 @@ erDiagram
         string description
     }
 
+    COMPANY_INVITATIONS {
+        bigint id PK
+        bigint company_id FK
+        string email
+        bigint role_id FK
+        string token UK
+        string status
+        bigint invited_by FK
+        bigint accepted_user_id FK
+        datetime expires_at
+        datetime created_at
+    }
+
     CANDIDATE_PROFILES {
         bigint id PK
         bigint user_id FK
@@ -394,6 +407,8 @@ erDiagram
     COMPANIES ||--o{ COMPANY_LOCATIONS : owns
     COMPANIES ||--o{ COMPANY_VERIFICATIONS : verified
     COMPANIES ||--o{ DEPARTMENTS : has
+    COMPANIES ||--o{ COMPANY_INVITATIONS : invites
+    ROLES ||--o{ COMPANY_INVITATIONS : "invited as"
 
     USERS ||--|| CANDIDATE_PROFILES : owns
 

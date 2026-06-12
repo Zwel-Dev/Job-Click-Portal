@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Invite team member</h2>
+
+<mat-dialog-content>
+  <p class="im__intro">They'll get an email invitation to join your company on Job Click.</p>
+
+  <form class="im__form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="im__field">
+      <mat-label>Email address</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="name@company.com" />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <mat-error>Enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="im__field">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        @for (role of roleOptions; track role) {
+          <mat-option [value]="role">{{ roleLabel(role) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Send invite</button>
+</mat-dialog-actions>

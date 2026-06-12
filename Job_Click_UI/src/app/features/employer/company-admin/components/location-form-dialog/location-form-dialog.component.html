@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content>
+  <form class="loc-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="loc-form__row">
+      <mat-form-field appearance="outline">
+        <mat-label>City</mat-label>
+        <input matInput formControlName="city" maxlength="80" />
+        @if (form.controls.city.touched && form.controls.city.invalid) {
+          <mat-error>City is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>State / Region</mat-label>
+        <input matInput formControlName="state" maxlength="80" />
+      </mat-form-field>
+    </div>
+
+    <div class="loc-form__row">
+      <mat-form-field appearance="outline">
+        <mat-label>Country</mat-label>
+        <input matInput formControlName="country" maxlength="80" />
+        @if (form.controls.country.touched && form.controls.country.invalid) {
+          <mat-error>Country is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Postal code</mat-label>
+        <input matInput formControlName="postalCode" maxlength="20" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="loc-form__full">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address" maxlength="160" placeholder="Street, building, township" />
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isHeadOffice" class="loc-form__toggle">
+      Head office
+    </mat-slide-toggle>
+    @if (data.lockHeadOffice) {
+      <p class="loc-form__hint">This is your only location, so it stays the head office.</p>
+    } @else {
+      <p class="loc-form__hint">Setting this clears the head-office flag on other locations.</p>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Save</button>
+</mat-dialog-actions>

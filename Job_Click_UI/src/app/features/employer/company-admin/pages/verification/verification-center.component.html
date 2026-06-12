@@ -1,0 +1,130 @@
+<a class="vc__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+<app-page-header title="Verification" subtitle="Verify your company to earn a trusted badge." />
+
+@if (verification(); as verification) {
+  <section class="vc__status-card">
+    <div class="vc__status-head">
+      <app-status-badge [label]="statusMeta[verification.status].label" [tone]="statusMeta[verification.status].tone" />
+      @if (verification.submittedAt) {
+        <span class="vc__submitted">Submitted {{ formatDate(verification.submittedAt) }}</span>
+      }
+    </div>
+
+    <ol class="vc__timeline">
+      @for (step of steps(); track step.label) {
+        <li class="vc-step" [attr.data-state]="step.state">
+          <span class="vc-step__dot">
+            @if (step.state === 'done') { <mat-icon>check</mat-icon> }
+            @else if (step.state === 'rejected') { <mat-icon>close</mat-icon> }
+          </span>
+          <span class="vc-step__label">{{ step.label }}</span>
+        </li>
+      }
+    </ol>
+  </section>
+
+  @if (verification.status === VerificationStatus.Pending) {
+    <app-empty-state
+      icon="hourglass_top"
+      title="Your documents are under review"
+      message="We'll update this page once the review is complete." />
+  } @else if (verification.status === VerificationStatus.Verified) {
+    <section class="vc__card vc__verified">
+      <mat-icon class="vc__verified-icon" aria-hidden="true">verified</mat-icon>
+      <div>
+        <h2 class="vc__card-title">Your company is verified</h2>
+        <p class="vc__verified-text">Candidates will see a verified badge on your company and jobs.</p>
+      </div>
+    </section>
+  } @else {
+    @if (verification.status === VerificationStatus.Rejected && verification.rejectionReason) {
+      <div class="vc__rejected">
+        <mat-icon aria-hidden="true">error_outline</mat-icon>
+        <div>
+          <strong>Verification was rejected.</strong>
+          <p>{{ verification.rejectionReason }}</p>
+        </div>
+      </div>
+    }
+
+    <section class="vc__card">
+      <h2 class="vc__card-title">Submit for verification</h2>
+      <form class="vc__form" [formGroup]="form" (ngSubmit)="submit()">
+        <div class="vc__row">
+          <mat-form-field appearance="outline">
+            <mat-label>Business registration no.</mat-label>
+            <input matInput formControlName="registrationNo" maxlength="60" />
+            @if (form.controls.registrationNo.touched && form.controls.registrationNo.invalid) {
+              <mat-error>Registration number is required.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tax registration no. (optional)</mat-label>
+            <input matInput formControlName="taxNo" maxlength="60" />
+          </mat-form-field>
+        </div>
+
+        <div class="vc__row">
+          <mat-form-field appearance="outline">
+            <mat-label>Official company email</mat-label>
+            <input matInput type="email" formControlName="officialEmail" placeholder="admin@yourcompany.com" />
+            @if (form.controls.officialEmail.touched && form.controls.officialEmail.invalid) {
+              <mat-error>Enter a valid company email.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Website (optional)</mat-label>
+            <input matInput formControlName="website" placeholder="https://yourcompany.com" />
+          </mat-form-field>
+        </div>
+
+        <div class="vc__docs">
+          <div class="vc__doc">
+            <span class="vc__doc-label">Business registration document <span class="vc__req">*</span></span>
+            @if (businessDoc(); as doc) {
+              <div class="vc__doc-chip">
+                <mat-icon aria-hidden="true">description</mat-icon>
+                <span>{{ doc.fileName }}</span>
+                <button mat-icon-button type="button" (click)="businessDoc.set(null)" aria-label="Remove">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            } @else {
+              <app-file-upload accept=".pdf,.png,.jpg,.jpeg" [maxSizeMb]="5" hint="PDF or image, up to 5 MB" (fileSelected)="onBusinessDoc($event)" />
+            }
+          </div>
+
+          <div class="vc__doc">
+            <span class="vc__doc-label">Tax registration document (optional)</span>
+            @if (taxDoc(); as doc) {
+              <div class="vc__doc-chip">
+                <mat-icon aria-hidden="true">description</mat-icon>
+                <span>{{ doc.fileName }}</span>
+                <button mat-icon-button type="button" (click)="taxDoc.set(null)" aria-label="Remove">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            } @else {
+              <app-file-upload accept=".pdf,.png,.jpg,.jpeg" [maxSizeMb]="5" hint="PDF or image, up to 5 MB" (fileSelected)="onTaxDoc($event)" />
+            }
+          </div>
+        </div>
+
+        <div class="vc__actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="!canSubmit">
+            {{ verification.status === VerificationStatus.Rejected ? 'Resubmit' : 'Submit for verification' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+} @else if (loading()) {
+  <app-skeleton height="320px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

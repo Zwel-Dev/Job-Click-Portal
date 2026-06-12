@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.ci__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jc-space-1);
+  margin-bottom: var(--jc-space-3);
+  color: var(--jc-text-secondary);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.ci__kpis {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--jc-space-3);
+}
+
+@media (max-width: 960px) {
+  .ci__kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

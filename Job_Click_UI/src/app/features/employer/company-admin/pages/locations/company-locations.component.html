@@ -1,0 +1,61 @@
+<a class="cl__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+<app-page-header title="Locations" subtitle="Offices and sites for your company.">
+  <button actions mat-flat-button color="primary" type="button" (click)="add()">
+    <mat-icon>add</mat-icon> Add location
+  </button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="cl__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="84px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (locations().length) {
+  <div class="cl__list">
+    @for (location of locations(); track location.id) {
+      <article class="loc-row">
+        <mat-icon class="loc-row__icon" aria-hidden="true">{{ location.isHeadOffice ? 'apartment' : 'place' }}</mat-icon>
+        <div class="loc-row__main">
+          <div class="loc-row__head">
+            <span class="loc-row__city">{{ location.city }}, {{ location.country }}</span>
+            @if (location.isHeadOffice) {
+              <app-status-badge label="Head office" tone="success" />
+            }
+          </div>
+          <div class="loc-row__meta">
+            @if (location.address) { <span>{{ location.address }}</span> }
+            @if (location.state) { <span>{{ location.state }}</span> }
+            @if (location.postalCode) { <span>{{ location.postalCode }}</span> }
+          </div>
+        </div>
+
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Location actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item type="button" (click)="edit(location)">
+            <mat-icon>edit</mat-icon><span>Edit</span>
+          </button>
+          @if (!location.isHeadOffice) {
+            <button mat-menu-item type="button" (click)="setHeadOffice(location)">
+              <mat-icon>apartment</mat-icon><span>Set as head office</span>
+            </button>
+          }
+          <button mat-menu-item type="button" (click)="remove(location)">
+            <mat-icon>delete_outline</mat-icon><span>Delete</span>
+          </button>
+        </mat-menu>
+      </article>
+    }
+  </div>
+} @else {
+  <app-empty-state icon="place" title="No locations yet" message="Add your first office or site.">
+    <button mat-flat-button color="primary" type="button" (click)="add()">Add location</button>
+  </app-empty-state>
+}

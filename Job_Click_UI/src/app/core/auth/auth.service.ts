@@ -4,7 +4,11 @@ import { delay, tap } from 'rxjs/operators';
 import { environment } from '@env';
 import { ApiBaseService } from '@core/http/api-base.service';
 import { API } from '@core/constants/api-endpoints';
-import { ApiError } from '@core/models/common.model';
+import { ApiError, Id } from '@core/models/common.model';
+import { User } from '@core/models/user.model';
+import { RoleCode } from '@core/enums/role-code.enum';
+import { UserStatus } from '@core/enums/user-status.enum';
+import { STORAGE_KEYS } from '@core/constants/storage-keys';
 import {
   AuthSession,
   ForgotPasswordRequest,
@@ -96,6 +100,61 @@ export class AuthService {
       : throwError(() => this.error(422, 'INVALID_OTP', 'The verification code is invalid or expired.')).pipe(
           delay(this.mockLatencyMs),
         );
+  }
+
+  /** Adds a company membership (role) to the signed-in user — invite accept, existing account. */
+  addMembership(role: RoleCode, companyId: Id, companyName: string): void {
+    const user = this.currentUser.user();
+    if (!user) {
+      return;
+    }
+    const roles = user.roles.includes(role) ? user.roles : [...user.roles, role];
+    this.persistUser({ ...user, roles, companyId, companyName });
+  }
+
+  /** Registers a brand-new user from an invitation and signs them in (mock). */
+  acceptInviteAsNewUser(input: {
+    email: string;
+    fullName: string;
+    role: RoleCode;
+    companyId: Id;
+    companyName: string;
+  }): Observable<AuthSession> {
+    const id = this.nextMockUserId++;
+    const user: User = {
+      id,
+      uuid: `invited-${id}`,
+      email: input.email,
+      fullName: input.fullName,
+      status: UserStatus.Active,
+      emailVerified: true,
+      phoneVerified: false,
+      roles: [input.role],
+      companyId: input.companyId,
+      companyName: input.companyName,
+    };
+    const session: AuthSession = {
+      token: `mock.invited.${id}`,
+      refreshToken: `mock-refresh.${id}`,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      user,
+    };
+    return of(session).pipe(
+      delay(this.mockLatencyMs),
+      tap((created) => {
+        this.tokenStorage.save(created, false);
+        this.currentUser.setUser(created.user);
+      }),
+    );
+  }
+
+  private persistUser(user: User): void {
+    const session = this.tokenStorage.session;
+    if (session) {
+      const remember = localStorage.getItem(STORAGE_KEYS.authSession) !== null;
+      this.tokenStorage.save({ ...session, user }, remember);
+    }
+    this.currentUser.setUser(user);
   }
 
   // --- Mock backend ---------------------------------------------------------

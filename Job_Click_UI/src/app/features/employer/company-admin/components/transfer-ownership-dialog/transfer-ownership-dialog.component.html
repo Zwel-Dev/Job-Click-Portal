@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Transfer ownership</h2>
+
+<mat-dialog-content>
+  <div class="to__warning">
+    <mat-icon aria-hidden="true">warning_amber</mat-icon>
+    <div>
+      <p><strong>{{ data.member.fullName }}</strong> will become the <strong>Company Admin</strong> with full control of the company, team, and billing.</p>
+      <p class="to__demote">You'll be changed to a <strong>Recruitment Manager</strong>. This can't be undone by you afterwards.</p>
+    </div>
+  </div>
+
+  <p class="to__prompt">Type <strong>{{ keyword }}</strong> to confirm.</p>
+  <mat-form-field appearance="outline" class="to__field">
+    <mat-label>Confirmation</mat-label>
+    <input matInput [formControl]="confirmText" autocomplete="off" />
+    @if (confirmed() && confirmText.value.trim().toUpperCase() !== keyword) {
+      <mat-error>Type {{ keyword }} exactly to confirm.</mat-error>
+    }
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="warn" type="button" (click)="confirm()">Transfer ownership</button>
+</mat-dialog-actions>

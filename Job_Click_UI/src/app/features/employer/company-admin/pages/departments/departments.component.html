@@ -1,0 +1,51 @@
+<a class="dp__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+<app-page-header title="Departments" subtitle="Org units that own jobs. Used in the job wizard.">
+  <button actions mat-flat-button color="primary" type="button" (click)="add()">
+    <mat-icon>add</mat-icon> Add department
+  </button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="dp__list">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="76px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+} @else if (departments().length) {
+  <div class="dp__list">
+    @for (department of departments(); track department.id) {
+      <article class="dept-row">
+        <mat-icon class="dept-row__icon" aria-hidden="true">account_tree</mat-icon>
+        <div class="dept-row__main">
+          <span class="dept-row__name">{{ department.name }}</span>
+          @if (department.description) {
+            <span class="dept-row__desc">{{ department.description }}</span>
+          }
+        </div>
+        <span class="dept-row__count" [matTooltip]="department.jobCount + ' open job(s)'">
+          <mat-icon aria-hidden="true">work_outline</mat-icon> {{ department.jobCount }}
+        </span>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Department actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item type="button" (click)="edit(department)">
+            <mat-icon>edit</mat-icon><span>Edit</span>
+          </button>
+          <button mat-menu-item type="button" [disabled]="department.jobCount > 0" (click)="remove(department)">
+            <mat-icon>delete_outline</mat-icon><span>Delete</span>
+          </button>
+        </mat-menu>
+      </article>
+    }
+  </div>
+} @else {
+  <app-empty-state icon="account_tree" title="No departments yet" message="Add your first department to organise jobs.">
+    <button mat-flat-button color="primary" type="button" (click)="add()">Add department</button>
+  </app-empty-state>
+}

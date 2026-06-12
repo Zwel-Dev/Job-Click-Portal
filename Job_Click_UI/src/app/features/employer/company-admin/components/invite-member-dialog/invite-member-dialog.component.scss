@@ -1,0 +1,23 @@
+.im__intro {
+  margin: 0 0 var(--jc-space-3);
+  color: var(--jc-text-secondary);
+}
+
+.im__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.im__field {
+  width: 100%;
+}
+
+mat-dialog-content {
+  min-width: 380px;
+}
+
+@media (max-width: 480px) {
+  mat-dialog-content {
+    min-width: 0;
+  }
+}

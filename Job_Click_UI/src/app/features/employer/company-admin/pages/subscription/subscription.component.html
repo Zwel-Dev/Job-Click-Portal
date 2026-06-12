@@ -1,0 +1,82 @@
+<a class="sub__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+<app-page-header title="Subscription" subtitle="Your plan, usage, and upgrade options." />
+
+@if (subscription(); as subscription) {
+  <div class="sub__grid">
+    <section class="sub__card sub__current">
+      <div class="sub__current-head">
+        <div>
+          <span class="sub__plan-name">{{ subscription.plan.name }}</span>
+          <app-status-badge [label]="statusMeta[subscription.status].label" [tone]="statusMeta[subscription.status].tone" />
+        </div>
+        <div class="sub__price">
+          <span class="sub__price-value">${{ subscription.plan.price }}</span>
+          <span class="sub__price-unit">/ month</span>
+        </div>
+      </div>
+      @if (subscription.endDate) {
+        <p class="sub__renews">Renews {{ formatDate(subscription.endDate) }}</p>
+      }
+      <ul class="sub__features">
+        @for (feature of subscription.plan.features; track feature) {
+          <li><mat-icon aria-hidden="true">check</mat-icon>{{ feature }}</li>
+        }
+      </ul>
+    </section>
+
+    <section class="sub__card">
+      <h2 class="sub__card-title">Usage this period</h2>
+      @if (usage(); as usage) {
+        <app-plan-usage-card [usage]="usage" />
+      }
+    </section>
+  </div>
+
+  <h2 class="sub__plans-title">Plans</h2>
+  <div class="sub__plans">
+    @for (plan of plans(); track plan.id) {
+      <article class="plan-card" [class.plan-card--current]="isCurrent(plan)">
+        <header class="plan-card__head">
+          <span class="plan-card__name">{{ plan.name }}</span>
+          @if (isCurrent(plan)) { <span class="plan-card__tag">Current</span> }
+        </header>
+        <div class="plan-card__price">
+          <span class="plan-card__price-value">${{ plan.price }}</span>
+          <span class="plan-card__price-unit">/ mo</span>
+        </div>
+        <ul class="plan-card__specs">
+          <li><strong>{{ limitLabel(plan.maxJobs) }}</strong> active jobs</li>
+          <li><strong>{{ limitLabel(plan.maxRecruiters) }}</strong> recruiters</li>
+          <li [class.plan-card__spec--off]="!plan.candidateSearch">
+            <mat-icon aria-hidden="true">{{ plan.candidateSearch ? 'check' : 'remove' }}</mat-icon>
+            Candidate search
+          </li>
+        </ul>
+        <ul class="plan-card__features">
+          @for (feature of plan.features; track feature) {
+            <li>{{ feature }}</li>
+          }
+        </ul>
+        @if (isCurrent(plan)) {
+          <button mat-stroked-button type="button" disabled>Current plan</button>
+        } @else {
+          <button mat-flat-button color="primary" type="button" (click)="choosePlan(plan)">
+            {{ isUpgrade(plan) ? 'Upgrade' : 'Switch' }}
+          </button>
+        }
+      </article>
+    }
+  </div>
+
+  <p class="sub__note">
+    <mat-icon aria-hidden="true">info</mat-icon>
+    Checkout &amp; billing management arrive in a later release.
+  </p>
+} @else if (loading()) {
+  <app-skeleton height="360px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

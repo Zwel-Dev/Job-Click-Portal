@@ -1,0 +1,17 @@
+<a class="ci__back" routerLink="/employer/company">
+  <mat-icon>arrow_back</mat-icon> Company
+</a>
+
+@if (analytics(); as data) {
+  <app-page-header title="Company insights" [subtitle]="'Company-wide hiring performance · ' + data.periodLabel" />
+  <app-analytics-view [data]="data" />
+} @else if (loading()) {
+  <app-page-header title="Company insights" subtitle="Company-wide hiring performance" />
+  <div class="ci__kpis">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="load()" />
+}

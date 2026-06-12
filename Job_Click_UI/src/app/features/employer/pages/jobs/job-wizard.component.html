@@ -25,7 +25,7 @@
             <mat-label>Department</mat-label>
             <mat-select formControlName="department">
               <mat-option [value]="''">None</mat-option>
-              @for (dept of departments; track dept) {
+              @for (dept of departments(); track dept) {
                 <mat-option [value]="dept">{{ dept }}</mat-option>
               }
             </mat-select>

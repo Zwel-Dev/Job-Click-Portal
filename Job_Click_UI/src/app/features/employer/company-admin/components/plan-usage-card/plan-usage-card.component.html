@@ -1,0 +1,22 @@
+<ul class="usage">
+  @for (row of rows(); track row.label) {
+    <li class="usage-row">
+      <div class="usage-row__head">
+        <span class="usage-row__label">{{ row.label }}</span>
+        <span class="usage-row__count" [class.usage-row__count--full]="row.full">{{ row.used }} / {{ row.limit }}</span>
+      </div>
+      <span class="usage-row__bar">
+        <span
+          class="usage-row__fill"
+          [class.usage-row__fill--near]="row.near"
+          [class.usage-row__fill--full]="row.full"
+          [style.width]="barWidth(row)"></span>
+      </span>
+      @if (row.full) {
+        <span class="usage-row__note">Limit reached — upgrade to add more.</span>
+      } @else if (row.near) {
+        <span class="usage-row__note">{{ row.limit - row.used }} left on your plan.</span>
+      }
+    </li>
+  }
+</ul>

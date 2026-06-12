@@ -1,4 +1,4 @@
-import type { AppEnvironment } from './environment';
+import type { AppEnvironment } from './app-environment';
 
 // Optional "dev API" target (not wired by default). Use by adding a `development`
 // fileReplacement in angular.json if you want to run against a live dev backend.
