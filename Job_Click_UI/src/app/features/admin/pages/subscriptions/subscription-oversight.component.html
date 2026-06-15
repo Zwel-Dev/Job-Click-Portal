@@ -1,0 +1,123 @@
+<app-page-header title="Subscriptions" subtitle="Oversee company plans, billing status, and invoices across the platform." />
+
+@if (summary(); as kpis) {
+  <div class="so__kpis">
+    <app-kpi-card icon="payments" [value]="formatMoney(kpis.mrr, kpis.currency)" label="Monthly recurring" hint="Active plans" />
+    <app-kpi-card icon="check_circle" [value]="kpis.activeSubscriptions" label="Active subscriptions" />
+    <app-kpi-card icon="error_outline" [value]="kpis.pastDue" label="Past due" hint="Need attention" />
+    <app-kpi-card icon="workspace_premium" [value]="kpis.paidCompanies" label="Paid companies" hint="On a paid plan" />
+  </div>
+}
+
+<div class="so__bar">
+  <mat-form-field appearance="outline" class="so__search">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="keywordControl" placeholder="Company name or code" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="so__filter">
+    <mat-label>Plan</mat-label>
+    <mat-select [value]="plan()" (selectionChange)="onPlanChange($event.value)">
+      <mat-option [value]="null">All plans</mat-option>
+      @for (option of planOptions; track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="so__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+      <mat-option [value]="null">All statuses</mat-option>
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (hasFilters()) {
+    <button mat-button type="button" class="so__clear" (click)="clearFilters()">
+      <mat-icon>close</mat-icon> Clear
+    </button>
+  }
+</div>
+
+@if (result(); as res) {
+  @if (res.data.length) {
+    <p class="so__count">{{ res.totalItems }} subscription{{ res.totalItems === 1 ? '' : 's' }}</p>
+
+    <div class="so__table" role="table">
+      <div class="so__head" role="row">
+        <span role="columnheader">Company</span>
+        <span role="columnheader">Plan</span>
+        <span role="columnheader">Status</span>
+        <span role="columnheader">Monthly</span>
+        <span role="columnheader">Started</span>
+        <span role="columnheader">Renews</span>
+        <span role="columnheader" class="so__col-actions">Invoices</span>
+      </div>
+
+      @for (sub of res.data; track sub.id) {
+        <div class="so__row" role="row">
+          <a class="so__company" [routerLink]="['/admin/companies', sub.companyId]">
+            <span class="so__logo" aria-hidden="true">{{ sub.companyName.charAt(0) }}</span>
+            <span class="so__company-id">
+              <span class="so__company-name">{{ sub.companyName }}</span>
+              <span class="so__company-code">{{ sub.companyCode }}</span>
+            </span>
+          </a>
+
+          <div class="so__cell" role="cell">
+            <span class="so__cell-label">Plan</span>
+            <span class="so__plan">{{ sub.planName }}</span>
+          </div>
+
+          <div class="so__cell" role="cell">
+            <span class="so__cell-label">Status</span>
+            <app-status-badge [label]="statusMeta[sub.status].label" [tone]="statusMeta[sub.status].tone" />
+          </div>
+
+          <div class="so__cell" role="cell">
+            <span class="so__cell-label">Monthly</span>
+            <span class="so__muted">{{ sub.price > 0 ? formatMoney(sub.price, sub.currency) : 'Free' }}</span>
+          </div>
+
+          <div class="so__cell" role="cell">
+            <span class="so__cell-label">Started</span>
+            <span class="so__muted">{{ formatDate(sub.startDate) }}</span>
+          </div>
+
+          <div class="so__cell" role="cell">
+            <span class="so__cell-label">Renews</span>
+            <span class="so__muted">{{ sub.endDate ? formatDate(sub.endDate) : '—' }}</span>
+          </div>
+
+          <div class="so__cell so__col-actions" role="cell">
+            <button mat-stroked-button type="button" (click)="viewPayments(sub)">
+              <mat-icon>receipt_long</mat-icon> Invoices
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="so__pagination">
+      <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+    </div>
+  } @else {
+    <app-empty-state
+      icon="receipt_long"
+      title="No subscriptions found"
+      [message]="hasFilters() ? 'No subscriptions match these filters. Try broadening your search.' : 'There are no subscriptions yet.'"
+    />
+  }
+} @else if (loading()) {
+  <div class="so__skeletons">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="64px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

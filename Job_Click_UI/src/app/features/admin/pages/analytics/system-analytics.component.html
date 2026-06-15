@@ -1,0 +1,88 @@
+<app-page-header title="System analytics" subtitle="Platform-wide growth, hiring funnel, and plan health." />
+
+@if (analytics(); as data) {
+  <div class="sa__kpis">
+    <app-kpi-card icon="group_add" [value]="data.kpis.newUsers" label="New users" [hint]="data.periodLabel" />
+    <app-kpi-card icon="domain_add" [value]="data.kpis.newCompanies" label="New companies" [hint]="data.periodLabel" />
+    <app-kpi-card icon="work_outline" [value]="data.kpis.jobsPosted" label="Jobs posted" [hint]="data.periodLabel" />
+    <app-kpi-card icon="mail_outline" [value]="data.kpis.applications" label="Applications" [hint]="data.periodLabel" />
+  </div>
+
+  <div class="sa__trends">
+    @for (chart of trendCharts(); track chart.title) {
+      <section class="sa__card">
+        <header class="sa__card-head">
+          <h2 class="sa__card-title">
+            <mat-icon aria-hidden="true">{{ chart.icon }}</mat-icon>
+            {{ chart.title }}
+          </h2>
+          <span class="sa__card-note">{{ data.periodLabel }}</span>
+        </header>
+        <div class="cols" role="img" [attr.aria-label]="chart.title + ' per month'">
+          @for (point of chart.series; track point.label) {
+            <div class="col">
+              <span class="col__val">{{ point.value }}</span>
+              <div class="col__track">
+                <div class="col__bar" [style.height]="barHeight(point.value, chart.max)"></div>
+              </div>
+              <span class="col__label">{{ point.label }}</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <div class="sa__grid">
+    <section class="sa__card">
+      <header class="sa__card-head">
+        <h2 class="sa__card-title">Hiring funnel</h2>
+        <span class="sa__card-note">Applied → Hired</span>
+      </header>
+      <ul class="funnel">
+        @for (stage of data.funnel; track stage.label) {
+          <li class="funnel-row">
+            <span class="funnel-row__label">{{ stage.label }}</span>
+            <span class="funnel-row__bar">
+              <span class="funnel-row__fill" [style.width]="funnelWidth(stage.value)"></span>
+            </span>
+            <span class="funnel-row__count">{{ stage.value }}</span>
+            <span class="funnel-row__pct">{{ funnelPct(stage.value) }}%</span>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="sa__card">
+      <header class="sa__card-head">
+        <h2 class="sa__card-title">Plan distribution</h2>
+        <span class="sa__card-note">Companies</span>
+      </header>
+      <ul class="plans">
+        @for (slice of data.planDistribution; track slice.label) {
+          <li class="plan-row">
+            <span class="plan-row__label">{{ slice.label }}</span>
+            <span class="plan-row__bar">
+              <span class="plan-row__fill" [style.width]="planWidth(slice.value)"></span>
+            </span>
+            <span class="plan-row__count">{{ slice.value }}</span>
+            <span class="plan-row__pct">{{ planPct(slice.value) }}%</span>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+} @else if (loading()) {
+  <div class="sa__kpis">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+  <div class="sa__trends">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="220px" radius="var(--jc-radius-lg)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

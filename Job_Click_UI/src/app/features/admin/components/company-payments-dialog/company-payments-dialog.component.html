@@ -1,0 +1,47 @@
+<div class="cpd">
+  <header class="cpd__head">
+    <div class="cpd__id">
+      <h2 class="cpd__title" mat-dialog-title>Invoices</h2>
+      <span class="cpd__company">{{ companyName }}</span>
+    </div>
+    <button mat-icon-button type="button" class="cpd__close" (click)="close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <mat-dialog-content class="cpd__body">
+    @if (!loading() && !error()) {
+      @if (payments().length) {
+        <ul class="cpd__list">
+          @for (payment of payments(); track payment.id) {
+            <li class="cpd-row">
+              <div class="cpd-row__main">
+                <span class="cpd-row__invoice">{{ payment.invoiceNo }}</span>
+                <span class="cpd-row__sub">{{ payment.planName }} · {{ payment.method }}</span>
+              </div>
+              <div class="cpd-row__side">
+                <span class="cpd-row__amount">{{ formatMoney(payment.amount, payment.currency) }}</span>
+                <span class="cpd-row__date">{{ formatDate(payment.paidAt) }}</span>
+              </div>
+              <app-status-badge [label]="statusMeta[payment.status].label" [tone]="statusMeta[payment.status].tone" />
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="receipt_long" title="No invoices" message="This company has no payment history yet." />
+      }
+    } @else if (loading()) {
+      <div class="cpd__skeletons">
+        @for (item of skeletons; track item) {
+          <app-skeleton height="56px" radius="var(--jc-radius-md)" />
+        }
+      </div>
+    } @else if (error()) {
+      <app-error-state [message]="error()!" (retry)="reload()" />
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" (click)="close()">Close</button>
+  </mat-dialog-actions>
+</div>

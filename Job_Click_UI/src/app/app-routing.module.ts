@@ -4,6 +4,7 @@ import { authGuard } from '@core/auth/guards/auth.guard';
 import { guestGuard } from '@core/auth/guards/guest.guard';
 import { candidateGuard } from '@core/auth/guards/candidate.guard';
 import { employerGuard } from '@core/auth/guards/employer.guard';
+import { adminGuard } from '@core/auth/guards/admin.guard';
 import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
@@ -27,6 +28,11 @@ const routes: Routes = [
     path: 'employer',
     canActivate: [authGuard, employerGuard],
     loadChildren: () => import('@features/employer/employer.module').then((m) => m.EmployerModule),
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard, adminGuard],
+    loadChildren: () => import('@features/admin/admin.module').then((m) => m.AdminModule),
   },
   {
     path: 'welcome',

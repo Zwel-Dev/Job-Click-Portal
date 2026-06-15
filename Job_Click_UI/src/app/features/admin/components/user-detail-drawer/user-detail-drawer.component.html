@@ -1,0 +1,102 @@
+<div class="udd" [class.udd--busy]="busy()">
+  <header class="udd__head">
+    <div class="udd__avatar" aria-hidden="true">{{ initial() }}</div>
+    <div class="udd__id">
+      <h2 class="udd__name" mat-dialog-title>{{ user().fullName }}</h2>
+      <span class="udd__email">{{ user().email }}</span>
+    </div>
+    <button mat-icon-button type="button" class="udd__close" (click)="close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <mat-dialog-content class="udd__body">
+    <div class="udd__badges">
+      <app-status-badge [label]="statusMeta[user().status].label" [tone]="statusMeta[user().status].tone" />
+      @if (isSelf()) {
+        <span class="udd__you">You</span>
+      }
+    </div>
+
+    <section class="udd__section">
+      <h3 class="udd__section-title">Roles &amp; membership</h3>
+      <div class="udd__chips">
+        @for (role of user().roles; track role) {
+          <span class="udd__chip">{{ roleLabel(role) }}</span>
+        }
+      </div>
+      <dl class="udd__facts">
+        <div class="udd__fact">
+          <dt>Company</dt>
+          <dd>{{ user().companyName || 'Platform-scoped (no company)' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="udd__section">
+      <h3 class="udd__section-title">Contact</h3>
+      <dl class="udd__facts">
+        <div class="udd__fact">
+          <dt>Email</dt>
+          <dd>
+            {{ user().email }}
+            <mat-icon class="udd__verify" [class.udd__verify--ok]="user().emailVerified" aria-hidden="true">
+              {{ user().emailVerified ? 'verified' : 'error_outline' }}
+            </mat-icon>
+          </dd>
+        </div>
+        <div class="udd__fact">
+          <dt>Phone</dt>
+          <dd>
+            {{ user().phone || '—' }}
+            @if (user().phone) {
+              <mat-icon class="udd__verify" [class.udd__verify--ok]="user().phoneVerified" aria-hidden="true">
+                {{ user().phoneVerified ? 'verified' : 'error_outline' }}
+              </mat-icon>
+            }
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="udd__section">
+      <h3 class="udd__section-title">Activity</h3>
+      <dl class="udd__facts">
+        <div class="udd__fact">
+          <dt>Joined</dt>
+          <dd>{{ formatDate(user().createdAt) }}</dd>
+        </div>
+        <div class="udd__fact">
+          <dt>Last login</dt>
+          <dd>{{ user().lastLoginAt ? formatDate(user().lastLoginAt!) : 'Never signed in' }}</dd>
+        </div>
+        <div class="udd__fact">
+          <dt>User ID</dt>
+          <dd class="udd__mono">{{ user().uuid }}</dd>
+        </div>
+      </dl>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="udd__actions">
+    <button mat-stroked-button type="button" [disabled]="busy()" (click)="resetPassword()">
+      <mat-icon>lock_reset</mat-icon> Reset password
+    </button>
+    @if (isSuspended()) {
+      <button mat-flat-button color="primary" type="button" [disabled]="busy()" (click)="toggleStatus()">
+        <mat-icon>check_circle</mat-icon> Reactivate
+      </button>
+    } @else {
+      <button
+        mat-flat-button
+        color="warn"
+        type="button"
+        [disabled]="busy() || isSelf()"
+        [matTooltip]="isSelf() ? 'You cannot suspend your own account.' : ''"
+        (click)="toggleStatus()"
+      >
+        <mat-icon>block</mat-icon> Suspend
+      </button>
+    }
+  </mat-dialog-actions>
+</div>

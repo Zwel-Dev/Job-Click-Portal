@@ -1,0 +1,37 @@
+<article class="fsc" [class.fsc--resolved]="signal().resolved">
+  <header class="fsc__head">
+    <span class="fsc__icon" aria-hidden="true"><mat-icon>{{ typeMeta().icon }}</mat-icon></span>
+    <span class="fsc__type">{{ typeMeta().label }}</span>
+    <span class="fsc__spacer"></span>
+    <app-status-badge [label]="severityMeta().label" [tone]="severityMeta().tone" />
+  </header>
+
+  <div class="fsc__body">
+    <span class="fsc__entity">{{ signal().entityLabel }}</span>
+    <p class="fsc__detail">{{ signal().detail }}</p>
+  </div>
+
+  <footer class="fsc__foot">
+    <span class="fsc__date">{{ formatDate(signal().detectedAt) }}</span>
+    @if (entityLink(); as link) {
+      <a class="fsc__link" [routerLink]="link"><mat-icon>open_in_new</mat-icon> View</a>
+    }
+    <span class="fsc__spacer"></span>
+
+    @if (signal().resolved) {
+      <span class="fsc__resolved">
+        <mat-icon aria-hidden="true">check_circle</mat-icon>
+        Resolved@if (signal().resolvedBy) { · {{ signal().resolvedBy }} }
+      </span>
+    } @else {
+      @if (actionKind()) {
+        <button mat-stroked-button color="warn" type="button" [disabled]="busy()" (click)="onAct()">
+          <mat-icon>{{ actionIcon() }}</mat-icon> {{ actionLabel() }}
+        </button>
+      }
+      <button mat-flat-button color="primary" type="button" [disabled]="busy()" (click)="onResolve()">
+        <mat-icon>done</mat-icon> Resolve
+      </button>
+    }
+  </footer>
+</article>

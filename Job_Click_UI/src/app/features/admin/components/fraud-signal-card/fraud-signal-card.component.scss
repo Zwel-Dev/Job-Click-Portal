@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.fsc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-3);
+  height: 100%;
+  padding: var(--jc-space-4);
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  box-shadow: var(--jc-shadow-xs);
+
+  &--resolved {
+    opacity: 0.7;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: var(--jc-space-2);
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--jc-radius-sm);
+    background: var(--jc-surface-muted);
+    color: var(--jc-text-secondary);
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__type {
+    font-weight: 700;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--jc-text-secondary);
+  }
+
+  &__spacer {
+    flex: 1 1 auto;
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__entity {
+    display: block;
+    font-weight: 600;
+    color: var(--jc-text);
+    word-break: break-word;
+  }
+
+  &__detail {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    color: var(--jc-text-secondary);
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--jc-space-2);
+  }
+
+  &__date {
+    font-size: 0.75rem;
+    color: var(--jc-text-muted);
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--jc-primary-700);
+    text-decoration: none;
+
+    mat-icon {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__resolved {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--jc-success);
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__foot button mat-icon {
+    margin-right: 4px;
+  }
+}

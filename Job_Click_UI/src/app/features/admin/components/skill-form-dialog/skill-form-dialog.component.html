@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit skill' : 'Add skill' }}</h2>
+
+<mat-dialog-content>
+  <form class="sfd__form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="sfd__field">
+      <mat-label>Skill name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. Kubernetes" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <mat-error>A skill name is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sfd__field">
+      <mat-label>Category</mat-label>
+      <input matInput formControlName="category" placeholder="e.g. DevOps" />
+      @if (form.controls.category.touched && form.controls.category.invalid) {
+        <mat-error>A category is required.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">
+    {{ isEdit ? 'Save' : 'Add skill' }}
+  </button>
+</mat-dialog-actions>

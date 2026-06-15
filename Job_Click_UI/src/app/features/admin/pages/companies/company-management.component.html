@@ -1,0 +1,136 @@
+<app-page-header title="Companies" subtitle="Inspect employer accounts, verification, and platform standing." />
+
+<div class="cm__bar">
+  <mat-form-field appearance="outline" class="cm__search">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="keywordControl" placeholder="Name, code, or industry" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="cm__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+      <mat-option [value]="null">All statuses</mat-option>
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="cm__filter">
+    <mat-label>Verification</mat-label>
+    <mat-select [value]="verified()" (selectionChange)="onVerifiedChange($event.value)">
+      @for (option of verifiedOptions; track option.label) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (hasFilters()) {
+    <button mat-button type="button" class="cm__clear" (click)="clearFilters()">
+      <mat-icon>close</mat-icon> Clear
+    </button>
+  }
+</div>
+
+@if (result(); as res) {
+  @if (res.data.length) {
+    <p class="cm__count">{{ res.totalItems }} compan{{ res.totalItems === 1 ? 'y' : 'ies' }}</p>
+
+    <div class="cm__table" role="table">
+      <div class="cm__head" role="row">
+        <span role="columnheader">Company</span>
+        <span role="columnheader">Status</span>
+        <span role="columnheader">Verification</span>
+        <span role="columnheader">Industry</span>
+        <span role="columnheader">Plan</span>
+        <span role="columnheader">Jobs · Members</span>
+        <span role="columnheader">Created</span>
+        <span role="columnheader" class="cm__col-actions">Actions</span>
+      </div>
+
+      @for (company of res.data; track company.id) {
+        <div class="cm__row" role="row">
+          <a class="cm__company" [routerLink]="['/admin/companies', company.id]">
+            <span class="cm__logo" aria-hidden="true">{{ company.name.charAt(0) }}</span>
+            <span class="cm__company-id">
+              <span class="cm__company-name">{{ company.name }}</span>
+              <span class="cm__company-code">{{ company.companyCode }}</span>
+            </span>
+          </a>
+
+          <div class="cm__cell" role="cell">
+            <span class="cm__cell-label">Status</span>
+            <app-status-badge [label]="statusMeta[company.status].label" [tone]="statusMeta[company.status].tone" />
+          </div>
+
+          <div class="cm__cell" role="cell">
+            <span class="cm__cell-label">Verification</span>
+            <app-status-badge
+              [label]="verificationMeta[company.verificationStatus].label"
+              [tone]="verificationMeta[company.verificationStatus].tone"
+            />
+          </div>
+
+          <div class="cm__cell" role="cell">
+            <span class="cm__cell-label">Industry</span>
+            <span class="cm__muted">{{ company.industry || '—' }}</span>
+          </div>
+
+          <div class="cm__cell" role="cell">
+            <span class="cm__cell-label">Plan</span>
+            <span class="cm__muted">{{ company.planName || '—' }}</span>
+          </div>
+
+          <div class="cm__cell" role="cell">
+            <span class="cm__cell-label">Jobs · Members</span>
+            <span class="cm__muted">{{ company.jobsCount }} · {{ company.membersCount }}</span>
+          </div>
+
+          <div class="cm__cell" role="cell">
+            <span class="cm__cell-label">Created</span>
+            <span class="cm__muted">{{ formatDate(company.createdAt) }}</span>
+          </div>
+
+          <div class="cm__cell cm__col-actions" role="cell">
+            <button mat-icon-button type="button" [matMenuTriggerFor]="rowMenu" aria-label="Company actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #rowMenu="matMenu">
+              <a mat-menu-item [routerLink]="['/admin/companies', company.id]">
+                <mat-icon>visibility</mat-icon> <span>View details</span>
+              </a>
+              @if (isSuspended(company)) {
+                <button mat-menu-item type="button" (click)="toggleStatus(company)">
+                  <mat-icon>check_circle</mat-icon> <span>Activate</span>
+                </button>
+              } @else {
+                <button mat-menu-item type="button" (click)="toggleStatus(company)">
+                  <mat-icon>block</mat-icon> <span>Suspend</span>
+                </button>
+              }
+            </mat-menu>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="cm__pagination">
+      <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+    </div>
+  } @else {
+    <app-empty-state
+      icon="domain_disabled"
+      title="No companies found"
+      [message]="hasFilters() ? 'No companies match these filters. Try broadening your search.' : 'There are no companies yet.'"
+    />
+  }
+} @else if (loading()) {
+  <div class="cm__skeletons">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="64px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

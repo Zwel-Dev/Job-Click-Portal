@@ -1,0 +1,104 @@
+<app-page-header title="Audit logs" subtitle="A read-only trail of every mutating admin action across the platform." />
+
+<div class="al__bar">
+  <mat-form-field appearance="outline" class="al__search">
+    <mat-label>Actor</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="actorControl" placeholder="Admin name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="al__filter">
+    <mat-label>Action</mat-label>
+    <mat-select [value]="action()" (selectionChange)="onActionChange($event.value)">
+      <mat-option [value]="null">All actions</mat-option>
+      @for (option of actionOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="al__filter">
+    <mat-label>Entity</mat-label>
+    <mat-select [value]="entityType()" (selectionChange)="onEntityTypeChange($event.value)">
+      <mat-option [value]="null">All entities</mat-option>
+      @for (type of entityTypes; track type) {
+        <mat-option [value]="type">{{ type }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="al__date">
+    <mat-label>From</mat-label>
+    <input matInput type="date" [value]="from()" (change)="onFromChange($any($event.target).value)" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="al__date">
+    <mat-label>To</mat-label>
+    <input matInput type="date" [value]="to()" (change)="onToChange($any($event.target).value)" />
+  </mat-form-field>
+
+  @if (hasFilters()) {
+    <button mat-button type="button" class="al__clear" (click)="clearFilters()">
+      <mat-icon>close</mat-icon> Clear
+    </button>
+  }
+</div>
+
+@if (result(); as res) {
+  @if (res.data.length) {
+    <p class="al__count">{{ res.totalItems }} entr{{ res.totalItems === 1 ? 'y' : 'ies' }}</p>
+
+    <div class="al__table" role="table">
+      <div class="al__head" role="row">
+        <span role="columnheader">Time</span>
+        <span role="columnheader">Actor</span>
+        <span role="columnheader">Action</span>
+        <span role="columnheader">Entity</span>
+        <span role="columnheader">Summary</span>
+      </div>
+
+      @for (entry of res.data; track entry.id) {
+        <div class="al__row" role="row">
+          <div class="al__cell" role="cell">
+            <span class="al__cell-label">Time</span>
+            <span class="al__muted">{{ formatDateTime(entry.createdAt) }}</span>
+          </div>
+          <div class="al__cell" role="cell">
+            <span class="al__cell-label">Actor</span>
+            <span class="al__actor">{{ entry.actorName }}</span>
+          </div>
+          <div class="al__cell" role="cell">
+            <span class="al__cell-label">Action</span>
+            <app-status-badge [label]="actionMeta[entry.action].label" [tone]="actionMeta[entry.action].tone" />
+          </div>
+          <div class="al__cell" role="cell">
+            <span class="al__cell-label">Entity</span>
+            <span class="al__entity">{{ entry.entityType }} <span class="al__muted">#{{ entry.entityId }}</span></span>
+          </div>
+          <div class="al__cell" role="cell">
+            <span class="al__cell-label">Summary</span>
+            <span class="al__summary">{{ entry.summary }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="al__pagination">
+      <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+    </div>
+  } @else {
+    <app-empty-state
+      icon="history"
+      title="No matching activity"
+      [message]="hasFilters() ? 'No audit entries match these filters.' : 'No admin activity has been recorded yet.'"
+    />
+  }
+} @else if (loading()) {
+  <div class="al__skeletons">
+    @for (item of [0, 1, 2, 3, 4, 5, 6, 7]; track item) {
+      <app-skeleton height="48px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

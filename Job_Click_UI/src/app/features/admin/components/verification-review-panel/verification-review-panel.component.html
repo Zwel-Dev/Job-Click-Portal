@@ -1,0 +1,99 @@
+<div class="vrp" [class.vrp--busy]="busy()">
+  <header class="vrp__head">
+    <div class="vrp__id">
+      <h2 class="vrp__name" mat-dialog-title>{{ item.companyName }}</h2>
+      @if (item.submittedAt) {
+        <span class="vrp__submitted">Submitted {{ formatDate(item.submittedAt) }}</span>
+      }
+    </div>
+    <button mat-icon-button type="button" class="vrp__close" (click)="close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <mat-dialog-content class="vrp__body">
+    <section class="vrp__section">
+      <h3 class="vrp__section-title">Business details</h3>
+      <dl class="vrp__facts">
+        <div class="vrp__fact">
+          <dt>Registration no.</dt>
+          <dd>{{ item.registrationNo || '—' }}</dd>
+        </div>
+        <div class="vrp__fact">
+          <dt>Tax no.</dt>
+          <dd>{{ item.taxNo || '—' }}</dd>
+        </div>
+        <div class="vrp__fact">
+          <dt>Official email</dt>
+          <dd>{{ item.officialEmail || '—' }}</dd>
+        </div>
+        <div class="vrp__fact">
+          <dt>Website</dt>
+          <dd>
+            @if (item.website) {
+              <a [href]="item.website" target="_blank" rel="noopener">{{ item.website }}</a>
+            } @else {
+              —
+            }
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="vrp__section">
+      <h3 class="vrp__section-title">Documents</h3>
+      @if (item.documents.length) {
+        <ul class="vrp__docs">
+          @for (doc of item.documents; track doc.id) {
+            <li class="vrp-doc">
+              <mat-icon class="vrp-doc__icon" aria-hidden="true">description</mat-icon>
+              <div class="vrp-doc__main">
+                <span class="vrp-doc__label">{{ doc.label }}</span>
+                <span class="vrp-doc__file">{{ doc.fileName }}</span>
+              </div>
+              <a mat-stroked-button [href]="doc.fileUrl" target="_blank" rel="noopener">
+                <mat-icon>open_in_new</mat-icon> Open
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="vrp__empty">No documents were submitted.</p>
+      }
+    </section>
+
+    @if (rejecting()) {
+      <section class="vrp__section">
+        <h3 class="vrp__section-title">Reason for rejection</h3>
+        <mat-form-field appearance="outline" class="vrp__reason">
+          <mat-label>Tell the company what to fix</mat-label>
+          <textarea
+            matInput
+            rows="3"
+            [formControl]="reasonControl"
+            placeholder="e.g. The registration document is illegible — please re-upload a clear copy."
+          ></textarea>
+          @if (reasonControl.touched && reasonControl.invalid) {
+            <mat-error>A reason is required so the company can resubmit.</mat-error>
+          }
+        </mat-form-field>
+      </section>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="vrp__actions">
+    @if (rejecting()) {
+      <button mat-stroked-button type="button" [disabled]="busy()" (click)="cancelReject()">Back</button>
+      <button mat-flat-button color="warn" type="button" [disabled]="busy()" (click)="confirmReject()">
+        <mat-icon>cancel</mat-icon> Confirm rejection
+      </button>
+    } @else {
+      <button mat-stroked-button color="warn" type="button" [disabled]="busy()" (click)="startReject()">
+        <mat-icon>cancel</mat-icon> Reject
+      </button>
+      <button mat-flat-button color="primary" type="button" [disabled]="busy()" (click)="approve()">
+        <mat-icon>verified</mat-icon> Approve
+      </button>
+    }
+  </mat-dialog-actions>
+</div>

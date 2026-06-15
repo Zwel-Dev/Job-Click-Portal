@@ -1,0 +1,243 @@
+:host {
+  display: block;
+}
+
+// Shared column template for the header + rows (desktop).
+$um-cols: minmax(220px, 2.2fr) minmax(150px, 1.4fr) 120px minmax(120px, 1fr) 110px 110px 56px;
+
+.um__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--jc-space-3);
+  margin-bottom: var(--jc-space-4);
+
+  .mat-mdc-form-field {
+    margin: 0;
+  }
+}
+
+.um__search {
+  flex: 1 1 260px;
+}
+
+.um__filter {
+  flex: 0 0 180px;
+}
+
+.um__clear {
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.um__count {
+  margin: 0 0 var(--jc-space-3);
+  font-size: 0.875rem;
+  color: var(--jc-text-muted);
+}
+
+.um__table {
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  overflow: hidden;
+  background: var(--jc-surface);
+}
+
+.um__head {
+  display: grid;
+  grid-template-columns: $um-cols;
+  gap: var(--jc-space-3);
+  align-items: center;
+  padding: var(--jc-space-3) var(--jc-space-4);
+  background: var(--jc-surface-muted);
+  border-bottom: 1px solid var(--jc-border);
+  position: sticky;
+  top: var(--jc-header-height);
+  z-index: 1;
+
+  span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+}
+
+.um__row {
+  display: grid;
+  grid-template-columns: $um-cols;
+  gap: var(--jc-space-3);
+  align-items: center;
+  padding: var(--jc-space-2) var(--jc-space-4);
+  border-bottom: 1px solid var(--jc-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--jc-surface-muted);
+  }
+}
+
+.um__user {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-3);
+  padding: var(--jc-space-2) 0;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.um__avatar {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--jc-primary-50);
+  color: var(--jc-primary-700);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.um__user-id {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.um__user-name {
+  font-weight: 600;
+  color: var(--jc-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .um__user:hover & {
+    color: var(--jc-primary-700);
+  }
+}
+
+.um__user-email {
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.um__cell {
+  min-width: 0;
+}
+
+.um__cell-label {
+  display: none;
+}
+
+.um__roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.um__chip {
+  padding: 2px 8px;
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-primary-50);
+  color: var(--jc-primary-700);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.um__muted {
+  font-size: 0.875rem;
+  color: var(--jc-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.um__col-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.um__skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+}
+
+.um__pagination {
+  margin-top: var(--jc-space-4);
+}
+
+// --- Mobile: collapse the table into stacked cards. ---
+@media (max-width: 900px) {
+  .um__head {
+    display: none;
+  }
+
+  .um__table {
+    border: none;
+    background: transparent;
+  }
+
+  .um__row {
+    grid-template-columns: 1fr;
+    gap: var(--jc-space-2);
+    padding: var(--jc-space-4);
+    margin-bottom: var(--jc-space-3);
+    border: 1px solid var(--jc-border);
+    border-radius: var(--jc-radius-lg);
+    background: var(--jc-surface);
+    position: relative;
+
+    &:hover {
+      background: var(--jc-surface);
+    }
+  }
+
+  .um__user {
+    padding-right: 44px; // leave room for the actions button
+  }
+
+  .um__cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jc-space-3);
+  }
+
+  .um__cell-label {
+    display: inline;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+
+  .um__muted {
+    white-space: normal;
+    text-align: right;
+  }
+
+  .um__roles {
+    justify-content: flex-end;
+  }
+
+  .um__col-actions {
+    position: absolute;
+    top: var(--jc-space-3);
+    right: var(--jc-space-3);
+  }
+}

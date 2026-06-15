@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit plan' : 'Add plan' }}</h2>
+
+<mat-dialog-content>
+  <form class="pfd__form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="pfd__field">
+      <mat-label>Plan name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. Pro" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <mat-error>A plan name is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="pfd__row">
+      <mat-form-field appearance="outline" class="pfd__field">
+        <mat-label>Price (USD / month)</mat-label>
+        <input matInput type="number" min="0" formControlName="price" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="pfd__field">
+        <mat-label>Max jobs</mat-label>
+        <input matInput type="number" min="1" formControlName="maxJobs" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="pfd__field">
+        <mat-label>Max recruiters</mat-label>
+        <input matInput type="number" min="1" formControlName="maxRecruiters" />
+      </mat-form-field>
+    </div>
+
+    <mat-slide-toggle formControlName="candidateSearch" class="pfd__toggle">
+      Candidate search included
+    </mat-slide-toggle>
+
+    <mat-form-field appearance="outline" class="pfd__field">
+      <mat-label>Features (one per line)</mat-label>
+      <textarea matInput rows="4" formControlName="features" placeholder="Up to 20 active jobs&#10;Recruitment analytics"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">
+    {{ isEdit ? 'Save' : 'Add plan' }}
+  </button>
+</mat-dialog-actions>

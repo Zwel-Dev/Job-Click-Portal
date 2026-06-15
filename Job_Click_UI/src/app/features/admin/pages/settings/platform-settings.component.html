@@ -1,0 +1,123 @@
+<app-page-header title="Platform settings" subtitle="Roles, skills taxonomy, subscription plans, and feature flags." />
+
+@if (!loading() && !error()) {
+  <mat-tab-group class="ps__tabs" animationDuration="0ms">
+    <!-- Roles (read-only) -->
+    <mat-tab label="Roles">
+      <div class="ps__tab">
+        <p class="ps__note">Platform roles are fixed in the system. This is a read-only reference.</p>
+        <ul class="ps__roles">
+          @for (role of roles(); track role.code) {
+            <li class="ps-role">
+              <span class="ps-role__chip">{{ role.label }}</span>
+              <span class="ps-role__desc">{{ role.description }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </mat-tab>
+
+    <!-- Skills taxonomy -->
+    <mat-tab label="Skills">
+      <div class="ps__tab">
+        <div class="ps__tab-head">
+          <p class="ps__note">{{ skills().length }} skills — feed candidate &amp; job pickers and the matching engine.</p>
+          <button mat-flat-button color="primary" type="button" (click)="addSkill()">
+            <mat-icon>add</mat-icon> Add skill
+          </button>
+        </div>
+        <div class="ps__skills">
+          @for (skill of skills(); track skill.id) {
+            <div class="ps-skill">
+              <div class="ps-skill__main">
+                <span class="ps-skill__name">{{ skill.name }}</span>
+                <span class="ps-skill__cat">{{ skill.category }}</span>
+              </div>
+              <button mat-icon-button type="button" [matMenuTriggerFor]="skillMenu" aria-label="Skill actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #skillMenu="matMenu">
+                <button mat-menu-item type="button" (click)="editSkill(skill)">
+                  <mat-icon>edit</mat-icon> <span>Edit</span>
+                </button>
+                <button mat-menu-item type="button" (click)="removeSkill(skill)">
+                  <mat-icon>delete_outline</mat-icon> <span>Remove</span>
+                </button>
+              </mat-menu>
+            </div>
+          }
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Plans -->
+    <mat-tab label="Plans">
+      <div class="ps__tab">
+        <div class="ps__tab-head">
+          <p class="ps__note">Subscription plans offered to companies.</p>
+          <button mat-flat-button color="primary" type="button" (click)="addPlan()">
+            <mat-icon>add</mat-icon> Add plan
+          </button>
+        </div>
+        <div class="ps__plans">
+          @for (plan of plans(); track plan.id) {
+            <section class="ps-plan">
+              <header class="ps-plan__head">
+                <div>
+                  <h3 class="ps-plan__name">{{ plan.name }}</h3>
+                  <span class="ps-plan__price">{{ formatMoney(plan.price, plan.currency) }}<span class="ps-plan__per">/mo</span></span>
+                </div>
+                <button mat-icon-button type="button" [matMenuTriggerFor]="planMenu" aria-label="Plan actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #planMenu="matMenu">
+                  <button mat-menu-item type="button" (click)="editPlan(plan)">
+                    <mat-icon>edit</mat-icon> <span>Edit</span>
+                  </button>
+                  <button mat-menu-item type="button" (click)="removePlan(plan)">
+                    <mat-icon>delete_outline</mat-icon> <span>Remove</span>
+                  </button>
+                </mat-menu>
+              </header>
+              <div class="ps-plan__limits">
+                <span><mat-icon aria-hidden="true">work_outline</mat-icon>{{ planLimit(plan.maxJobs) }} jobs</span>
+                <span><mat-icon aria-hidden="true">group</mat-icon>{{ planLimit(plan.maxRecruiters) }} recruiters</span>
+                <span><mat-icon aria-hidden="true">{{ plan.candidateSearch ? 'check_circle' : 'cancel' }}</mat-icon>Candidate search</span>
+              </div>
+              <ul class="ps-plan__features">
+                @for (feature of plan.features; track feature) {
+                  <li><mat-icon aria-hidden="true">check</mat-icon>{{ feature }}</li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Feature flags -->
+    <mat-tab label="Feature flags">
+      <div class="ps__tab">
+        <ul class="ps__flags">
+          @for (flag of flags(); track flag.id) {
+            <li class="ps-flag">
+              <div class="ps-flag__main">
+                <span class="ps-flag__label">{{ flag.label }}</span>
+                <span class="ps-flag__desc">{{ flag.description }}</span>
+              </div>
+              <mat-slide-toggle
+                [checked]="flag.enabled"
+                [disabled]="flagBusy() === flag.id"
+                (change)="toggleFlag(flag, $event.checked)"
+              />
+            </li>
+          }
+        </ul>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+} @else if (loading()) {
+  <app-skeleton height="320px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

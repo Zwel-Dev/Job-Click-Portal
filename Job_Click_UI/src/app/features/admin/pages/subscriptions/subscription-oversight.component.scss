@@ -1,0 +1,230 @@
+:host {
+  display: block;
+}
+
+$so-cols: minmax(200px, 2.2fr) 110px 110px 100px 110px 110px 130px;
+
+.so__kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--jc-space-3);
+  margin-bottom: var(--jc-space-5);
+}
+
+.so__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--jc-space-3);
+  margin-bottom: var(--jc-space-4);
+
+  .mat-mdc-form-field {
+    margin: 0;
+  }
+}
+
+.so__search {
+  flex: 1 1 240px;
+}
+
+.so__filter {
+  flex: 0 0 170px;
+}
+
+.so__clear mat-icon {
+  margin-right: 4px;
+}
+
+.so__count {
+  margin: 0 0 var(--jc-space-3);
+  font-size: 0.875rem;
+  color: var(--jc-text-muted);
+}
+
+.so__table {
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  overflow: hidden;
+  background: var(--jc-surface);
+}
+
+.so__head {
+  display: grid;
+  grid-template-columns: $so-cols;
+  gap: var(--jc-space-3);
+  align-items: center;
+  padding: var(--jc-space-3) var(--jc-space-4);
+  background: var(--jc-surface-muted);
+  border-bottom: 1px solid var(--jc-border);
+  position: sticky;
+  top: var(--jc-header-height);
+  z-index: 1;
+
+  span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+}
+
+.so__row {
+  display: grid;
+  grid-template-columns: $so-cols;
+  gap: var(--jc-space-3);
+  align-items: center;
+  padding: var(--jc-space-2) var(--jc-space-4);
+  border-bottom: 1px solid var(--jc-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--jc-surface-muted);
+  }
+}
+
+.so__company {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-3);
+  padding: var(--jc-space-2) 0;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.so__logo {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--jc-radius-sm);
+  display: grid;
+  place-items: center;
+  background: var(--jc-primary-50);
+  color: var(--jc-primary-700);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.so__company-id {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.so__company-name {
+  font-weight: 600;
+  color: var(--jc-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .so__company:hover & {
+    color: var(--jc-primary-700);
+  }
+}
+
+.so__company-code {
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.so__cell {
+  min-width: 0;
+}
+
+.so__cell-label {
+  display: none;
+}
+
+.so__plan {
+  font-weight: 600;
+  color: var(--jc-text);
+}
+
+.so__muted {
+  font-size: 0.875rem;
+  color: var(--jc-text-secondary);
+  white-space: nowrap;
+}
+
+.so__col-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.so__skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+}
+
+.so__pagination {
+  margin-top: var(--jc-space-4);
+}
+
+// --- Mobile: collapse the table into stacked cards. ---
+@media (max-width: 960px) {
+  .so__kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .so__head {
+    display: none;
+  }
+
+  .so__table {
+    border: none;
+    background: transparent;
+  }
+
+  .so__row {
+    grid-template-columns: 1fr;
+    gap: var(--jc-space-2);
+    padding: var(--jc-space-4);
+    margin-bottom: var(--jc-space-3);
+    border: 1px solid var(--jc-border);
+    border-radius: var(--jc-radius-lg);
+    background: var(--jc-surface);
+
+    &:hover {
+      background: var(--jc-surface);
+    }
+  }
+
+  .so__cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--jc-space-3);
+  }
+
+  .so__cell-label {
+    display: inline;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+
+  .so__col-actions {
+    justify-content: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .so__kpis {
+    grid-template-columns: 1fr;
+  }
+}

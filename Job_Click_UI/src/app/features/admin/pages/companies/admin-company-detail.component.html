@@ -1,0 +1,112 @@
+<a class="acd__back" routerLink="/admin/companies">
+  <mat-icon aria-hidden="true">arrow_back</mat-icon> Companies
+</a>
+
+@if (company(); as data) {
+  <section class="acd__identity">
+    <div class="acd__logo" aria-hidden="true">{{ initial() }}</div>
+    <div class="acd__main">
+      <div class="acd__head">
+        <h1 class="acd__name">{{ data.name }}</h1>
+        <app-status-badge [label]="statusMeta[data.status].label" [tone]="statusMeta[data.status].tone" />
+        <app-status-badge
+          [label]="verificationMeta[data.verificationStatus].label"
+          [tone]="verificationMeta[data.verificationStatus].tone"
+        />
+      </div>
+      <div class="acd__meta">
+        <span><mat-icon aria-hidden="true">tag</mat-icon>{{ data.companyCode }}</span>
+        @if (data.industry) {
+          <span><mat-icon aria-hidden="true">domain</mat-icon>{{ data.industry }}</span>
+        }
+        @if (data.companySize) {
+          <span><mat-icon aria-hidden="true">groups</mat-icon>{{ sizeLabels[data.companySize] }}</span>
+        }
+        @if (data.planName) {
+          <span><mat-icon aria-hidden="true">card_membership</mat-icon>{{ data.planName }} plan</span>
+        }
+        <span><mat-icon aria-hidden="true">event</mat-icon>Joined {{ formatDate(data.createdAt) }}</span>
+        @if (data.website) {
+          <a class="acd__link" [href]="data.website" target="_blank" rel="noopener">
+            <mat-icon aria-hidden="true">link</mat-icon>Website
+          </a>
+        }
+      </div>
+    </div>
+    @if (isSuspended()) {
+      <button mat-flat-button color="primary" class="acd__action" [disabled]="busy()" (click)="toggleStatus()">
+        <mat-icon>check_circle</mat-icon> Activate
+      </button>
+    } @else {
+      <button mat-flat-button color="warn" class="acd__action" [disabled]="busy()" (click)="toggleStatus()">
+        <mat-icon>block</mat-icon> Suspend
+      </button>
+    }
+  </section>
+
+  <div class="acd__kpis">
+    <app-kpi-card icon="work_outline" [value]="data.jobsCount" label="Jobs" />
+    <app-kpi-card icon="group" [value]="data.membersCount" label="Members" />
+    <app-kpi-card icon="place" [value]="data.locations.length" label="Locations" />
+  </div>
+
+  <div class="acd__grid">
+    <section class="acd__card">
+      <header class="acd__card-head">
+        <h2 class="acd__card-title">Locations</h2>
+      </header>
+      @if (data.locations.length) {
+        <ul class="acd__list">
+          @for (location of data.locations; track location.id) {
+            <li class="acd-loc">
+              <mat-icon class="acd-loc__icon" aria-hidden="true">place</mat-icon>
+              <div class="acd-loc__main">
+                <span class="acd-loc__city">
+                  {{ location.city }}, {{ location.country }}
+                  @if (location.isHeadOffice) {
+                    <span class="acd-loc__hq">HQ</span>
+                  }
+                </span>
+                @if (location.address) {
+                  <span class="acd-loc__addr">{{ location.address }}</span>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="place" title="No locations" message="This company has not added any office locations." />
+      }
+    </section>
+
+    <section class="acd__card">
+      <header class="acd__card-head">
+        <h2 class="acd__card-title">Admins</h2>
+      </header>
+      @if (data.admins.length) {
+        <ul class="acd__list">
+          @for (admin of data.admins; track admin.email) {
+            <li class="acd-admin">
+              <span class="acd-admin__avatar" aria-hidden="true">{{ admin.fullName.charAt(0) }}</span>
+              <div class="acd-admin__main">
+                <span class="acd-admin__name">{{ admin.fullName }}</span>
+                <span class="acd-admin__email">{{ admin.email }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="person_off" title="No admins" message="This company has no company admins on record." />
+      }
+    </section>
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="120px" radius="var(--jc-radius-lg)" />
+  <div class="acd__kpis">
+    @for (item of [0, 1, 2]; track item) {
+      <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

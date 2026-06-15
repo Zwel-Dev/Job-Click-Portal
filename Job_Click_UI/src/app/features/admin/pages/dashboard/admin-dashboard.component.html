@@ -1,0 +1,126 @@
+<app-page-header [title]="greeting()" subtitle="Platform-wide health, queues, and integrity at a glance." />
+
+<!-- KPI strip — sourced from AdminContextStore (shared with the nav badges). -->
+@if (context.kpis(); as kpis) {
+  <div class="adash__kpis">
+    <app-kpi-card icon="group" [value]="kpis.totalUsers" label="Total users" hint="All roles" />
+    <app-kpi-card icon="person" [value]="kpis.candidates" label="Candidates" hint="Job seekers" />
+    <app-kpi-card icon="business" [value]="kpis.companies" label="Companies" hint="Employer accounts" />
+    <app-kpi-card icon="work_outline" [value]="kpis.activeJobs" label="Active jobs" hint="Currently published" />
+    <app-kpi-card icon="verified_user" [value]="kpis.pendingVerifications" label="Pending verifications" hint="Awaiting review" />
+    <app-kpi-card icon="shield" [value]="kpis.openFraudSignals" label="Open fraud signals" hint="Unresolved" />
+  </div>
+} @else if (context.loading()) {
+  <div class="adash__kpis">
+    @for (item of kpiSkeletons; track item) {
+      <app-skeleton height="104px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (context.error()) {
+  <app-error-state [message]="context.error()!" (retry)="context.reload()" />
+}
+
+<!-- Queue widgets. -->
+@if (widgets(); as data) {
+  <div class="adash__grid">
+    <section class="adash__card">
+      <header class="adash__card-head">
+        <h2 class="adash__card-title">Verifications awaiting review</h2>
+        <a class="adash__link" routerLink="/admin/verifications">View queue</a>
+      </header>
+
+      @if (data.pendingVerifications.length) {
+        <ul class="adash__list">
+          @for (item of data.pendingVerifications; track item.companyId) {
+            <li class="adash-row">
+              <div class="adash-row__avatar adash-row__avatar--square" aria-hidden="true">
+                {{ item.companyName.charAt(0) }}
+              </div>
+              <div class="adash-row__main">
+                <a class="adash-row__title" routerLink="/admin/verifications">{{ item.companyName }}</a>
+                <span class="adash-row__sub">
+                  @if (item.registrationNo) { Reg. {{ item.registrationNo }} · }
+                  {{ item.documents.length }} {{ item.documents.length === 1 ? 'document' : 'documents' }}
+                </span>
+              </div>
+              <span class="adash-row__date">
+                @if (item.submittedAt) { {{ formatDate(item.submittedAt) }} }
+              </span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="task_alt" title="Queue is clear" message="No company verifications are awaiting review." />
+      }
+    </section>
+
+    <section class="adash__card">
+      <header class="adash__card-head">
+        <h2 class="adash__card-title">Latest sign-ups</h2>
+        <a class="adash__link" routerLink="/admin/users">View users</a>
+      </header>
+
+      @if (data.recentSignups.length) {
+        <ul class="adash__list">
+          @for (user of data.recentSignups; track user.id) {
+            <li class="adash-row">
+              <div class="adash-row__avatar" aria-hidden="true">{{ user.fullName.charAt(0) }}</div>
+              <div class="adash-row__main">
+                <a class="adash-row__title" [routerLink]="['/admin/users', user.id]">{{ user.fullName }}</a>
+                <span class="adash-row__sub">{{ user.email }}</span>
+              </div>
+              <div class="adash-row__side">
+                <span class="adash-row__role">{{ roleLabel(user.roles[0]) }}</span>
+                <app-status-badge [label]="userStatusMeta[user.status].label" [tone]="userStatusMeta[user.status].tone" />
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="group" title="No recent sign-ups" message="New accounts will appear here." />
+      }
+    </section>
+
+    <section class="adash__card adash__card--wide">
+      <header class="adash__card-head">
+        <h2 class="adash__card-title">Recent fraud signals</h2>
+        <a class="adash__link" routerLink="/admin/fraud">View all</a>
+      </header>
+
+      @if (data.recentFraudSignals.length) {
+        <ul class="adash__list">
+          @for (signal of data.recentFraudSignals; track signal.id) {
+            <li class="adash-row">
+              <div class="adash-row__avatar adash-row__avatar--icon" aria-hidden="true">
+                <mat-icon>{{ fraudTypeMeta[signal.type].icon }}</mat-icon>
+              </div>
+              <div class="adash-row__main">
+                <span class="adash-row__title">
+                  {{ fraudTypeMeta[signal.type].label }} · {{ signal.entityLabel }}
+                </span>
+                <span class="adash-row__sub">{{ signal.detail }}</span>
+              </div>
+              <div class="adash-row__side">
+                <app-status-badge
+                  [label]="fraudSeverityMeta[signal.severity].label"
+                  [tone]="fraudSeverityMeta[signal.severity].tone"
+                />
+                <span class="adash-row__date">{{ formatDate(signal.detectedAt) }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <app-empty-state icon="verified_user" title="Nothing flagged" message="No open fraud signals right now." />
+      }
+    </section>
+  </div>
+} @else if (widgetsLoading()) {
+  <div class="adash__grid">
+    @for (item of widgetSkeletons; track item) {
+      <app-skeleton height="220px" radius="var(--jc-radius-lg)" />
+    }
+  </div>
+} @else if (widgetsError()) {
+  <app-error-state [message]="widgetsError()!" (retry)="loadWidgets()" />
+}

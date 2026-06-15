@@ -1,0 +1,54 @@
+<app-page-header
+  title="Verifications"
+  subtitle="Review business documents and approve or reject company verification requests."
+/>
+
+@if (!loading() && !error()) {
+  @if (queue().length) {
+    <p class="vq__count">{{ queue().length }} awaiting review</p>
+    <ul class="vq__list">
+      @for (item of queue(); track item.companyId) {
+        <li class="vq-card">
+          <div class="vq-card__logo" aria-hidden="true">{{ item.companyName.charAt(0) }}</div>
+          <div class="vq-card__main">
+            <h2 class="vq-card__name">{{ item.companyName }}</h2>
+            <div class="vq-card__meta">
+              @if (item.registrationNo) {
+                <span><mat-icon aria-hidden="true">badge</mat-icon>Reg. {{ item.registrationNo }}</span>
+              }
+              @if (item.taxNo) {
+                <span><mat-icon aria-hidden="true">receipt_long</mat-icon>Tax {{ item.taxNo }}</span>
+              }
+              <span>
+                <mat-icon aria-hidden="true">description</mat-icon>
+                {{ item.documents.length }} {{ item.documents.length === 1 ? 'document' : 'documents' }}
+              </span>
+            </div>
+          </div>
+          <div class="vq-card__side">
+            @if (item.submittedAt) {
+              <span class="vq-card__date">Submitted {{ formatDate(item.submittedAt) }}</span>
+            }
+            <button mat-flat-button color="primary" type="button" (click)="review(item)">
+              <mat-icon>rule</mat-icon> Review
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else {
+    <app-empty-state
+      icon="verified_user"
+      title="Queue is clear"
+      message="No company verifications are awaiting review right now."
+    />
+  }
+} @else if (loading()) {
+  <div class="vq__skeletons">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="92px" radius="var(--jc-radius-lg)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

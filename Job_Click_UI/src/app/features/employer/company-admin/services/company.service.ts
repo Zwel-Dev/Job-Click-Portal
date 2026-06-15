@@ -14,13 +14,12 @@ import {
   DepartmentFormValue,
   VerificationFormValue,
 } from '@core/models/company.model';
-import { VerificationStatus } from '@core/enums/verification-status.enum';
+import { VerificationStore } from '@core/state/verification.store';
 import { CompanyOverview } from '../models/company-overview.model';
 import {
   MOCK_COMPANY,
   MOCK_COMPANY_COUNTS,
   MOCK_COMPANY_LOCATIONS,
-  MOCK_COMPANY_VERIFICATION,
   MOCK_DEPARTMENTS,
   MOCK_PLAN,
   MOCK_PLAN_USAGE,
@@ -36,11 +35,13 @@ const ENDPOINT = '/api/v1/employer/company';
 @Injectable({ providedIn: 'root' })
 export class CompanyService {
   private readonly api = inject(ApiBaseService);
+  // Verification is owned by the shared root store so an admin's Approve (PA1.3)
+  // flips this company's Verified badge, and a submit here surfaces in the queue.
+  private readonly verificationStore = inject(VerificationStore);
 
   private company: Company = clone(MOCK_COMPANY);
   private locations: CompanyLocation[] = clone(MOCK_COMPANY_LOCATIONS);
   private departments: Department[] = clone(MOCK_DEPARTMENTS);
-  private verification: CompanyVerification = clone(MOCK_COMPANY_VERIFICATION);
   private nextLocationId = 100;
   private nextDepartmentId = 100;
 
@@ -93,8 +94,9 @@ export class CompanyService {
       return this.api.get<CompanyOverview>(`${ENDPOINT}/overview`);
     }
     const overview: CompanyOverview = {
-      company: clone(this.company),
-      verification: clone(this.verification),
+      // `verified` is derived from the shared verification store (admin-controlled).
+      company: { ...clone(this.company), verified: this.verificationStore.isVerified(this.company.id) },
+      verification: this.verificationStore.getCompanyVerification(this.company.id),
       plan: clone(MOCK_PLAN),
       usage: clone(MOCK_PLAN_USAGE),
       counts: { ...MOCK_COMPANY_COUNTS, departments: this.departments.length, locations: this.locations.length },
@@ -108,7 +110,7 @@ export class CompanyService {
     if (!environment.useMock) {
       return this.api.get<CompanyVerification>(`${ENDPOINT}/verification`);
     }
-    return of(clone(this.verification)).pipe(delay(MOCK_LATENCY));
+    return of(this.verificationStore.getCompanyVerification(this.company.id)).pipe(delay(MOCK_LATENCY));
   }
 
   /** Submits (or resubmits, after rejection) for verification → Pending. */
@@ -116,27 +118,8 @@ export class CompanyService {
     if (!environment.useMock) {
       return this.api.post<CompanyVerification>(`${ENDPOINT}/verification`, value);
     }
-    const now = new Date().toISOString();
-    this.verification = {
-      ...this.verification,
-      registrationNo: value.registrationNo,
-      taxNo: value.taxNo,
-      website: value.website,
-      officialEmail: value.officialEmail,
-      documents: value.documents.map((doc, index) => ({
-        id: index + 1,
-        label: doc.label,
-        fileName: doc.fileName,
-        fileUrl: doc.fileUrl,
-        uploadedAt: now,
-      })),
-      status: VerificationStatus.Pending,
-      submittedAt: now,
-      reviewedAt: undefined,
-      rejectionReason: undefined,
-    };
-    this.company = { ...this.company, verified: false };
-    return of(clone(this.verification)).pipe(delay(MOCK_LATENCY));
+    this.verificationStore.submit(this.company.id, value);
+    return of(this.verificationStore.getCompanyVerification(this.company.id)).pipe(delay(MOCK_LATENCY));
   }
 
   // --- Departments ----------------------------------------------------------

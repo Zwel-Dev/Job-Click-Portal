@@ -1,0 +1,233 @@
+<app-page-header title="Job moderation" subtitle="Review platform postings, flag or remove abuse, and catch duplicates." />
+
+<div class="jm__views" role="tablist">
+  <button
+    class="jm__view"
+    [class.jm__view--active]="view() === 'all'"
+    type="button"
+    role="tab"
+    [attr.aria-selected]="view() === 'all'"
+    (click)="setView('all')"
+  >
+    <mat-icon aria-hidden="true">work_outline</mat-icon> All jobs
+  </button>
+  <button
+    class="jm__view"
+    [class.jm__view--active]="view() === 'duplicates'"
+    type="button"
+    role="tab"
+    [attr.aria-selected]="view() === 'duplicates'"
+    (click)="setView('duplicates')"
+  >
+    <mat-icon aria-hidden="true">content_copy</mat-icon> Duplicates
+  </button>
+</div>
+
+@if (view() === 'all') {
+  <div class="jm__bar">
+    <mat-form-field appearance="outline" class="jm__search">
+      <mat-label>Search</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="keywordControl" placeholder="Title or company" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="jm__filter">
+      <mat-label>Status</mat-label>
+      <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+        <mat-option [value]="null">All statuses</mat-option>
+        @for (option of statusOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="jm__filter">
+      <mat-label>Flagged</mat-label>
+      <mat-select [value]="flagged()" (selectionChange)="onFlaggedChange($event.value)">
+        @for (option of flaggedOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (hasFilters()) {
+      <button mat-button type="button" class="jm__clear" (click)="clearFilters()">
+        <mat-icon>close</mat-icon> Clear
+      </button>
+    }
+  </div>
+
+  @if (result(); as res) {
+    @if (res.data.length) {
+      <p class="jm__count">{{ res.totalItems }} job{{ res.totalItems === 1 ? '' : 's' }}</p>
+
+      <div class="jm__table" role="table">
+        <div class="jm__head" role="row">
+          <span role="columnheader">Job</span>
+          <span role="columnheader">Status</span>
+          <span role="columnheader">Applicants</span>
+          <span role="columnheader">Posted</span>
+          <span role="columnheader">Flags</span>
+          <span role="columnheader" class="jm__col-actions">Actions</span>
+        </div>
+
+        @for (job of res.data; track job.id) {
+          <div class="jm__row" role="row" [class.jm__row--removed]="job.removed">
+            <div class="jm__job">
+              <span class="jm__job-title">{{ job.title }}</span>
+              <span class="jm__job-company">{{ job.companyName }}</span>
+            </div>
+
+            <div class="jm__cell" role="cell">
+              <span class="jm__cell-label">Status</span>
+              @if (job.removed) {
+                <app-status-badge label="Removed" tone="danger" />
+              } @else {
+                <app-status-badge [label]="statusMeta[job.status].label" [tone]="statusMeta[job.status].tone" />
+              }
+            </div>
+
+            <div class="jm__cell" role="cell">
+              <span class="jm__cell-label">Applicants</span>
+              <span class="jm__muted">{{ job.applicants }}</span>
+            </div>
+
+            <div class="jm__cell" role="cell">
+              <span class="jm__cell-label">Posted</span>
+              <span class="jm__muted">{{ formatDate(job.postedAt) }}</span>
+            </div>
+
+            <div class="jm__cell jm__flags" role="cell">
+              <span class="jm__cell-label">Flags</span>
+              <span class="jm__flag-set">
+                @if (job.flagged) {
+                  <span [matTooltip]="job.flagReason ?? ''">
+                    <app-status-badge label="Flagged" tone="danger" />
+                  </span>
+                }
+                @if (job.duplicateOf) {
+                  <span [matTooltip]="'Near-identical to job #' + job.duplicateOf">
+                    <app-status-badge label="Duplicate" tone="progress" />
+                  </span>
+                }
+                @if (!job.flagged && !job.duplicateOf) {
+                  <span class="jm__muted">—</span>
+                }
+              </span>
+            </div>
+
+            <div class="jm__cell jm__col-actions" role="cell">
+              <button
+                mat-icon-button
+                type="button"
+                [matMenuTriggerFor]="jobMenu"
+                [matMenuTriggerData]="{ job: job }"
+                aria-label="Job actions"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="jm__pagination">
+        <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+      </div>
+    } @else {
+      <app-empty-state
+        icon="work_off"
+        title="No jobs found"
+        [message]="hasFilters() ? 'No jobs match these filters. Try broadening your search.' : 'There are no jobs yet.'"
+      />
+    }
+  } @else if (loading()) {
+    <div class="jm__skeletons">
+      @for (item of skeletons; track item) {
+        <app-skeleton height="64px" radius="var(--jc-radius-md)" />
+      }
+    </div>
+  } @else if (error()) {
+    <app-error-state [message]="error()!" (retry)="reload()" />
+  }
+} @else {
+  <!-- Duplicates view -->
+  @if (!dupLoading() && !dupError()) {
+    @if (groups().length) {
+      <p class="jm__count">{{ groups().length }} duplicate group{{ groups().length === 1 ? '' : 's' }} detected</p>
+      <div class="jm__groups">
+        @for (group of groups(); track group.original.id) {
+          <section class="jm-group">
+            <header class="jm-group__head">
+              <mat-icon aria-hidden="true">content_copy</mat-icon>
+              <span>Near-identical postings</span>
+            </header>
+            <ul class="jm-group__list">
+              @for (job of allInGroup(group); track job.id) {
+                <li class="jm-line" [class.jm-line--original]="job.id === group.original.id" [class.jm-line--removed]="job.removed">
+                  <div class="jm-line__main">
+                    <span class="jm-line__title">
+                      {{ job.title }}
+                      @if (job.id === group.original.id) {
+                        <span class="jm-line__tag">Original</span>
+                      }
+                    </span>
+                    <span class="jm-line__meta">{{ job.companyName }} · {{ job.applicants }} applicants · {{ formatDate(job.postedAt) }}</span>
+                  </div>
+                  @if (job.removed) {
+                    <app-status-badge label="Removed" tone="danger" />
+                  } @else if (job.flagged) {
+                    <app-status-badge label="Flagged" tone="danger" />
+                  }
+                  <button
+                    mat-icon-button
+                    type="button"
+                    [matMenuTriggerFor]="jobMenu"
+                    [matMenuTriggerData]="{ job: job }"
+                    aria-label="Job actions"
+                  >
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+    } @else {
+      <app-empty-state icon="done_all" title="No duplicates" message="No near-identical postings were detected." />
+    }
+  } @else if (dupLoading()) {
+    <div class="jm__skeletons">
+      @for (item of skeletons; track item) {
+        <app-skeleton height="120px" radius="var(--jc-radius-lg)" />
+      }
+    </div>
+  } @else if (dupError()) {
+    <app-error-state [message]="dupError()!" (retry)="reloadDuplicates()" />
+  }
+}
+
+<!-- Shared row-actions menu (context = the job). -->
+<mat-menu #jobMenu="matMenu">
+  <ng-template matMenuContent let-job="job">
+    @if (job.removed) {
+      <button mat-menu-item type="button" disabled>
+        <mat-icon>block</mat-icon> <span>Removed</span>
+      </button>
+    } @else {
+      @if (job.flagged) {
+        <button mat-menu-item type="button" (click)="unflag(job)">
+          <mat-icon>outlined_flag</mat-icon> <span>Unflag</span>
+        </button>
+      } @else {
+        <button mat-menu-item type="button" (click)="flag(job)">
+          <mat-icon>flag</mat-icon> <span>Flag</span>
+        </button>
+      }
+      <button mat-menu-item type="button" (click)="remove(job)">
+        <mat-icon>delete_outline</mat-icon> <span>Remove</span>
+      </button>
+    }
+  </ng-template>
+</mat-menu>

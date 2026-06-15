@@ -1,0 +1,135 @@
+<app-page-header title="Users" subtitle="Search, inspect, and manage every account on the platform." />
+
+<div class="um__bar">
+  <mat-form-field appearance="outline" class="um__search">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [formControl]="keywordControl" placeholder="Name, email, or company" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="um__filter">
+    <mat-label>Role</mat-label>
+    <mat-select [value]="role()" (selectionChange)="onRoleChange($event.value)">
+      <mat-option [value]="null">All roles</mat-option>
+      @for (option of roleOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="um__filter">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="status()" (selectionChange)="onStatusChange($event.value)">
+      <mat-option [value]="null">All statuses</mat-option>
+      @for (option of statusOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (hasFilters()) {
+    <button mat-button type="button" class="um__clear" (click)="clearFilters()">
+      <mat-icon>close</mat-icon> Clear
+    </button>
+  }
+</div>
+
+@if (result(); as res) {
+  @if (res.data.length) {
+    <p class="um__count">{{ res.totalItems }} user{{ res.totalItems === 1 ? '' : 's' }}</p>
+
+    <div class="um__table" role="table">
+      <div class="um__head" role="row">
+        <span role="columnheader">User</span>
+        <span role="columnheader">Roles</span>
+        <span role="columnheader">Status</span>
+        <span role="columnheader">Company</span>
+        <span role="columnheader">Joined</span>
+        <span role="columnheader">Last login</span>
+        <span role="columnheader" class="um__col-actions">Actions</span>
+      </div>
+
+      @for (user of res.data; track user.id) {
+        <div class="um__row" role="row">
+          <button type="button" class="um__user" (click)="openDetail(user)">
+            <span class="um__avatar" aria-hidden="true">{{ user.fullName.charAt(0) }}</span>
+            <span class="um__user-id">
+              <span class="um__user-name">{{ user.fullName }}</span>
+              <span class="um__user-email">{{ user.email }}</span>
+            </span>
+          </button>
+
+          <div class="um__cell" role="cell">
+            <span class="um__cell-label">Roles</span>
+            <span class="um__roles">
+              @for (role of user.roles; track role) {
+                <span class="um__chip">{{ roleLabel(role) }}</span>
+              }
+            </span>
+          </div>
+
+          <div class="um__cell" role="cell">
+            <span class="um__cell-label">Status</span>
+            <app-status-badge [label]="statusMeta[user.status].label" [tone]="statusMeta[user.status].tone" />
+          </div>
+
+          <div class="um__cell" role="cell">
+            <span class="um__cell-label">Company</span>
+            <span class="um__muted">{{ user.companyName || '—' }}</span>
+          </div>
+
+          <div class="um__cell" role="cell">
+            <span class="um__cell-label">Joined</span>
+            <span class="um__muted">{{ formatDate(user.createdAt) }}</span>
+          </div>
+
+          <div class="um__cell" role="cell">
+            <span class="um__cell-label">Last login</span>
+            <span class="um__muted">{{ user.lastLoginAt ? formatDate(user.lastLoginAt) : 'Never' }}</span>
+          </div>
+
+          <div class="um__cell um__col-actions" role="cell">
+            <button mat-icon-button type="button" [matMenuTriggerFor]="rowMenu" aria-label="User actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #rowMenu="matMenu">
+              <button mat-menu-item type="button" (click)="openDetail(user)">
+                <mat-icon>visibility</mat-icon> <span>View details</span>
+              </button>
+              <button mat-menu-item type="button" (click)="resetPassword(user)">
+                <mat-icon>lock_reset</mat-icon> <span>Reset password</span>
+              </button>
+              @if (isSuspended(user)) {
+                <button mat-menu-item type="button" (click)="toggleStatus(user)">
+                  <mat-icon>check_circle</mat-icon> <span>Reactivate</span>
+                </button>
+              } @else {
+                <button mat-menu-item type="button" [disabled]="isSelf(user)" (click)="toggleStatus(user)">
+                  <mat-icon>block</mat-icon> <span>Suspend</span>
+                </button>
+              }
+            </mat-menu>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="um__pagination">
+      <app-pagination [page]="page()" [pageSize]="pageSize" [totalItems]="res.totalItems" (pageChange)="onPageChange($event)" />
+    </div>
+  } @else {
+    <app-empty-state
+      icon="person_off"
+      title="No users found"
+      [message]="hasFilters() ? 'No users match these filters. Try broadening your search.' : 'There are no users yet.'"
+    />
+  }
+} @else if (loading()) {
+  <div class="um__skeletons">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="64px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

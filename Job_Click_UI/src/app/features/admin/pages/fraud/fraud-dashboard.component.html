@@ -1,0 +1,63 @@
+<app-page-header title="Fraud detection" subtitle="Review platform-integrity signals and act on the entities behind them." />
+
+@if (!loading() && !error()) {
+  <div class="fd__kpis">
+    <app-kpi-card icon="shield" [value]="openCount()" label="Open signals" hint="Need review" />
+    <app-kpi-card icon="priority_high" [value]="highCount()" label="High severity" hint="Open" />
+    <app-kpi-card icon="check_circle" [value]="resolvedCount()" label="Resolved" />
+  </div>
+
+  <div class="fd__bar">
+    <mat-form-field appearance="outline" class="fd__filter">
+      <mat-label>Severity</mat-label>
+      <mat-select [value]="severity()" (selectionChange)="onSeverityChange($event.value)">
+        <mat-option [value]="null">All severities</mat-option>
+        @for (option of severityOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-slide-toggle class="fd__toggle" [checked]="showResolved()" (change)="toggleResolved($event.checked)">
+      Show resolved
+    </mat-slide-toggle>
+  </div>
+
+  @if (hasVisible()) {
+    <div class="fd__groups">
+      @for (group of groups(); track group.type) {
+        <section class="fd-group">
+          <header class="fd-group__head">
+            <mat-icon aria-hidden="true">{{ typeMeta[group.type].icon }}</mat-icon>
+            <span class="fd-group__title">{{ typeMeta[group.type].label }}</span>
+            <span class="fd-group__count">{{ group.signals.length }}</span>
+          </header>
+          <div class="fd-group__cards">
+            @for (item of group.signals; track item.id) {
+              <app-fraud-signal-card
+                [signal]="item"
+                [busy]="busyId() === item.id"
+                (resolve)="resolve(item)"
+                (act)="act(item, $event)"
+              />
+            }
+          </div>
+        </section>
+      }
+    </div>
+  } @else {
+    <app-empty-state
+      icon="verified_user"
+      title="Nothing to review"
+      [message]="showResolved() ? 'No signals match this filter.' : 'No open fraud signals right now.'"
+    />
+  }
+} @else if (loading()) {
+  <div class="fd__skeletons">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="160px" radius="var(--jc-radius-lg)" />
+    }
+  </div>
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

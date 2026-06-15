@@ -1,0 +1,26 @@
+.pfd__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+  padding-top: var(--jc-space-2);
+}
+
+.pfd__field {
+  width: 100%;
+}
+
+.pfd__row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--jc-space-2);
+}
+
+.pfd__toggle {
+  margin: var(--jc-space-1) 0 var(--jc-space-2);
+}
+
+@media (max-width: 560px) {
+  .pfd__row {
+    grid-template-columns: 1fr;
+  }
+}

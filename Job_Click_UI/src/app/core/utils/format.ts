@@ -17,6 +17,12 @@ export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/** Formats a money amount like "$199" (USD) or "199 MMK". */
+export function formatMoney(amount: number, currency = 'USD'): string {
+  const value = amount.toLocaleString('en-US');
+  return currency === 'USD' ? `$${value}` : `${value} ${currency}`;
+}
+
 /** Formats a byte count as "240 KB" / "1.4 MB". */
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) {

@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Flag job</h2>
+
+<mat-dialog-content>
+  <p class="fjd__intro">
+    Flagging <strong>{{ data.jobTitle }}</strong> marks it for review. The reason is recorded in the
+    moderation trail.
+  </p>
+
+  <mat-form-field appearance="outline" class="fjd__field">
+    <mat-label>Reason</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      [formControl]="reasonControl"
+      placeholder="e.g. Misleading title and unrealistic pay claims."
+    ></textarea>
+    @if (reasonControl.touched && reasonControl.invalid) {
+      <mat-error>Please give a reason for flagging this job.</mat-error>
+    }
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="warn" type="button" (click)="submit()">
+    <mat-icon>flag</mat-icon> Flag job
+  </button>
+</mat-dialog-actions>
