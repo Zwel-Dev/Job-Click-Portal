@@ -1,0 +1,100 @@
+:host {
+  display: block;
+  border-top: 1px solid var(--jc-border);
+  background: var(--jc-surface);
+}
+
+.composer {
+  padding: var(--jc-space-3) var(--jc-space-4);
+}
+
+.composer__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--jc-space-2);
+  margin-bottom: var(--jc-space-2);
+}
+
+.composer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 8px;
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-surface-muted);
+  font-size: 0.75rem;
+  color: var(--jc-text-secondary);
+  max-width: 220px;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__remove {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--jc-text-muted);
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+.composer__error {
+  margin: 0 0 var(--jc-space-2);
+  font-size: 0.75rem;
+  color: var(--jc-danger);
+}
+
+.composer__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--jc-space-2);
+}
+
+.composer__attach {
+  flex: 0 0 auto;
+}
+
+.composer__input {
+  flex: 1 1 auto;
+  resize: none;
+  max-height: 120px;
+  padding: 10px 12px;
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-md);
+  font: inherit;
+  color: var(--jc-text);
+  background: var(--jc-bg);
+
+  &:focus {
+    outline: none;
+    border-color: var(--jc-primary-500);
+  }
+}
+
+.composer__send {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 0 14px;
+
+  mat-icon {
+    margin: 0;
+  }
+}

@@ -1,0 +1,41 @@
+<div class="msg" [class.msg--thread]="selectedId() !== null">
+  <aside class="msg__list">
+    @if (conversationsLoading() && !conversations().length) {
+      <div class="msg__list-loading">
+        @for (item of [0, 1, 2, 3]; track item) {
+          <app-skeleton height="64px" radius="var(--jc-radius-md)" />
+        }
+      </div>
+    } @else {
+      <app-conversation-list
+        [conversations]="conversations()"
+        [selectedId]="selectedId()"
+        (select)="select($event)"
+      />
+    }
+  </aside>
+
+  <section class="msg__thread">
+    @if (selected()) {
+      <app-message-thread
+        [conversation]="selected()"
+        [messages]="messages()"
+        [currentUserId]="currentUserId()"
+        [loading]="messagesLoading()"
+        [canInvite]="canInvite()"
+        (send)="onSend($event)"
+        (back)="back()"
+        (invite)="onInvite()"
+        (respondInvite)="onRespondInvite($event)"
+      />
+    } @else {
+      <div class="msg__placeholder">
+        <app-empty-state
+          icon="forum"
+          title="Select a conversation"
+          message="Choose a conversation from the list to read and reply."
+        />
+      </div>
+    }
+  </section>
+</div>

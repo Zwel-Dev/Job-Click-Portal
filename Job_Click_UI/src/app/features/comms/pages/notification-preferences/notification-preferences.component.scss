@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+$np-cols: minmax(180px, 2fr) repeat(4, 88px);
+
+.np__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: var(--jc-space-4);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--jc-text-secondary);
+  text-decoration: none;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    color: var(--jc-primary-700);
+  }
+}
+
+.np__table {
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  overflow: hidden;
+  background: var(--jc-surface);
+}
+
+.np__head {
+  display: grid;
+  grid-template-columns: $np-cols;
+  gap: var(--jc-space-3);
+  align-items: center;
+  padding: var(--jc-space-3) var(--jc-space-4);
+  background: var(--jc-surface-muted);
+  border-bottom: 1px solid var(--jc-border);
+
+  span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--jc-text-muted);
+  }
+}
+
+.np__col {
+  text-align: center;
+}
+
+.np__row {
+  display: grid;
+  grid-template-columns: $np-cols;
+  gap: var(--jc-space-3);
+  align-items: center;
+  padding: var(--jc-space-3) var(--jc-space-4);
+  border-bottom: 1px solid var(--jc-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.np__cat {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.np__cat-label {
+  font-weight: 600;
+  color: var(--jc-text);
+}
+
+.np__cat-desc {
+  font-size: 0.8125rem;
+  color: var(--jc-text-muted);
+}
+
+.np__cell {
+  display: flex;
+  justify-content: center;
+}
+
+.np__cell-label {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .np__head {
+    display: none;
+  }
+
+  .np__row {
+    grid-template-columns: 1fr;
+    gap: var(--jc-space-2);
+    padding: var(--jc-space-4);
+  }
+
+  .np__cat {
+    margin-bottom: var(--jc-space-2);
+  }
+
+  .np__cell {
+    justify-content: space-between;
+  }
+
+  .np__cell-label {
+    display: inline;
+    font-size: 0.875rem;
+    color: var(--jc-text-secondary);
+  }
+}

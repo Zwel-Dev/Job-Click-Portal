@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Invite to interview</h2>
+
+<mat-dialog-content>
+  <p class="iid__intro">Send an interview invitation to <strong>{{ data.participantName }}</strong>.</p>
+
+  <form class="iid__form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="iid__field">
+      <mat-label>Role</mat-label>
+      <input matInput formControlName="jobTitle" placeholder="e.g. Logistics Coordinator" />
+      @if (form.controls.jobTitle.touched && form.controls.jobTitle.invalid) {
+        <mat-error>A role is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="iid__row">
+      <mat-form-field appearance="outline" class="iid__field">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="date" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="iid__field">
+        <mat-label>Time</mat-label>
+        <input matInput type="time" formControlName="time" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="iid__field">
+      <mat-label>Mode</mat-label>
+      <mat-select formControlName="mode">
+        @for (mode of modes; track mode) {
+          <mat-option [value]="mode">{{ mode }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="iid__field">
+      <mat-label>Location / link (optional)</mat-label>
+      <input matInput formControlName="location" placeholder="Office address or meeting link" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">
+    <mat-icon>send</mat-icon> Send invitation
+  </button>
+</mat-dialog-actions>

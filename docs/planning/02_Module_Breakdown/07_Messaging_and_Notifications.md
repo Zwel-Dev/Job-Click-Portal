@@ -3,6 +3,8 @@
 **Cross-cutting** · shared by Candidate and Employer workspaces. **Primary phase:** Phase 2.
 **Angular module:** `CommsModule` (shared feature module providing components + services).
 
+> **Status:** ✅ done · ⬜ pending. **Phase 2 complete — module shipped & build-verified (MN1.0–MN1.3).** Foundation: `CommsModule` + `RealtimeService` (polling) + `NotificationService`/`MessagingService` signal stores (`unreadCount` → header badges). Notifications: bell dropdown + feed (`/{candidate,employer}/notifications`) + mark-read + **channel preferences** (`/notifications/preferences`, In-App/Email/SMS/Push toggles). Messaging: responsive two-pane page (`/{candidate,employer}/messages`) — `ConversationList` + `MessageThread` (bubbles + attachments + **interview-invite card**) + `MessageComposer` — header `MessagingPanel` with badge + `?c=` deep-link. **Interview invites:** a recruiter sends one from the thread (`InterviewInviteDialog`) → creates an invite message **+** a notification; the candidate accepts/declines from the card → reply message + notification. Role-aware mock data throughout. **Phase 3 (WS/SSE realtime, read receipts) deferred.**
+
 ---
 
 ## 1. Scope
@@ -52,12 +54,12 @@ Two related surfaces:
 ## 6. Backlog by phase
 
 ### Phase 2
-- [ ] `CommsModule` shell + services + realtime abstraction (polling)
-- [ ] Conversation list + thread + composer + attachments
-- [ ] Header messaging panel with unread badge
-- [ ] Notification feed + bell dropdown + mark-read
-- [ ] Notification channel preferences (in-app managed)
-- [ ] Interview invite message/notification integration
+- [x] `CommsModule` shell + services + realtime abstraction (polling) ✅
+- [x] Conversation list + thread + composer + attachments ✅
+- [x] Header messaging panel with unread badge ✅
+- [x] Notification feed + bell dropdown + mark-read ✅
+- [x] Notification channel preferences (in-app managed) ✅
+- [x] Interview invite message/notification integration ✅
 
 ### Phase 3
 - [ ] WebSocket/SSE realtime upgrade

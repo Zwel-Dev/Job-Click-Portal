@@ -1,0 +1,51 @@
+<app-page-header title="Notifications" subtitle="Your recent activity and updates.">
+  <div actions class="nl__actions">
+    @if (unread()) {
+      <button mat-stroked-button type="button" (click)="markAll()">
+        <mat-icon>done_all</mat-icon> Mark all read
+      </button>
+    }
+    <a mat-stroked-button [routerLink]="['preferences']">
+      <mat-icon>tune</mat-icon> Preferences
+    </a>
+  </div>
+</app-page-header>
+
+<div class="nl__filters">
+  <button
+    class="nl__filter"
+    [class.nl__filter--active]="filter() === 'all'"
+    type="button"
+    (click)="setFilter('all')"
+  >
+    All
+  </button>
+  <button
+    class="nl__filter"
+    [class.nl__filter--active]="filter() === 'unread'"
+    type="button"
+    (click)="setFilter('unread')"
+  >
+    Unread @if (unread()) { <span class="nl__count">{{ unread() }}</span> }
+  </button>
+</div>
+
+@if (loading() && !notifications().length) {
+  <div class="nl__skeletons">
+    @for (item of skeletons; track item) {
+      <app-skeleton height="72px" radius="var(--jc-radius-md)" />
+    }
+  </div>
+} @else if (filtered().length) {
+  <div class="nl__list">
+    @for (item of filtered(); track item.id) {
+      <app-notification-item [item]="item" (open)="open(item)" />
+    }
+  </div>
+} @else {
+  <app-empty-state
+    icon="notifications_none"
+    [title]="filter() === 'unread' ? 'No unread notifications' : 'No notifications yet'"
+    [message]="filter() === 'unread' ? 'You\'re all caught up.' : 'Updates about your activity will appear here.'"
+  />
+}

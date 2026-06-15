@@ -1,0 +1,42 @@
+<a class="np__back" routerLink=".."><mat-icon aria-hidden="true">arrow_back</mat-icon> Notifications</a>
+
+<app-page-header
+  title="Notification preferences"
+  subtitle="Choose how you want to be notified. In-app notifications are always on."
+/>
+
+@if (!loading() && !error()) {
+  <div class="np__table" role="table">
+    <div class="np__head" role="row">
+      <span role="columnheader">Category</span>
+      @for (col of columns; track col.key) {
+        <span class="np__col" role="columnheader">{{ col.label }}</span>
+      }
+    </div>
+
+    @for (pref of preferences(); track pref.key) {
+      <div class="np__row" role="row">
+        <div class="np__cat">
+          <span class="np__cat-label">{{ pref.label }}</span>
+          @if (pref.description) {
+            <span class="np__cat-desc">{{ pref.description }}</span>
+          }
+        </div>
+        @for (col of columns; track col.key) {
+          <div class="np__cell" role="cell">
+            <span class="np__cell-label">{{ col.label }}</span>
+            <mat-slide-toggle
+              [checked]="pref.channels[col.key]"
+              [disabled]="col.locked"
+              (change)="toggle(pref, col.key, $event.checked)"
+            />
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else if (loading()) {
+  <app-skeleton height="280px" radius="var(--jc-radius-lg)" />
+} @else if (error()) {
+  <app-error-state [message]="error()!" (retry)="reload()" />
+}

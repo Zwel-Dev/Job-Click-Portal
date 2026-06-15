@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
+import { CommsModule } from '@features/comms/comms.module';
 import { EmployerRoutingModule } from './employer-routing.module';
 // Layout component class imported via RELATIVE path (not @layouts) — TS-993004.
 import { EmployerLayoutComponent } from '../../layouts/employer-layout/employer-layout.component';
@@ -70,6 +71,6 @@ import { TransferOwnershipDialogComponent } from './company-admin/components/tra
     InviteMemberDialogComponent,
     TransferOwnershipDialogComponent,
   ],
-  imports: [SharedModule, EmployerRoutingModule],
+  imports: [SharedModule, CommsModule, EmployerRoutingModule],
 })
 export class EmployerModule {}

@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.msg {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: calc(100vh - 200px);
+  min-height: 480px;
+  background: var(--jc-surface);
+  border: 1px solid var(--jc-border);
+  border-radius: var(--jc-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--jc-shadow-xs);
+}
+
+.msg__list {
+  border-right: 1px solid var(--jc-border);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.msg__list-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jc-space-2);
+  padding: var(--jc-space-2);
+}
+
+.msg__thread {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.msg__placeholder {
+  margin: auto;
+  padding: var(--jc-space-6);
+}
+
+@media (max-width: 860px) {
+  .msg {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 150px);
+  }
+
+  .msg__list {
+    border-right: none;
+  }
+
+  // Mobile: show the list, or the thread once a conversation is open.
+  .msg__thread {
+    display: none;
+  }
+
+  .msg--thread .msg__list {
+    display: none;
+  }
+
+  .msg--thread .msg__thread {
+    display: flex;
+  }
+}

@@ -1,0 +1,37 @@
+<div class="iic">
+  <header class="iic__head">
+    <mat-icon aria-hidden="true">event</mat-icon>
+    <span class="iic__title">Interview invitation</span>
+    <app-status-badge [label]="statusMeta().label" [tone]="statusMeta().tone" />
+  </header>
+
+  <dl class="iic__facts">
+    <div class="iic__fact">
+      <dt>Role</dt>
+      <dd>{{ invite().jobTitle }}</dd>
+    </div>
+    <div class="iic__fact">
+      <dt>When</dt>
+      <dd>{{ when() }}</dd>
+    </div>
+    <div class="iic__fact">
+      <dt>Mode</dt>
+      <dd>{{ invite().mode }}</dd>
+    </div>
+    @if (invite().location) {
+      <div class="iic__fact">
+        <dt>Where</dt>
+        <dd>{{ invite().location }}</dd>
+      </div>
+    }
+  </dl>
+
+  @if (canRespond()) {
+    <div class="iic__actions">
+      <button mat-stroked-button type="button" (click)="respond.emit(false)">Decline</button>
+      <button mat-flat-button color="primary" type="button" (click)="respond.emit(true)">
+        <mat-icon>check</mat-icon> Accept
+      </button>
+    </div>
+  }
+</div>

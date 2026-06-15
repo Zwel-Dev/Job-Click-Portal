@@ -16,6 +16,7 @@ export const EMPLOYER_NAV: readonly EmployerNavItem[] = [
   { label: 'Jobs', icon: 'work_outline', route: '/employer/jobs' },
   { label: 'Approvals', icon: 'task_alt', route: '/employer/approvals', managerOnly: true },
   { label: 'Candidates', icon: 'person_search', route: '/employer/candidates' },
+  { label: 'Messages', icon: 'chat_bubble_outline', route: '/employer/messages' },
   { label: 'Talent Pools', icon: 'groups', route: '/employer/talent-pools' },
   { label: 'Offers', icon: 'mail_outline', route: '/employer/offers' },
   { label: 'Analytics', icon: 'insights', route: '/employer/analytics', managerOnly: true },

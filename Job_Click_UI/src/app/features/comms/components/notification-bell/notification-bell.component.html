@@ -1,0 +1,27 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Notifications" class="bell">
+  <mat-icon>{{ unread() ? 'notifications_active' : 'notifications_none' }}</mat-icon>
+  @if (unread()) {
+    <span class="bell__badge">{{ unread() > 9 ? '9+' : unread() }}</span>
+  }
+</button>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  <div class="bell__panel" (click)="$event.stopPropagation()">
+    <header class="bell__head">
+      <span class="bell__title">Notifications</span>
+      @if (unread()) {
+        <button mat-button type="button" class="bell__mark" (click)="markAll()">Mark all read</button>
+      }
+    </header>
+
+    <div class="bell__list">
+      @for (item of recent(); track item.id) {
+        <app-notification-item [item]="item" [compact]="true" (open)="open(item)" />
+      } @empty {
+        <p class="bell__empty">You're all caught up.</p>
+      }
+    </div>
+
+    <a mat-button class="bell__all" [routerLink]="allRoute()">View all notifications</a>
+  </div>
+</mat-menu>

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
+import { CommsModule } from '@features/comms/comms.module';
 import { CandidateRoutingModule } from './candidate-routing.module';
 // Layout component class imported via RELATIVE path (not @layouts) — TS-993004.
 import { CandidateLayoutComponent } from '../../layouts/candidate-layout/candidate-layout.component';
@@ -50,6 +51,6 @@ import { PortfolioSectionComponent } from './pages/profile/sections/portfolio-se
     CertificationsSectionComponent,
     PortfolioSectionComponent,
   ],
-  imports: [SharedModule, CandidateRoutingModule],
+  imports: [SharedModule, CommsModule, CandidateRoutingModule],
 })
 export class CandidateModule {}

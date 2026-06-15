@@ -1,0 +1,70 @@
+@if (conversation(); as conversation) {
+  <header class="mt__head">
+    <button type="button" mat-icon-button class="mt__back" (click)="back.emit()" aria-label="Back to conversations">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="mt__avatar" aria-hidden="true">{{ conversation.participantName.charAt(0) }}</span>
+    <span class="mt__id">
+      <span class="mt__name">{{ conversation.participantName }}</span>
+      @if (conversation.participantRole) {
+        <span class="mt__role">{{ conversation.participantRole }}</span>
+      }
+    </span>
+    @if (canInvite()) {
+      <button mat-stroked-button type="button" class="mt__invite" (click)="invite.emit()">
+        <mat-icon>event</mat-icon> Invite to interview
+      </button>
+    }
+  </header>
+
+  <div class="mt__body">
+    @if (loading()) {
+      <div class="mt__skeletons">
+        @for (item of skeletons; track item) {
+          <app-skeleton height="48px" radius="var(--jc-radius-lg)" />
+        }
+      </div>
+    } @else {
+      @for (message of messages(); track message.id) {
+        @if (message.interviewInvite; as invite) {
+          <div class="mt-msg mt-msg--invite" [class.mt-msg--mine]="mine(message)">
+            <app-interview-invite-card
+              [invite]="invite"
+              [canRespond]="canRespond(message)"
+              (respond)="respondInvite.emit({ message, accepted: $event })"
+            />
+            <span class="mt-msg__time">{{ timeAgo(message.sentAt) }}</span>
+          </div>
+        } @else {
+        <div class="mt-msg" [class.mt-msg--mine]="mine(message)">
+          <div class="mt-msg__bubble">
+            @if (message.body) {
+              <p class="mt-msg__text">{{ message.body }}</p>
+            }
+            @if (message.attachments?.length) {
+              <div class="mt-msg__attachments">
+                @for (attachment of message.attachments; track attachment.id) {
+                  <a class="mt-att" [href]="attachment.fileUrl" target="_blank" rel="noopener">
+                    <mat-icon aria-hidden="true">description</mat-icon>
+                    <span class="mt-att__main">
+                      <span class="mt-att__name">{{ attachment.fileName }}</span>
+                      @if (attachment.sizeLabel) {
+                        <span class="mt-att__size">{{ attachment.sizeLabel }}</span>
+                      }
+                    </span>
+                  </a>
+                }
+              </div>
+            }
+          </div>
+          <span class="mt-msg__time">{{ timeAgo(message.sentAt) }}</span>
+        </div>
+        }
+      } @empty {
+        <p class="mt__empty">No messages yet — say hello.</p>
+      }
+    }
+  </div>
+
+  <app-message-composer (send)="send.emit($event)" />
+}

@@ -1,0 +1,67 @@
+.bell {
+  position: relative;
+  overflow: visible;
+}
+
+.bell__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-danger);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.bell__panel {
+  width: 340px;
+  max-width: 92vw;
+}
+
+.bell__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--jc-space-3) var(--jc-space-4);
+  border-bottom: 1px solid var(--jc-border);
+}
+
+.bell__title {
+  font-weight: 600;
+  color: var(--jc-text);
+}
+
+.bell__mark {
+  font-size: 0.8125rem;
+}
+
+.bell__list {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: var(--jc-space-2);
+}
+
+.bell__empty {
+  margin: 0;
+  padding: var(--jc-space-5) var(--jc-space-4);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--jc-text-muted);
+}
+
+.bell__all {
+  display: block;
+  width: 100%;
+  border-top: 1px solid var(--jc-border);
+  border-radius: 0;
+  color: var(--jc-primary-700);
+  font-weight: 600;
+}

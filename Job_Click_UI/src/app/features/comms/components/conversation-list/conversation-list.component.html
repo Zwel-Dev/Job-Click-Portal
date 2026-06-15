@@ -1,0 +1,31 @@
+<ul class="cl">
+  @for (conversation of conversations(); track conversation.id) {
+    <li>
+      <button
+        type="button"
+        class="cl-row"
+        [class.cl-row--active]="conversation.id === selectedId()"
+        (click)="select.emit(conversation.id)"
+      >
+        <span class="cl-row__avatar" aria-hidden="true">{{ conversation.participantName.charAt(0) }}</span>
+        <span class="cl-row__main">
+          <span class="cl-row__top">
+            <span class="cl-row__name">{{ conversation.participantName }}</span>
+            <span class="cl-row__time">{{ timeAgo(conversation.lastMessageAt) }}</span>
+          </span>
+          @if (conversation.jobTitle) {
+            <span class="cl-row__job">{{ conversation.jobTitle }}</span>
+          }
+          <span class="cl-row__preview">
+            <span class="cl-row__last" [class.cl-row__last--unread]="conversation.unread > 0">{{ conversation.lastMessage }}</span>
+            @if (conversation.unread > 0) {
+              <span class="cl-row__badge">{{ conversation.unread }}</span>
+            }
+          </span>
+        </span>
+      </button>
+    </li>
+  } @empty {
+    <li class="cl__empty">No conversations yet.</li>
+  }
+</ul>

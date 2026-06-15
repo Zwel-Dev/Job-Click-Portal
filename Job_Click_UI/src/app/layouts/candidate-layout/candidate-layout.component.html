@@ -33,9 +33,8 @@
 
       <span class="shell__spacer"></span>
 
-      <button mat-icon-button aria-label="Notifications" routerLink="/candidate/notifications">
-        <mat-icon>notifications_none</mat-icon>
-      </button>
+      <app-messaging-panel allRoute="/candidate/messages" />
+      <app-notification-bell allRoute="/candidate/notifications" />
 
       <button mat-button class="shell__user" [matMenuTriggerFor]="userMenu">
         <span class="shell__avatar">{{ initials() }}</span>

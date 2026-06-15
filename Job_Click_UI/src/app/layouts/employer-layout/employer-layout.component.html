@@ -40,6 +40,9 @@
 
       <span class="shell__spacer"></span>
 
+      <app-messaging-panel allRoute="/employer/messages" />
+      <app-notification-bell allRoute="/employer/notifications" />
+
       <button mat-button class="shell__user" [matMenuTriggerFor]="userMenu">
         <span class="shell__avatar">{{ initials() }}</span>
         <span class="shell__user-name">{{ currentUser.displayName() }}</span>

@@ -12,8 +12,10 @@ import { ApplicationDetailComponent } from './pages/applications/application-det
 import { AccountSettingsComponent } from './pages/settings/account-settings.component';
 import { ResumeManagerComponent } from './pages/resumes/resume-manager.component';
 import { RecommendationsComponent } from './pages/recommendations/recommendations.component';
-// ComingSoonComponent is declared in SharedModule → used here only as a route target.
-import { ComingSoonComponent } from '@shared/components/coming-soon/coming-soon.component';
+// Notifications + messages pages are declared in CommsModule (imported by CandidateModule).
+import { NotificationListComponent } from '@features/comms/pages/notifications/notification-list.component';
+import { NotificationPreferencesComponent } from '@features/comms/pages/notification-preferences/notification-preferences.component';
+import { MessagesPageComponent } from '@features/comms/pages/messages/messages-page.component';
 
 const routes: Routes = [
   {
@@ -29,8 +31,9 @@ const routes: Routes = [
       { path: 'recommendations', component: RecommendationsComponent, title: 'Recommended | Job Click' },
       { path: 'applications', component: ApplicationListComponent, title: 'Applications | Job Click' },
       { path: 'applications/:id', component: ApplicationDetailComponent, title: 'Application | Job Click' },
-      // Interviews + Messaging are hidden until Phase 2 (slices C2.1 / C2.2).
-      { path: 'notifications', component: ComingSoonComponent, data: { label: 'Notifications' }, title: 'Notifications | Job Click' },
+      { path: 'messages', component: MessagesPageComponent, title: 'Messages | Job Click' },
+      { path: 'notifications', component: NotificationListComponent, title: 'Notifications | Job Click' },
+      { path: 'notifications/preferences', component: NotificationPreferencesComponent, title: 'Notification Preferences | Job Click' },
       { path: 'settings', component: AccountSettingsComponent, title: 'Settings | Job Click' },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: '**', redirectTo: 'dashboard' },

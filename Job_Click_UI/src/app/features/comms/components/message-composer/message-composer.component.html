@@ -1,0 +1,38 @@
+<div class="composer">
+  @if (attachments().length) {
+    <div class="composer__chips">
+      @for (attachment of attachments(); track attachment.id) {
+        <span class="composer-chip">
+          <mat-icon aria-hidden="true">description</mat-icon>
+          <span class="composer-chip__name">{{ attachment.fileName }}</span>
+          <button type="button" class="composer-chip__remove" (click)="removeAttachment(attachment.id)" aria-label="Remove attachment">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      }
+    </div>
+  }
+
+  @if (error()) {
+    <p class="composer__error">{{ error() }}</p>
+  }
+
+  <div class="composer__row">
+    <button type="button" mat-icon-button class="composer__attach" (click)="fileInput.click()" aria-label="Attach file">
+      <mat-icon>attach_file</mat-icon>
+    </button>
+    <input #fileInput type="file" hidden (change)="onFile($event)" />
+
+    <textarea
+      class="composer__input"
+      rows="1"
+      placeholder="Write a message…"
+      [formControl]="text"
+      (keydown.enter)="onEnter($event)"
+    ></textarea>
+
+    <button type="button" mat-flat-button color="primary" class="composer__send" (click)="submit()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>

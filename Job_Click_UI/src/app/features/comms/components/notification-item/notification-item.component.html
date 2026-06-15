@@ -1,0 +1,17 @@
+<button
+  type="button"
+  class="ni"
+  [class.ni--unread]="!item().read"
+  [class.ni--compact]="compact()"
+  (click)="open.emit(item())"
+>
+  <span class="ni__icon" aria-hidden="true"><mat-icon>{{ typeMeta().icon }}</mat-icon></span>
+  <span class="ni__main">
+    <span class="ni__title">{{ item().title }}</span>
+    <span class="ni__body">{{ item().body }}</span>
+    <span class="ni__time">{{ timeAgo(item().createdAt) }}</span>
+  </span>
+  @if (!item().read) {
+    <span class="ni__dot" aria-label="Unread"></span>
+  }
+</button>

@@ -1,0 +1,36 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Messages" class="mp">
+  <mat-icon>chat_bubble_outline</mat-icon>
+  @if (unread()) {
+    <span class="mp__badge">{{ unread() > 9 ? '9+' : unread() }}</span>
+  }
+</button>
+
+<mat-menu #menu="matMenu" xPosition="before">
+  <div class="mp__panel" (click)="$event.stopPropagation()">
+    <header class="mp__head">
+      <span class="mp__title">Messages</span>
+    </header>
+
+    <div class="mp__list">
+      @for (conversation of recent(); track conversation.id) {
+        <button type="button" class="mp-row" [class.mp-row--unread]="conversation.unread > 0" (click)="open(conversation)">
+          <span class="mp-row__avatar" aria-hidden="true">{{ conversation.participantName.charAt(0) }}</span>
+          <span class="mp-row__main">
+            <span class="mp-row__top">
+              <span class="mp-row__name">{{ conversation.participantName }}</span>
+              <span class="mp-row__time">{{ timeAgo(conversation.lastMessageAt) }}</span>
+            </span>
+            <span class="mp-row__last">{{ conversation.lastMessage }}</span>
+          </span>
+          @if (conversation.unread > 0) {
+            <span class="mp-row__dot" aria-label="Unread"></span>
+          }
+        </button>
+      } @empty {
+        <p class="mp__empty">No conversations yet.</p>
+      }
+    </div>
+
+    <a mat-button class="mp__all" [routerLink]="allRoute()">View all messages</a>
+  </div>
+</mat-menu>

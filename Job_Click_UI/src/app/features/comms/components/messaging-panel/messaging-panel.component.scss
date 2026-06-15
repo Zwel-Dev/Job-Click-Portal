@@ -1,0 +1,140 @@
+.mp {
+  position: relative;
+  overflow: visible;
+}
+
+.mp__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--jc-radius-pill);
+  background: var(--jc-primary-600);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mp__panel {
+  width: 340px;
+  max-width: 92vw;
+}
+
+.mp__head {
+  padding: var(--jc-space-3) var(--jc-space-4);
+  border-bottom: 1px solid var(--jc-border);
+}
+
+.mp__title {
+  font-weight: 600;
+  color: var(--jc-text);
+}
+
+.mp__list {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: var(--jc-space-2);
+}
+
+.mp__empty {
+  margin: 0;
+  padding: var(--jc-space-5) var(--jc-space-4);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--jc-text-muted);
+}
+
+.mp-row {
+  display: flex;
+  align-items: center;
+  gap: var(--jc-space-3);
+  width: 100%;
+  padding: var(--jc-space-2) var(--jc-space-3);
+  background: none;
+  border: none;
+  border-radius: var(--jc-radius-md);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--jc-surface-muted);
+  }
+
+  &__avatar {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--jc-primary-100, var(--jc-primary-50));
+    color: var(--jc-primary-700);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--jc-space-2);
+  }
+
+  &__name {
+    font-weight: 600;
+    color: var(--jc-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__time {
+    flex: 0 0 auto;
+    font-size: 0.6875rem;
+    color: var(--jc-text-muted);
+  }
+
+  &__last {
+    font-size: 0.8125rem;
+    color: var(--jc-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &--unread &__last {
+    color: var(--jc-text);
+    font-weight: 600;
+  }
+
+  &__dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--jc-primary-600);
+  }
+}
+
+.mp__all {
+  display: block;
+  width: 100%;
+  border-top: 1px solid var(--jc-border);
+  border-radius: 0;
+  color: var(--jc-primary-700);
+  font-weight: 600;
+}

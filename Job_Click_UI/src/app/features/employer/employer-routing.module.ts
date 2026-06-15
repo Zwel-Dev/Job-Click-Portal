@@ -22,6 +22,9 @@ import { VerificationCenterComponent } from './company-admin/pages/verification/
 import { TeamListComponent } from './company-admin/pages/team/team-list.component';
 import { CompanyInsightsComponent } from './company-admin/pages/insights/company-insights.component';
 import { SubscriptionComponent } from './company-admin/pages/subscription/subscription.component';
+import { NotificationListComponent } from '@features/comms/pages/notifications/notification-list.component';
+import { NotificationPreferencesComponent } from '@features/comms/pages/notification-preferences/notification-preferences.component';
+import { MessagesPageComponent } from '@features/comms/pages/messages/messages-page.component';
 import { recruiterGuard } from '@core/auth/guards/recruiter.guard';
 import { managerGuard } from '@core/auth/guards/manager.guard';
 import { companyAdminGuard } from '@core/auth/guards/company-admin.guard';
@@ -55,6 +58,9 @@ const routes: Routes = [
       { path: 'company/insights', component: CompanyInsightsComponent, canActivate: [managerGuard], title: 'Company Insights | Job Click' },
       { path: 'team', component: TeamListComponent, canActivate: [companyAdminGuard], title: 'Team | Job Click' },
       { path: 'subscription', component: SubscriptionComponent, canActivate: [companyAdminGuard], title: 'Subscription | Job Click' },
+      { path: 'messages', component: MessagesPageComponent, title: 'Messages | Job Click' },
+      { path: 'notifications', component: NotificationListComponent, title: 'Notifications | Job Click' },
+      { path: 'notifications/preferences', component: NotificationPreferencesComponent, title: 'Notification Preferences | Job Click' },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: '**', redirectTo: 'dashboard' },
     ],
